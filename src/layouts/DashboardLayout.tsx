@@ -1,0 +1,154 @@
+import { Outlet, Link, useLocation } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
+import {
+  Map,
+  History,
+  Settings,
+  LogOut,
+  Menu,
+  X,
+  ChevronRight,
+} from 'lucide-react';
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
+import { useAuth } from '@/features/auth';
+import { APP_CONFIG } from '@/config/constants';
+
+const navItems = [
+  { path: '/dashboard', label: 'Mapa de Calor', icon: Map },
+  { path: '/history', label: 'Historial', icon: History },
+  { path: '/settings', label: 'Configuración', icon: Settings },
+];
+
+export function DashboardLayout() {
+  const { user, signOut } = useAuth();
+  const location = useLocation();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  return (
+    <div className="flex h-screen bg-background">
+      {/* Mobile Overlay */}
+      <AnimatePresence>
+        {sidebarOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-40 bg-black/50 lg:hidden"
+            onClick={() => setSidebarOpen(false)}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Sidebar */}
+      <motion.aside
+        className={`fixed inset-y-0 left-0 z-50 w-64 border-r border-border bg-card lg:static lg:z-auto ${
+          sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
+        } transition-transform duration-300 ease-in-out`}
+      >
+        <div className="flex h-full flex-col">
+          {/* Logo */}
+          <div className="flex h-16 items-center gap-2 px-6">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
+              <Map className="h-4 w-4 text-primary-foreground" />
+            </div>
+            <span className="text-lg font-bold tracking-tight">
+              {APP_CONFIG.name}
+            </span>
+            <button
+              className="ml-auto lg:hidden"
+              onClick={() => setSidebarOpen(false)}
+            >
+              <X className="h-5 w-5" />
+            </button>
+          </div>
+
+          <Separator />
+
+          {/* Navigation */}
+          <nav className="flex-1 space-y-1 p-3">
+            {navItems.map((item) => {
+              const isActive = location.pathname === item.path;
+              return (
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  onClick={() => setSidebarOpen(false)}
+                  className={`group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all ${
+                    isActive
+                      ? 'bg-primary text-primary-foreground shadow-sm'
+                      : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
+                  }`}
+                >
+                  <item.icon className="h-4 w-4" />
+                  {item.label}
+                  {isActive && (
+                    <ChevronRight className="ml-auto h-4 w-4" />
+                  )}
+                </Link>
+              );
+            })}
+          </nav>
+
+          <Separator />
+
+          {/* User section */}
+          <div className="p-4">
+            <div className="flex items-center gap-3 rounded-lg bg-muted/50 p-3">
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-sm font-bold text-primary">
+                {user?.email?.charAt(0).toUpperCase() ?? 'U'}
+              </div>
+              <div className="flex-1 overflow-hidden">
+                <p className="truncate text-sm font-medium">
+                  {user?.user_metadata?.full_name ?? 'Usuario'}
+                </p>
+                <p className="truncate text-xs text-muted-foreground">
+                  {user?.email ?? ''}
+                </p>
+              </div>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={signOut}
+                className="h-8 w-8 shrink-0"
+              >
+                <LogOut className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+        </div>
+      </motion.aside>
+
+      {/* Main content */}
+      <div className="flex flex-1 flex-col overflow-hidden">
+        {/* Mobile header */}
+        <header className="flex h-16 items-center gap-4 border-b border-border px-4 lg:hidden">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setSidebarOpen(true)}
+          >
+            <Menu className="h-5 w-5" />
+          </Button>
+          <span className="text-lg font-bold">{APP_CONFIG.name}</span>
+        </header>
+
+        {/* Page content */}
+        <main className="flex-1 overflow-auto p-4 md:p-6 lg:p-8">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={location.pathname}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.2 }}
+            >
+              <Outlet />
+            </motion.div>
+          </AnimatePresence>
+        </main>
+      </div>
+    </div>
+  );
+}
