@@ -1,4 +1,4 @@
-# LocalRank Pro 🗺️
+# MapRanker Pro 🗺️
 
 **Herramienta SaaS de SEO Local con Mapa de Calor interactivo** — Permite a negocios locales visualizar su posicionamiento en Google Maps a través de una cuadrícula geolocalizada con ranking por colores.
 
@@ -166,28 +166,22 @@ VITE_SUPABASE_ANON_KEY=tu_anon_key_de_supabase
 
 ## Funcionalidades
 
-### ✅ Implementadas (MVP Scaffolding)
+### ✅ Implementadas (Core Features)
 
-- **Autenticación completa** — Login, registro, OAuth con Google (via Supabase Auth)
-- **Rutas protegidas** — `ProtectedRoute` redirige a login si no hay sesión
-- **Dashboard Layout** — Sidebar responsive con menú móvil y navegación animada
-- **Landing Page** — Página de marketing pública
-- **Página de Dashboard** — UI de configuración del heatmap (formulario con keyword, business name, Place ID, grid size, radius)
-- **Historial de búsquedas** — Página de historial (UI)
-- **Página de settings** — Configuración del usuario
-- **Sistema de diseño** — 12 componentes shadcn/ui configurados
-- **Animaciones** — Transiciones con Framer Motion en todas las páginas
+- **Autenticación completa** — Real (Supabase) y **Modo Demo Offline** para desarrollo ágil.
+- **Mapa interactivo real** — Integración completa de Leaflet con cuadrícula dinámica y marcadores reactivos.
+- **Lógica de Grid Geográfico** — Generación de puntos (3x3 a 7x7) con cálculos de radio precisos en KM.
+- **Motor de Simulación de Rankings** — `searchService` funcional con generación de datos y delay realista (UX).
+- **Persistencia Local** — Historial de búsquedas guardado en `localStorage` (listo para migrar a Supabase).
+- **Dashboard Layout** — Sidebar responsive con menú móvil y navegación animada.
+- **Formulario Reactivo** — Configuración de búsquedas totalmente conectada al mapa y al servicio de análisis.
 
 ### 🔲 Pendiente de Implementar
 
-- **Mapa interactivo** — Integración real de Leaflet (actualmente es un placeholder)
-- **Motor de búsqueda de rankings** — Lógica para consultar posiciones en Google Maps
-- **Feature `heatmap/`** — Componentes y lógica del mapa de calor
-- **Feature `search-history/`** — Hooks y servicios para el historial
-- **Custom hooks** — Hooks para gestión de estado y lógica de negocio
-- **Servicios API** — Capa de servicios para comunicación con el backend
-- **Tablas en Supabase** — Las tablas `profiles` y `search_history` necesitan crearse
-- **Sistema de planes** — Lógica de restricciones por plan (free/pro/enterprise)
+- **Motor de búsqueda REAL** — Sustituir el simulador por llamadas reales a Google Places API / Edge Functions.
+- **Migración a Base de Datos** — Mover el historial de `localStorage` a las tablas de Supabase (SQL ya preparado).
+- **Página de Historial Visual** — Mostrar los resultados guardados en una lista interactiva.
+- **Sistema de planes progresivo** — Lógica de restricciones por plan (free/pro/enterprise).
 
 ---
 
@@ -248,12 +242,9 @@ VITE_SUPABASE_ANON_KEY=tu_anon_key_de_supabase
 
 ## Estado Actual del MVP
 
-> **Versión:** 0.1.0 — Scaffolding completo, UI construida, lógica de negocio pendiente.
+> **Versión:** 0.1.1 — Core Interactividad Completado.
 
-El proyecto tiene toda la **estructura base y UI** lista. Las próximas tareas críticas son:
-
-1. **Crear las tablas en Supabase** (profiles, search_history)
-2. **Implementar el mapa interactivo** con Leaflet/React-Leaflet
-3. **Desarrollar el motor de búsqueda** para obtener rankings de Google Maps
-4. **Conectar el formulario del dashboard** con la lógica de búsqueda
-5. **Implementar la lógica de planes** y restricciones
+Próximas tareas:
+1. **Página de Historial**: Visualizar análisis antiguos desde `localStorage`.
+2. **Conexión Real con Supabase**: Configurar variables de entorno y migrar persistencia.
+3. **Google API**: Implementar el fetching real de rankings.
