@@ -1,7 +1,7 @@
 /** Application-wide configuration constants */
 
 export const APP_CONFIG = {
-  name: 'LocalRank Pro',
+  name: 'MapRanker Pro',
   description: 'Herramienta SaaS de SEO Local con Mapa de Calor interactivo',
   version: '0.1.0',
 } as const;
