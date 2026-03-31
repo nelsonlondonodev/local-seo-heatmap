@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Map, Search, Crosshair } from 'lucide-react';
+import { Map as MapIcon, Search, Crosshair } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -13,6 +13,8 @@ import {
 } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { GRID_OPTIONS, RADIUS_OPTIONS } from '@/config/constants';
+import { HeatmapMap, useHeatmap } from '@/features/heatmap';
+import { cn } from '@/lib/utils';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -28,6 +30,8 @@ const itemVariants = {
 };
 
 export function DashboardPage() {
+  const heatmap = useHeatmap();
+
   return (
     <motion.div
       variants={containerVariants}
@@ -64,6 +68,8 @@ export function DashboardPage() {
                 <Input
                   id="keyword"
                   placeholder="ej: peluquería cerca de mí"
+                  value={heatmap.keyword}
+                  onChange={(e) => heatmap.setKeyword(e.target.value)}
                 />
               </div>
 
@@ -72,14 +78,18 @@ export function DashboardPage() {
                 <Input
                   id="business"
                   placeholder="ej: Mi Peluquería"
+                  value={heatmap.businessName}
+                  onChange={(e) => heatmap.setBusinessName(e.target.value)}
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="placeId">Google Place ID</Label>
+                <Label htmlFor="placeId">Google Place ID (Opcional)</Label>
                 <Input
                   id="placeId"
                   placeholder="ChIJ..."
+                  value={heatmap.placeId}
+                  onChange={(e) => heatmap.setPlaceId(e.target.value)}
                 />
               </div>
 
@@ -89,13 +99,20 @@ export function DashboardPage() {
                   {GRID_OPTIONS.map((option) => (
                     <button
                       key={option.value}
-                      className="group relative flex flex-col items-center rounded-lg border border-border p-3 text-center transition-all hover:border-primary hover:bg-primary/5 focus:outline-none focus:ring-2 focus:ring-primary/50"
+                      onClick={() => heatmap.setGridSize(option.value)}
+                      className={cn(
+                        'group relative flex flex-col items-center rounded-lg border border-border p-3 text-center transition-all hover:border-primary hover:bg-primary/5 focus:outline-none focus:ring-2 focus:ring-primary/50',
+                        heatmap.gridSize === option.value && 'border-primary bg-primary/5 ring-2 ring-primary/50'
+                      )}
                     >
                       <span className="text-sm font-semibold">{option.label}</span>
                       <span className="text-xs text-muted-foreground">
                         {option.points} puntos
                       </span>
-                      <Badge variant="secondary" className="mt-1 text-[10px]">
+                      <Badge 
+                        variant={heatmap.gridSize === option.value ? 'default' : 'secondary'} 
+                        className="mt-1 text-[10px]"
+                      >
                         {option.description}
                       </Badge>
                     </button>
@@ -105,7 +122,10 @@ export function DashboardPage() {
 
               <div className="space-y-2">
                 <Label>Radio (km)</Label>
-                <Select>
+                <Select
+                  value={String(heatmap.radiusKm)}
+                  onValueChange={(v) => heatmap.setRadiusKm(Number(v))}
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Seleccionar radio" />
                   </SelectTrigger>
@@ -121,13 +141,20 @@ export function DashboardPage() {
 
               <div className="space-y-2">
                 <Label>Ubicación central</Label>
-                <Button variant="outline" className="w-full gap-2">
+                <Button 
+                  variant="outline" 
+                  className="w-full gap-2"
+                  onClick={heatmap.handleResetCenter}
+                >
                   <Crosshair className="h-4 w-4" />
-                  Seleccionar en el mapa
+                  Resetear al centro
                 </Button>
+                <p className="text-[10px] text-muted-foreground">
+                  Lat: {heatmap.center[0].toFixed(4)}, Lng: {heatmap.center[1].toFixed(4)}
+                </p>
               </div>
 
-              <Button className="w-full gap-2">
+              <Button className="w-full gap-2" disabled={!heatmap.isFormValid}>
                 <Search className="h-4 w-4" />
                 Ejecutar Análisis
               </Button>
@@ -137,53 +164,51 @@ export function DashboardPage() {
 
         {/* Map Preview */}
         <motion.div variants={itemVariants} className="lg:col-span-2">
-          <Card className="h-full min-h-[500px]">
-            <CardHeader>
+          <Card className="flex h-full min-h-[600px] flex-col overflow-hidden">
+            <CardHeader className="pb-3">
               <CardTitle className="flex items-center gap-2 text-lg">
-                <Map className="h-4 w-4" />
+                <MapIcon className="h-4 w-4" />
                 Vista del Mapa
               </CardTitle>
               <CardDescription>
                 Haz clic en el mapa para seleccionar el punto central del análisis
               </CardDescription>
             </CardHeader>
-            <CardContent className="relative flex-1">
-              {/* Placeholder for the Leaflet map */}
-              <div className="flex h-96 items-center justify-center rounded-lg border border-dashed border-border bg-muted/30">
-                <div className="text-center">
-                  <Map className="mx-auto mb-3 h-12 w-12 text-muted-foreground/50" />
-                  <p className="text-sm font-medium text-muted-foreground">
-                    El mapa interactivo se renderizará aquí
-                  </p>
-                  <p className="text-xs text-muted-foreground/70">
-                    Integración con Leaflet + React-Leaflet
-                  </p>
-                </div>
-              </div>
+            <CardContent className="relative flex-1 p-0">
+              <HeatmapMap
+                center={heatmap.center}
+                zoom={13}
+                points={heatmap.points}
+                onMapClick={heatmap.handleMapClick}
+              />
 
-              {/* Color Legend */}
-              <div className="mt-4 flex flex-wrap items-center gap-2">
-                <span className="text-xs font-medium text-muted-foreground">
-                  Leyenda:
-                </span>
-                {[
-                  { color: '#22c55e', label: '#1-3' },
-                  { color: '#facc15', label: '#4-6' },
-                  { color: '#f97316', label: '#7-9' },
-                  { color: '#dc2626', label: '#10-15' },
-                  { color: '#7f1d1d', label: '16+' },
-                  { color: '#374151', label: 'N/A' },
-                ].map((item) => (
-                  <div key={item.label} className="flex items-center gap-1">
-                    <div
-                      className="h-3 w-3 rounded-sm"
-                      style={{ backgroundColor: item.color }}
-                    />
-                    <span className="text-xs text-muted-foreground">
-                      {item.label}
-                    </span>
+              {/* Color Legend Overlay */}
+              <div className="absolute bottom-4 left-4 z-[1000] rounded-md border border-border bg-background/90 p-3 shadow-sm backdrop-blur-sm">
+                <div className="flex flex-col gap-2">
+                  <span className="text-xs font-semibold text-foreground">
+                    Leyenda de Posiciones
+                  </span>
+                  <div className="grid grid-cols-2 gap-x-4 gap-y-1">
+                    {[
+                      { color: '#22c55e', label: '#1-3' },
+                      { color: '#facc15', label: '#4-6' },
+                      { color: '#f97316', label: '#7-9' },
+                      { color: '#dc2626', label: '#10-15' },
+                      { color: '#7f1d1d', label: '16+' },
+                      { color: '#374151', label: 'N/A' },
+                    ].map((item) => (
+                      <div key={item.label} className="flex items-center gap-1.5">
+                        <div
+                          className="h-2.5 w-2.5 rounded-full"
+                          style={{ backgroundColor: item.color }}
+                        />
+                        <span className="text-[10px] text-muted-foreground font-medium">
+                          {item.label}
+                        </span>
+                      </div>
+                    ))}
                   </div>
-                ))}
+                </div>
               </div>
             </CardContent>
           </Card>
