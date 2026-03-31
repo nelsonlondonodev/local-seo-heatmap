@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Map as MapIcon, Search, Crosshair } from 'lucide-react';
+import { Map as MapIcon, Search, Crosshair, Loader2 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -154,9 +154,22 @@ export function DashboardPage() {
                 </p>
               </div>
 
-              <Button className="w-full gap-2" disabled={!heatmap.isFormValid}>
-                <Search className="h-4 w-4" />
-                Ejecutar Análisis
+              <Button 
+                className="w-full gap-2" 
+                disabled={!heatmap.isFormValid || heatmap.isLoading}
+                onClick={heatmap.runAnalysis}
+              >
+                {heatmap.isLoading ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Analizando...
+                  </>
+                ) : (
+                  <>
+                    <Search className="h-4 w-4" />
+                    Ejecutar Análisis
+                  </>
+                )}
               </Button>
             </CardContent>
           </Card>

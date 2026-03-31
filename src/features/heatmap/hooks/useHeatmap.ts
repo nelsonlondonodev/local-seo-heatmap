@@ -1,7 +1,9 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
+import { toast } from 'sonner';
 import { MAP_DEFAULT_CENTER } from '@/config/constants';
 import { generateGridPoints } from '../utils/grid';
-import type { GridSize } from '@/types';
+import { searchService } from '../services/searchService';
+import type { GridSize, HeatmapConfig, GridPoint } from '@/types';
 
 /**
  * Custom hook to manage the heatmap state and logic.
@@ -17,13 +19,50 @@ export function useHeatmap() {
     MAP_DEFAULT_CENTER.lat,
     MAP_DEFAULT_CENTER.lng,
   ]);
+  
+  // Points state to allow manual updates (from search results)
+  const [points, setPoints] = useState<GridPoint[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
-  // Derive points reactively
-  const points = useMemo(() => {
-    return generateGridPoints(center[0], center[1], gridSize, radiusKm);
+  // Synchronize points when configuration changes (Reset rankings)
+  useEffect(() => {
+    const newPoints = generateGridPoints(center[0], center[1], gridSize, radiusKm);
+    setPoints(newPoints);
   }, [center, gridSize, radiusKm]);
 
-  // Handlers
+  // Derived Values
+  const isFormValid = keyword.trim().length > 0 && businessName.trim().length > 0;
+
+  const currentConfig = useMemo<HeatmapConfig>(() => ({
+    keyword,
+    businessName,
+    placeId,
+    gridSize,
+    radiusKm,
+    centerLat: center[0],
+    centerLng: center[1],
+  }), [keyword, businessName, placeId, gridSize, radiusKm, center]);
+
+  // Actions
+  const runAnalysis = async () => {
+    if (!isFormValid) return;
+
+    try {
+      setIsLoading(true);
+      toast.loading('Ejecutando análisis de ranking local...', { id: 'search-heatmap' });
+      
+      const result = await searchService.executeSearch(currentConfig, points);
+      
+      setPoints(result.points);
+      toast.success('¡Análisis completado!', { id: 'search-heatmap' });
+    } catch (error) {
+      console.error('Search failed', error);
+      toast.error('Hubo un error al ejecutar el análisis.', { id: 'search-heatmap' });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const handleMapClick = (lat: number, lng: number) => {
     setCenter([lat, lng]);
   };
@@ -31,8 +70,6 @@ export function useHeatmap() {
   const handleResetCenter = () => {
     setCenter([MAP_DEFAULT_CENTER.lat, MAP_DEFAULT_CENTER.lng]);
   };
-
-  const isFormValid = keyword.trim().length > 0 && businessName.trim().length > 0;
 
   return {
     // State
@@ -43,6 +80,7 @@ export function useHeatmap() {
     radiusKm,
     center,
     points,
+    isLoading,
     isFormValid,
 
     // Setters
@@ -55,5 +93,6 @@ export function useHeatmap() {
     // Actions
     handleMapClick,
     handleResetCenter,
+    runAnalysis,
   };
 }
