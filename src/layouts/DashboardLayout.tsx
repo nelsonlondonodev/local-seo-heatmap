@@ -13,6 +13,14 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { useAuth, type UserRole } from '@/features/auth';
 import { APP_CONFIG } from '@/config/constants';
 
@@ -41,6 +49,12 @@ export function DashboardLayout() {
   const { user, profile, role, signOut } = useAuth();
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isLogoutOpen, setIsLogoutOpen] = useState(false);
+
+  const handleSignOut = async () => {
+    setIsLogoutOpen(false);
+    await signOut();
+  };
 
   return (
     <div className="flex h-screen bg-background">
@@ -133,7 +147,7 @@ export function DashboardLayout() {
               <Button
                 variant="ghost"
                 size="icon"
-                onClick={signOut}
+                onClick={() => setIsLogoutOpen(true)}
                 className="h-9 w-9 shrink-0 rounded-full hover:bg-destructive/10 hover:text-destructive text-muted-foreground transition-colors"
                 title="Cerrar Sesión"
               >
@@ -173,6 +187,41 @@ export function DashboardLayout() {
           </AnimatePresence>
         </main>
       </div>
+
+      {/* Logout Confirmation Modal - TEMPORARILY DISABLED FOR DIAGNOSIS
+      <Dialog open={isLogoutOpen} onOpenChange={setIsLogoutOpen}>
+        <DialogContent className="sm:max-w-[400px]">
+          <DialogHeader>
+            <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-destructive/10 text-destructive">
+              <LogOut className="h-6 w-6" />
+            </div>
+            <DialogTitle className="text-center text-xl font-bold">
+              ¿Cerrar sesión?
+            </DialogTitle>
+            <DialogDescription className="text-center text-muted-foreground pt-2">
+              ¿Estás seguro de que deseas salir de <strong>{APP_CONFIG.name}</strong>? 
+              Tendrás que volver a autenticarte para acceder a tus mapas.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="mt-6 flex sm:flex-col-reverse gap-3">
+            <Button 
+              variant="outline" 
+              onClick={() => setIsLogoutOpen(false)}
+              className="flex-1 rounded-xl h-11 font-semibold"
+            >
+              Cancelar
+            </Button>
+            <Button 
+              variant="destructive" 
+              onClick={handleSignOut}
+              className="flex-1 rounded-xl h-11 font-semibold shadow-lg shadow-destructive/20 active:scale-[0.98] transition-transform"
+            >
+              Sí, cerrar sesión
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      */}
     </div>
   );
 }
