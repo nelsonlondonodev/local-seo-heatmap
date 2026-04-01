@@ -25,9 +25,28 @@ Hoy hemos alcanzado hitos críticos para la escalabilidad de **MapRanker Pro**:
 2.  **🔑 Auth Segura**: Implementación de **Google OAuth** y sistema de login real (no más mocks).
 3.  **🏢 Arquitectura Multi-Tenant**: Soporte nativo para múltiples agencias (**Marca Blanca**).
 4.  **🎭 Roles & Jerarquía**: Definición clara de permisos desde el SuperAdmin hasta el Cliente Final.
+5.  **🧩 Estructura Modular**: Refactorización de Auth y Dashboard en componentes atómicos para facilitar el crecimiento.
 
 > [!TIP]
 > Puedes consultar la documentación detallada de la jerarquía de permisos en [docs/ROLES_AND_HIERARCHY.md](./docs/ROLES_AND_HIERARCHY.md).
+
+---
+
+## 🛠️ Guía de Desarrollo
+
+### Requisitos Previos
+- Node.js 20+
+- Cuenta de Supabase Cloud para las variables de entorno.
+
+### Variables de Entorno (.env)
+Asegúrate de tener configuradas las siguientes variables para que la conexión a la nube sea estable:
+```env
+VITE_SUPABASE_URL=tu_url_de_supabase
+VITE_SUPABASE_ANON_KEY=tu_clave_anon_de_supabase
+```
+
+### Diagnóstico de Autenticación
+Si encuentras problemas durante el refresco del navegador, hemos inyectado sensores en el `AuthProvider` que emiten logs específicos en la consola del desarrollador (`[AUTH] logs`). Esto nos permite diagnosticar el flujo de sesiones en tiempo real.
 
 ---
 
