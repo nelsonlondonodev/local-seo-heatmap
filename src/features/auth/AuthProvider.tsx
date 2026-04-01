@@ -1,34 +1,13 @@
-import { useContext, createContext, useEffect, useState, useCallback, useMemo, type ReactNode } from 'react';
+import { useEffect, useState, useCallback, useMemo, type ReactNode } from 'react';
 import type { Session, User } from '@supabase/supabase-js';
 import { supabase } from '@/lib/supabase';
+import { AuthContext } from './hooks/useAuth';
+import type { UserProfile, UserRole } from './types';
 
-export type UserRole = 'super-admin' | 'owner' | 'admin' | 'staff' | 'client';
-
-interface UserProfile {
-  id: string;
-  email: string;
-  full_name: string | null;
-  avatar_url: string | null;
-  role: UserRole;
-  agency_id: string | null;
-  plan: string;
-}
-
-interface AuthContextType {
-  user: User | null;
-  profile: UserProfile | null;
-  session: Session | null;
-  isLoading: boolean;
-  role: UserRole | null;
-  agencyId: string | null;
-  signIn: (email: string, password: string) => Promise<void>;
-  signUp: (email: string, password: string, fullName: string) => Promise<void>;
-  signOut: () => Promise<void>;
-  signInWithGoogle: () => Promise<void>;
-}
-
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
+/**
+ * Provider component for Authentication and User Profile management.
+ * Consolidates session events into atomic state updates.
+ */
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
@@ -43,7 +22,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       async (_event, currentSession) => {
         if (!mounted) return;
 
-        // Check if session has actually changed to prevent loops
+        // Block redundant session initialization to prevent loops
         const currentId = currentSession?.access_token || 'none';
         if (currentId === lastSessionId) {
           setIsLoading(false);
@@ -118,14 +97,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (error) throw error;
   }, []);
 
-  // Memoize the context value to prevent unnecessary re-renders of all consumers
+  // UseMemo to stabilize the context object and prevent re-render cascades
   const value = useMemo(() => ({
     user,
     profile,
     session,
     isLoading,
-    role: profile?.role || null,
-    agencyId: profile?.agency_id || null,
+    role: profile?.role || (null as UserRole | null),
+    agencyId: profile?.agency_id || (null as string | null),
     signIn,
     signUp,
     signOut,
@@ -137,12 +116,4 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       {children}
     </AuthContext.Provider>
   );
-}
-
-export function useAuth(): AuthContextType {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
 }
