@@ -17,6 +17,20 @@
 
 ---
 
+## 🚀 Estado Actual del Proyecto (White Label MVP)
+
+Hoy hemos alcanzado hitos críticos para la escalabilidad de **MapRanker Pro**:
+
+1.  **☁️ Cloud Native**: El proyecto ya está conectado 100% a **Supabase Cloud** (Base de Datos y Auth).
+2.  **🔑 Auth Segura**: Implementación de **Google OAuth** y sistema de login real (no más mocks).
+3.  **🏢 Arquitectura Multi-Tenant**: Soporte nativo para múltiples agencias (**Marca Blanca**).
+4.  **🎭 Roles & Jerarquía**: Definición clara de permisos desde el SuperAdmin hasta el Cliente Final.
+
+> [!TIP]
+> Puedes consultar la documentación detallada de la jerarquía de permisos en [docs/ROLES_AND_HIERARCHY.md](./docs/ROLES_AND_HIERARCHY.md).
+
+---
+
 ## Descripción
 
 **LocalRank Pro** es una plataforma SaaS que genera mapas de calor (heatmaps) para analizar el posicionamiento local de un negocio en Google Maps. El usuario configura una búsqueda con una palabra clave, nombre de negocio, Place ID de Google, tamaño de cuadrícula y radio, y el sistema genera un mapa interactivo con puntos coloreados según el ranking obtenido en cada ubicación simulada.
