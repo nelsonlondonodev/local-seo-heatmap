@@ -22,31 +22,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const initAuth = async () => {
       try {
-        // Try real supabase auth
         const { data: { session: initialSession } } = await supabase.auth.getSession();
-        
         if (initialSession) {
           setSession(initialSession);
           setUser(initialSession.user);
-        } else if (import.meta.env.DEV) {
-          // DEVELOPER MODE: Simulate a logged-in user for testing without Supabase
-          console.warn('MapRanker: Using Mock Auth for development');
-          const mockUser = { 
-            id: 'dev-user-id', 
-            email: 'dev@mapranker.app', 
-            user_metadata: { full_name: 'Developer Mode' } 
-          } as any;
-          setUser(mockUser);
-          setSession({ user: mockUser, access_token: 'mock-token', expires_in: 3600 } as any);
         }
       } catch (e) {
         console.error('Auth initialization error:', e);
-        // Fallback to mock in dev even on error
-        if (import.meta.env.DEV) {
-          const mockUser = { id: 'dev-user', email: 'dev@mapranker.app' } as any;
-          setUser(mockUser);
-          setSession({ user: mockUser } as any);
-        }
       } finally {
         setIsLoading(false);
       }
@@ -54,12 +36,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     initAuth();
 
-    // Listen for auth state changes if supabase is working
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (_event, newSession) => {
         if (newSession) {
           setSession(newSession);
           setUser(newSession.user);
+        } else {
+          setSession(null);
+          setUser(null);
         }
         setIsLoading(false);
       }
@@ -68,29 +52,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => subscription.unsubscribe();
   }, []);
 
-  const signIn = useCallback(async (email: string, _password: string) => {
-    if (import.meta.env.DEV) {
-      console.warn('MapRanker: Mock SignIn');
-      const mockUser = { id: 'dev-user', email } as any;
-      setUser(mockUser);
-      setSession({ user: mockUser } as any);
-      return;
-    }
-    const { error } = await supabase.auth.signInWithPassword({ email, password: _password });
+  const signIn = useCallback(async (email: string, password: string) => {
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) throw error;
   }, []);
 
-  const signUp = useCallback(async (email: string, _password: string, fullName: string) => {
-    if (import.meta.env.DEV) {
-      console.warn('MapRanker: Mock SignUp');
-      const mockUser = { id: 'dev-user', email, user_metadata: { full_name: fullName } } as any;
-      setUser(mockUser);
-      setSession({ user: mockUser } as any);
-      return;
-    }
+  const signUp = useCallback(async (email: string, password: string, fullName: string) => {
     const { error } = await supabase.auth.signUp({
       email,
-      password: _password,
+      password,
       options: {
         data: { full_name: fullName },
       },
@@ -101,6 +71,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signOut = useCallback(async () => {
     const { error } = await supabase.auth.signOut();
     if (error) throw error;
+    setSession(null);
+    setUser(null);
   }, []);
 
   const signInWithGoogle = useCallback(async () => {
