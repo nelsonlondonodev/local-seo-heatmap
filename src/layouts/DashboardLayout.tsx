@@ -12,7 +12,8 @@ import {
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { useAuth } from '@/features/auth';
+import { Badge } from '@/components/ui/badge';
+import { useAuth, type UserRole } from '@/features/auth';
 import { APP_CONFIG } from '@/config/constants';
 
 const navItems = [
@@ -21,8 +22,23 @@ const navItems = [
   { path: '/settings', label: 'Configuración', icon: Settings },
 ];
 
+const getRoleBadgeStyle = (role: UserRole | null) => {
+  switch (role) {
+    case 'super-admin':
+      return 'bg-amber-500 hover:bg-amber-600 text-white border-none shadow-sm shadow-amber-200';
+    case 'owner':
+      return 'bg-blue-600 hover:bg-blue-700 text-white border-none';
+    case 'admin':
+      return 'bg-indigo-500 hover:bg-indigo-600 text-white border-none';
+    case 'staff':
+      return 'bg-emerald-500 hover:bg-emerald-600 text-white border-none';
+    default:
+      return 'bg-slate-500 hover:bg-slate-600 text-white border-none';
+  }
+};
+
 export function DashboardLayout() {
-  const { user, signOut } = useAuth();
+  const { user, profile, role, signOut } = useAuth();
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -94,24 +110,32 @@ export function DashboardLayout() {
           <Separator />
 
           {/* User section */}
-          <div className="p-4">
-            <div className="flex items-center gap-3 rounded-lg bg-muted/50 p-3">
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-sm font-bold text-primary">
+          <div className="p-4 mt-auto">
+            <div className="flex items-center gap-3 rounded-xl bg-muted/40 p-4 border border-border/50 shadow-sm transition-all hover:bg-muted/60">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-sm font-bold text-primary ring-2 ring-background shadow-inner">
                 {user?.email?.charAt(0).toUpperCase() ?? 'U'}
               </div>
               <div className="flex-1 overflow-hidden">
-                <p className="truncate text-sm font-medium">
-                  {user?.user_metadata?.full_name ?? 'Usuario'}
+                <p className="truncate text-sm font-bold tracking-tight text-foreground">
+                  {profile?.full_name ?? user?.user_metadata?.full_name ?? 'Usuario'}
                 </p>
-                <p className="truncate text-xs text-muted-foreground">
-                  {user?.email ?? ''}
-                </p>
+                <div className="flex flex-col gap-1.5">
+                  <p className="truncate text-[10px] font-medium text-muted-foreground/80 leading-none">
+                    {user?.email ?? ''}
+                  </p>
+                  {role && (
+                    <Badge className={`w-fit px-2 py-0 h-4 text-[9px] font-black uppercase tracking-wider ${getRoleBadgeStyle(role)} transition-all duration-300`}>
+                      {role.replace('-', ' ')}
+                    </Badge>
+                  )}
+                </div>
               </div>
               <Button
                 variant="ghost"
                 size="icon"
                 onClick={signOut}
-                className="h-8 w-8 shrink-0"
+                className="h-9 w-9 shrink-0 rounded-full hover:bg-destructive/10 hover:text-destructive text-muted-foreground transition-colors"
+                title="Cerrar Sesión"
               >
                 <LogOut className="h-4 w-4" />
               </Button>
