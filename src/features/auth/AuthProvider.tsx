@@ -11,106 +11,82 @@ interface AuthState {
   isLoading: boolean;
 }
 
-const CACHE_KEY = 'mapranker_auth_cache_v2';
-
 /**
- * PRODUCTION-GRADE AuthProvider.
- * Solves: Infinite loops, redirect bounces, and Google OAuth hang issues.
+ * CLEAN VERSION: Minimalist AuthProvider.
+ * Removed local cache to prevent redirect loops between cookies and storage.
+ * Added Panic Timeout (5s) for instant UI unblocking.
  */
 export function AuthProvider({ children }: { children: ReactNode }) {
-  // 1. Initial State from Cache (Optional UI Speedup)
-  const [authState, setAuthState] = useState<AuthState>(() => {
-    const cached = localStorage.getItem(CACHE_KEY);
-    if (cached) {
-      try {
-        const data = JSON.parse(cached);
-        return { ...data, isLoading: true };
-      } catch (e) { /* corrupted cache */ }
-    }
-    return { user: null, profile: null, session: null, isLoading: true };
+  const [authState, setAuthState] = useState<AuthState>({
+    user: null,
+    profile: null,
+    session: null,
+    isLoading: true,
   });
 
   const lastTokenRef = useRef<string>('');
-  const isInitializingRef = useRef(false);
-
-  // Helper to persist session to avoid the "Cold Start" redirect loop
-  const syncState = useCallback((updates: Partial<AuthState>) => {
-    setAuthState(prev => {
-      const newState = { ...prev, ...updates };
-      if (newState.session) {
-        localStorage.setItem(CACHE_KEY, JSON.stringify({
-          user: newState.user,
-          profile: newState.profile,
-          session: newState.session
-        }));
-      } else if (updates.isLoading === false && !updates.session) {
-        localStorage.removeItem(CACHE_KEY);
-      }
-      return newState;
-    });
-  }, []);
+  const initializedRef = useRef(false);
 
   useEffect(() => {
-    if (isInitializingRef.current) return;
-    isInitializingRef.current = true;
+    if (initializedRef.current) return;
+    initializedRef.current = true;
 
     let mounted = true;
 
     const fetchProfile = async (id: string): Promise<UserProfile | null> => {
       try {
-        const { data, error } = await supabase.from('profiles').select('*').eq('id', id).single();
-        if (error) return null;
+        const { data } = await supabase.from('profiles').select('*').eq('id', id).single();
         return data as UserProfile;
       } catch (e) { return null; }
     };
 
     const handleSession = async (session: Session | null, event?: string) => {
       if (!mounted) return;
-      console.log(`[AUTH] Processing ${event || 'initial'} session...`);
+      console.log(`[AUTH] Process: ${event || 'init'}`);
 
       const currentToken = session?.access_token || 'none';
       if (currentToken === lastTokenRef.current && event !== 'SIGNED_OUT' && event !== 'SIGNED_IN') {
-        // Redundant - unless we are just finishing initialization
-        if (authState.isLoading) syncState({ isLoading: false });
+        if (authState.isLoading) setAuthState(prev => ({ ...prev, isLoading: false }));
         return;
       }
       lastTokenRef.current = currentToken;
 
       if (session) {
-        // We have a session! Get profile and finish loading.
         const profile = await fetchProfile(session.user.id);
-        syncState({ user: session.user, session, profile, isLoading: false });
+        if (mounted) {
+          setAuthState({ user: session.user, session, profile, isLoading: false });
+        }
       } else {
-        // No session. Stop loading.
-        syncState({ user: null, session: null, profile: null, isLoading: false });
+        if (mounted) {
+          setAuthState({ user: null, session: null, profile: null, isLoading: false });
+        }
       }
     };
 
-    // 2. WAKE UP Supabase (Absolute priority for Google Auth redirects)
+    // 1. Initial Wake Up
     supabase.auth.getSession().then(({ data: { session } }) => {
-      if (mounted) handleSession(session, 'WAKE_UP_CALL');
+      handleSession(session, 'INITIAL');
     });
 
-    // 3. Setup Listener for Real-time events
+    // 2. Auth Listner
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      console.log(`[AUTH] Auth event: ${event}`);
-      if (mounted) handleSession(session, event);
+      handleSession(session, event);
     });
 
-    // Panic Timeout: If after 5s we are still "isLoading", force it to false to unblock.
-    const panicTimer = setTimeout(() => {
+    // 3. FINAL PANIC: 5 seconds timeout to force unblock UI
+    const timer = setTimeout(() => {
       if (mounted && authState.isLoading) {
-        console.warn('[AUTH] Force unblocking UI (Initial sync expired)');
-        syncState({ isLoading: false });
+        console.warn('[AUTH] Panic Timeout: Unblocking UI.');
+        setAuthState(prev => ({ ...prev, isLoading: false }));
       }
     }, 5000);
 
     return () => {
       mounted = false;
       subscription.unsubscribe();
-      clearTimeout(panicTimer);
+      clearTimeout(timer);
     };
-  }, [syncState]); // authState.isLoading as dependency could cause loops if not careful
+  }, []); // Re-renders will not trigger this
 
   const signIn = useCallback(async (email: string, password: string) => {
     const { error } = await supabase.auth.signInWithPassword({ email, password });
@@ -125,18 +101,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const signOut = useCallback(async () => {
-    localStorage.removeItem(CACHE_KEY);
     await supabase.auth.signOut();
-    syncState({ user: null, session: null, profile: null, isLoading: false });
-  }, [syncState]);
+    setAuthState({ user: null, session: null, profile: null, isLoading: false });
+  }, []);
 
   const signInWithGoogle = useCallback(async () => {
-    console.log('[AUTH] Starting Google OAuth...');
-    const { error } = await supabase.auth.signInWithOAuth({
+    await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: { redirectTo: `${window.location.origin}/dashboard` },
     });
-    if (error) throw error;
   }, []);
 
   const value = useMemo(() => ({
