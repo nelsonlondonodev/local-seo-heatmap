@@ -1,69 +1,132 @@
 import { motion } from 'framer-motion';
-import { History, Search, Calendar, Grid3X3, MapPin, Trash2 } from 'lucide-react';
+import { History, Search, Calendar, Grid3X3, MapPin, Trash2, ExternalLink } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useHeatmaps } from '@/hooks';
 
-const mockHistory = [
-  { id: '1', keyword: 'peluquería cerca de mí', businessName: 'Salón Narbo', gridSize: '5x5', radiusKm: 3, createdAt: '2026-03-29T10:30:00Z', avgRank: 3.2, bestRank: 1 },
-  { id: '2', keyword: 'barbería premium', businessName: 'Blond Bros Barber', gridSize: '3x3', radiusKm: 2, createdAt: '2026-03-28T15:45:00Z', avgRank: 5.8, bestRank: 2 },
-  { id: '3', keyword: 'spa uñas Sabana', businessName: 'Narbo Spa', gridSize: '7x7', radiusKm: 5, createdAt: '2026-03-27T09:15:00Z', avgRank: 7.1, bestRank: 3 },
-];
+const containerVariants = { 
+  hidden: { opacity: 0 }, 
+  visible: { opacity: 1, transition: { staggerChildren: 0.08 } } 
+};
 
-const containerVariants = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.08 } } };
-const itemVariants = { hidden: { opacity: 0, y: 12 }, visible: { opacity: 1, y: 0 } };
+const itemVariants = { 
+  hidden: { opacity: 0, y: 12 }, 
+  visible: { opacity: 1, y: 0 } 
+};
 
-function getRankVariant(rank: number): 'default' | 'secondary' | 'destructive' {
+function getRankVariant(rank: number | null): 'default' | 'secondary' | 'destructive' {
+  if (rank === null) return 'secondary';
   if (rank <= 3) return 'default';
   if (rank <= 7) return 'secondary';
   return 'destructive';
 }
 
 export function HistoryPage() {
-  const isLoading = false;
+  const { history, isLoading, deleteHeatmap, isDeleting } = useHeatmaps();
 
   return (
     <motion.div variants={containerVariants} initial="hidden" animate="visible" className="space-y-6">
-      <motion.div variants={itemVariants} className="flex items-center justify-between">
+      <motion.div variants={itemVariants} className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Historial de Búsquedas</h1>
-          <p className="text-muted-foreground">Revisa y compara tus análisis anteriores</p>
+          <p className="text-muted-foreground">Revisa y compara tus análisis guardados en la nube</p>
         </div>
-        <Badge variant="outline" className="gap-1"><History className="h-3 w-3" />{mockHistory.length} búsquedas</Badge>
+        <Badge variant="outline" className="w-fit gap-1">
+          <History className="h-3 w-3" />
+          {history.length} {history.length === 1 ? 'búsqueda' : 'búsquedas'}
+        </Badge>
       </motion.div>
 
       {isLoading ? (
-        <div className="space-y-4">{Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} className="h-32 w-full rounded-xl" />)}</div>
+        <div className="grid gap-4">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <Skeleton key={i} className="h-32 w-full rounded-xl" />
+          ))}
+        </div>
+      ) : history.length === 0 ? (
+        <motion.div variants={itemVariants} className="flex flex-col items-center justify-center rounded-xl border border-dashed p-12 text-center">
+          <History className="mb-4 h-12 w-12 text-muted-foreground/30" />
+          <h3 className="text-lg font-semibold">No hay búsquedas aún</h3>
+          <p className="mb-6 text-sm text-muted-foreground">Realiza tu primer análisis desde el panel principal.</p>
+          <Button variant="outline" asChild>
+            <a href="/dashboard">Ir al Dashboard</a>
+          </Button>
+        </motion.div>
       ) : (
         <div className="space-y-4">
-          {mockHistory.map((entry) => (
-            <motion.div key={entry.id} variants={itemVariants}>
-              <Card className="transition-all hover:border-primary/30 hover:shadow-md">
-                <CardContent className="p-5">
-                  <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                    <div className="space-y-2">
-                      <div className="flex items-center gap-2">
-                        <Search className="h-4 w-4 text-primary" />
-                        <span className="font-semibold">{entry.keyword}</span>
+          {history.map((entry) => {
+            const summary = entry.results_summary || { avgRank: 0, bestRank: null };
+            
+            return (
+              <motion.div key={entry.id} variants={itemVariants}>
+                <Card className="transition-all hover:border-primary/30 hover:shadow-md">
+                  <CardContent className="p-5">
+                    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-2">
+                          <Search className="h-4 w-4 text-primary" />
+                          <span className="font-semibold">{entry.keyword}</span>
+                        </div>
+                        <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
+                          <span className="flex items-center gap-1">
+                            <MapPin className="h-3 w-3" />
+                            {entry.business_name}
+                          </span>
+                          <span className="flex items-center gap-1">
+                            <Grid3X3 className="h-3 w-3" />
+                            {entry.grid_size} • {entry.radius_km} km
+                          </span>
+                          <span className="flex items-center gap-1">
+                            <Calendar className="h-3 w-3" />
+                            {new Date(entry.created_at).toLocaleDateString('es-ES', { 
+                              day: '2-digit', 
+                              month: 'short',
+                              year: 'numeric'
+                            })}
+                          </span>
+                        </div>
                       </div>
-                      <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
-                        <span className="flex items-center gap-1"><MapPin className="h-3 w-3" />{entry.businessName}</span>
-                        <span className="flex items-center gap-1"><Grid3X3 className="h-3 w-3" />{entry.gridSize} • {entry.radiusKm} km</span>
-                        <span className="flex items-center gap-1"><Calendar className="h-3 w-3" />{new Date(entry.createdAt).toLocaleDateString('es-ES')}</span>
+                      
+                      <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-3 border-r pr-4">
+                          <div className="text-center sm:text-right">
+                            <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider mb-0.5">Mejor</p>
+                            <Badge variant={getRankVariant(summary.bestRank)}>
+                              #{summary.bestRank || 'N/A'}
+                            </Badge>
+                          </div>
+                          <div className="text-center sm:text-right">
+                            <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider mb-0.5">Promedio</p>
+                            <Badge variant={getRankVariant(Math.round(summary.avgRank))}>
+                              #{summary.avgRank.toFixed(1)}
+                            </Badge>
+                          </div>
+                        </div>
+                        
+                        <div className="flex items-center gap-1">
+                          <Button variant="outline" size="sm" className="gap-2">
+                            <ExternalLink className="h-3.5 w-3.5" />
+                            <span className="hidden sm:inline">Ver</span>
+                          </Button>
+                          <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            disabled={isDeleting}
+                            onClick={() => deleteHeatmap(entry.id)}
+                            className="h-9 w-9 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
                       </div>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <div className="text-right"><p className="text-xs text-muted-foreground">Mejor</p><Badge variant={getRankVariant(entry.bestRank)}>#{entry.bestRank}</Badge></div>
-                      <div className="text-right"><p className="text-xs text-muted-foreground">Promedio</p><Badge variant={getRankVariant(Math.round(entry.avgRank))}>#{entry.avgRank.toFixed(1)}</Badge></div>
-                      <Button variant="outline" size="sm">Ver</Button>
-                      <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-destructive"><Trash2 className="h-4 w-4" /></Button>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-          ))}
+                  </CardContent>
+                </Card>
+              </motion.div>
+            );
+          })}
         </div>
       )}
     </motion.div>
