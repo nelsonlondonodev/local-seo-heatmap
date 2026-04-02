@@ -10,12 +10,13 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
   const { user, isLoading } = useAuth();
   const location = useLocation();
 
-  if (isLoading) {
+  // Optimistic UI: Show content if we have a user from cache, even if session is being validated
+  if (isLoading && !user) {
     return (
       <div className="flex h-screen items-center justify-center bg-background">
         <div className="flex flex-col items-center gap-4">
           <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
-          <p className="text-sm text-muted-foreground">Cargando...</p>
+          <p className="text-sm text-muted-foreground">Sincronizando sesión...</p>
         </div>
       </div>
     );
