@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { MAP_DEFAULT_CENTER } from '@/config/constants';
@@ -9,15 +9,18 @@ import type { GridSize, HeatmapConfig, GridPoint } from '@/types';
 
 /**
  * Custom hook to manage the heatmap state and logic.
- * Separates business logic from visual components.
+ * Structured to be ultra-stable for React Reconciliation.
  */
 export function useHeatmap() {
-  // 1. External Library Hooks (Always First)
+  // 1. Context & Navigation Hooks
   const location = useLocation();
   const navigate = useNavigate();
   const { saveHeatmap } = useHeatmaps();
 
-  // 2. State Hooks (Grouped and Stable)
+  // 2. Persistent Refs
+  const hasLoadedHistory = useRef(false);
+
+  // 3. Application State
   const [keyword, setKeyword] = useState('');
   const [businessName, setBusinessName] = useState('');
   const [placeId, setPlaceId] = useState('');
@@ -29,77 +32,81 @@ export function useHeatmap() {
   ]);
   const [points, setPoints] = useState<GridPoint[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [isFromHistory, setIsFromHistory] = useState(false);
 
-  // 3. Memoized Values
-  const isFormValid = useMemo(() => 
-    keyword.trim().length > 0 && businessName.trim().length > 0
-  , [keyword, businessName]);
+  // 4. Derived State (Computed values)
+  const isFormValid = useMemo(() => {
+    const k = keyword || '';
+    const b = businessName || '';
+    return k.trim().length > 0 && b.trim().length > 0;
+  }, [keyword, businessName]);
 
   const currentConfig = useMemo<HeatmapConfig>(() => ({
-    keyword,
-    businessName,
-    placeId,
+    keyword: keyword || '',
+    businessName: businessName || '',
+    placeId: placeId || '',
     gridSize,
     radiusKm,
     centerLat: center[0],
     centerLng: center[1],
   }), [keyword, businessName, placeId, gridSize, radiusKm, center]);
 
-  // 4. Side Effects (Always at the end of hooks section)
+  // 5. Side Effects
   
-  // Effect: Detect if we came from history and load the data
+  // A. Load from History
   useEffect(() => {
-    const historicalData = (location.state as any)?.heatmap;
-    if (historicalData) {
+    const state = location.state as { heatmap?: any };
+    const historicalData = state?.heatmap;
+    
+    if (historicalData && !hasLoadedHistory.current) {
       console.log('[DASHBOARD] Loading historical heatmap:', historicalData.id);
+      hasLoadedHistory.current = true; // Mark as loaded for this render cycle
       
-      setIsFromHistory(true);
-      setKeyword(historicalData.keyword);
-      setBusinessName(historicalData.business_name);
+      setKeyword(historicalData.keyword || '');
+      setBusinessName(historicalData.business_name || '');
       setPlaceId(historicalData.place_id || '');
       setGridSize(historicalData.grid_size as GridSize);
       setRadiusKm(Number(historicalData.radius_km));
       setCenter([Number(historicalData.center_lat), Number(historicalData.center_lng)]);
-      setPoints(historicalData.points);
+      setPoints(historicalData.points || []);
 
-      // Clear the navigation state so a page refresh doesn't trigger this again
+      // Clean up navigation state
       navigate(location.pathname, { replace: true, state: {} });
       
-      toast.info('Mostrando resultados históricos del ' + new Date(historicalData.created_at).toLocaleDateString());
+      toast.info(`Cargado: ${historicalData.keyword}`);
     }
   }, [location.state, navigate, location.pathname]);
 
-  // Effect: Synchronize points when configuration changes (Reset rankings)
+  // B. Sync Grid Points
   useEffect(() => {
-    // If we just loaded from history, don't overwrite with empty points
-    if (isFromHistory) {
-      setIsFromHistory(false);
+    // If we are currently loading from history, we skip the first sync
+    // which would otherwise overwrite our cloud data with empty points.
+    if (hasLoadedHistory.current) {
+      hasLoadedHistory.current = false; // Release the lock for future manual changes
       return;
     }
 
     const newPoints = generateGridPoints(center[0], center[1], gridSize, radiusKm);
     setPoints(newPoints);
-  }, [center, gridSize, radiusKm, isFromHistory]);
+  }, [center, gridSize, radiusKm]);
 
-  // 5. Actions / Handlers
+  // 6. Action Handlers
   const runAnalysis = async () => {
     if (!isFormValid) return;
 
     try {
       setIsLoading(true);
-      toast.loading('Ejecutando análisis de ranking local...', { id: 'search-heatmap' });
+      toast.loading('Iniciando análisis...', { id: 'search-exec' });
       
       const result = await searchService.executeSearch(currentConfig, points);
       
-      // Persist to Supabase Cloud
+      // Save to Cloud
       await saveHeatmap(result);
       
       setPoints(result.points);
-      toast.success('¡Análisis completado y guardado!', { id: 'search-heatmap' });
+      toast.success('Análisis completado', { id: 'search-exec' });
     } catch (error) {
-      console.error('Search failed', error);
-      toast.error('Hubo un error al ejecutar el análisis o guardar los datos.', { id: 'search-heatmap' });
+      console.error('Heatmap analysis failed', error);
+      toast.error('Error al ejecutar el análisis', { id: 'search-exec' });
     } finally {
       setIsLoading(false);
     }
@@ -114,25 +121,15 @@ export function useHeatmap() {
   };
 
   return {
-    // State
-    keyword,
-    businessName,
-    placeId,
-    gridSize,
-    radiusKm,
+    keyword, setKeyword,
+    businessName, setBusinessName,
+    placeId, setPlaceId,
+    gridSize, setGridSize,
+    radiusKm, setRadiusKm,
     center,
     points,
     isLoading,
     isFormValid,
-
-    // Setters
-    setKeyword,
-    setBusinessName,
-    setPlaceId,
-    setGridSize,
-    setRadiusKm,
-    
-    // Actions
     handleMapClick,
     handleResetCenter,
     runAnalysis,
