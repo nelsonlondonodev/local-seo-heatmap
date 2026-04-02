@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import { History, Search, Calendar, Grid3X3, MapPin, Trash2, ExternalLink } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -24,6 +25,7 @@ function getRankVariant(rank: number | null): 'default' | 'secondary' | 'destruc
 }
 
 export function HistoryPage() {
+  const navigate = useNavigate();
   const { history, isLoading, deleteHeatmap, isDeleting } = useHeatmaps();
 
   return (
@@ -45,18 +47,18 @@ export function HistoryPage() {
             <Skeleton key={i} className="h-32 w-full rounded-xl" />
           ))}
         </div>
-      ) : history.length === 0 ? (
+      ) : (history as any[]).length === 0 ? (
         <motion.div variants={itemVariants} className="flex flex-col items-center justify-center rounded-xl border border-dashed p-12 text-center">
           <History className="mb-4 h-12 w-12 text-muted-foreground/30" />
           <h3 className="text-lg font-semibold">No hay búsquedas aún</h3>
           <p className="mb-6 text-sm text-muted-foreground">Realiza tu primer análisis desde el panel principal.</p>
-          <Button variant="outline" asChild>
-            <a href="/dashboard">Ir al Dashboard</a>
+          <Button variant="outline" onClick={() => navigate('/dashboard')}>
+            Ir al Dashboard
           </Button>
         </motion.div>
       ) : (
         <div className="space-y-4">
-          {history.map((entry) => {
+          {(history as any[]).map((entry) => {
             const summary = entry.results_summary || { avgRank: 0, bestRank: null };
             
             return (
@@ -100,13 +102,18 @@ export function HistoryPage() {
                           <div className="text-center sm:text-right">
                             <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider mb-0.5">Promedio</p>
                             <Badge variant={getRankVariant(Math.round(summary.avgRank))}>
-                              #{summary.avgRank.toFixed(1)}
+                              #{summary.avgRank?.toFixed(1) || '0.0'}
                             </Badge>
                           </div>
                         </div>
                         
                         <div className="flex items-center gap-1">
-                          <Button variant="outline" size="sm" className="gap-2">
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            className="gap-2"
+                            onClick={() => navigate('/dashboard', { state: { heatmap: entry } })}
+                          >
                             <ExternalLink className="h-3.5 w-3.5" />
                             <span className="hidden sm:inline">Ver</span>
                           </Button>
