@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect } from 'react';
 import { toast } from 'sonner';
 import { MAP_DEFAULT_CENTER } from '@/config/constants';
 import { generateGridPoints } from '../utils/grid';
+import { useHeatmaps } from '@/hooks';
 import { searchService } from '../services/searchService';
 import type { GridSize, HeatmapConfig, GridPoint } from '@/types';
 
@@ -10,6 +11,7 @@ import type { GridSize, HeatmapConfig, GridPoint } from '@/types';
  * Separates business logic from visual components.
  */
 export function useHeatmap() {
+  const { saveHeatmap } = useHeatmaps();
   const [keyword, setKeyword] = useState('');
   const [businessName, setBusinessName] = useState('');
   const [placeId, setPlaceId] = useState('');
@@ -53,11 +55,14 @@ export function useHeatmap() {
       
       const result = await searchService.executeSearch(currentConfig, points);
       
+      // Persist to Supabase Cloud
+      await saveHeatmap(result);
+      
       setPoints(result.points);
-      toast.success('¡Análisis completado!', { id: 'search-heatmap' });
+      toast.success('¡Análisis completado y guardado!', { id: 'search-heatmap' });
     } catch (error) {
       console.error('Search failed', error);
-      toast.error('Hubo un error al ejecutar el análisis.', { id: 'search-heatmap' });
+      toast.error('Hubo un error al ejecutar el análisis o guardar los datos.', { id: 'search-heatmap' });
     } finally {
       setIsLoading(false);
     }

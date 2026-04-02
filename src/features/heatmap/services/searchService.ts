@@ -1,15 +1,13 @@
 import type { HeatmapConfig, HeatmapResult, GridPoint } from '@/types';
 
-const STORAGE_KEY = 'mapranker_history';
-
 /**
  * Service to handle heatmap search logic.
- * Currently uses simulated data and localStorage for persistence.
+ * Currently uses simulated data for analysis.
+ * Google Places API or Edge Functions will be integrated here in the future.
  */
 export const searchService = {
   /**
    * Simulates a grid search for ranking data.
-   * In the future, this will call Google Places API or an Edge Function.
    */
   async executeSearch(config: HeatmapConfig, points: GridPoint[]): Promise<HeatmapResult> {
     // 1. Simulate a delay (UX: "doing something")
@@ -33,39 +31,6 @@ export const searchService = {
       createdAt: new Date().toISOString(),
     };
 
-    // 3. Save to local storage
-    this.saveToHistory(result);
-
     return result;
   },
-
-  /**
-   * Persists a search result to the local history.
-   */
-  saveToHistory(result: HeatmapResult): void {
-    const history = this.getHistory();
-    history.unshift(result); // Add to the beginning
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(history.slice(0, 50))); // Keep last 50
-  },
-
-  /**
-   * Retrieves the full search history from localStorage.
-   */
-  getHistory(): HeatmapResult[] {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (!saved) return [];
-    try {
-      return JSON.parse(saved);
-    } catch (e) {
-      console.error('Failed to parse history', e);
-      return [];
-    }
-  },
-
-  /**
-   * Clears the entire search history.
-   */
-  clearHistory(): void {
-    localStorage.removeItem(STORAGE_KEY);
-  }
 };
