@@ -12,15 +12,17 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { useAuth } from '@/features/auth';
-import { APP_CONFIG } from '@/config/constants';
+import { useBranding } from '@/features/branding';
 import { Sidebar } from './dashboard/Sidebar';
 
 /**
  * Main Layout for the Dashboard. 
  * Refactored into atomic components for scalability and clean code.
+ * Now supports dynamic white-label branding.
  */
 export function DashboardLayout() {
   const { signOut } = useAuth();
+  const { config } = useBranding();
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isLogoutOpen, setIsLogoutOpen] = useState(false);
@@ -50,7 +52,7 @@ export function DashboardLayout() {
           >
             <Menu className="h-5 w-5" />
           </Button>
-          <span className="text-lg font-bold">{APP_CONFIG.name}</span>
+          <span className="text-lg font-bold">{config.name}</span>
         </header>
 
         {/* Dynamic Page Content with Transitions */}
@@ -80,7 +82,7 @@ export function DashboardLayout() {
               ¿Cerrar sesión?
             </DialogTitle>
             <DialogDescription className="text-center text-muted-foreground pt-2">
-              ¿Estás seguro de que deseas salir de <strong>{APP_CONFIG.name}</strong>? 
+              ¿Estás seguro de que deseas salir de <strong>{config.name}</strong>? 
               Tendrás que volver a autenticarte para acceder a tus mapas.
             </DialogDescription>
           </DialogHeader>

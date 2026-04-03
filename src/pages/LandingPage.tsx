@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Map, ArrowRight, Zap, BarChart3, Globe, Shield, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { APP_CONFIG } from '@/config/constants';
+import { useBranding } from '@/features/branding';
 
 const features = [
   {
@@ -41,26 +41,28 @@ const itemVariants = {
 };
 
 export function LandingPage() {
+  const { config } = useBranding();
+
   return (
     <div className="min-h-screen bg-background">
       {/* Navbar */}
       <nav className="fixed top-0 z-50 w-full border-b border-border/50 bg-background/80 backdrop-blur-xl">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-primary shadow-sm">
               <Map className="h-4 w-4 text-primary-foreground" />
             </div>
-            <span className="text-lg font-bold">{APP_CONFIG.name}</span>
+            <span className="text-xl font-bold tracking-tight">{config.name}</span>
           </div>
           <div className="flex items-center gap-3">
             <Link to="/login">
-              <Button variant="ghost" size="sm">
+              <Button variant="ghost" size="sm" className="font-medium">
                 Iniciar Sesión
               </Button>
             </Link>
             <Link to="/register">
-              <Button size="sm" className="gap-1">
-                Comenzar Gratis <ArrowRight className="h-3 w-3" />
+              <Button size="sm" className="gap-1 font-semibold bg-brand-primary hover:opacity-90">
+                Comenzar Gratis <ArrowRight className="h-3.5 w-3.5" />
               </Button>
             </Link>
           </div>
@@ -68,10 +70,10 @@ export function LandingPage() {
       </nav>
 
       {/* Hero */}
-      <section className="relative overflow-hidden pt-32 pb-20">
+      <section className="relative overflow-hidden pt-36 pb-24">
         {/* Background gradient */}
         <div className="pointer-events-none absolute inset-0 -z-10">
-          <div className="absolute left-1/2 top-0 h-[600px] w-[600px] -translate-x-1/2 rounded-full bg-primary/5 blur-3xl" />
+          <div className="absolute left-1/2 top-0 h-[600px] w-[600px] -translate-x-1/2 rounded-full bg-brand-primary/10 blur-3xl" />
           <div className="absolute right-0 top-1/4 h-[400px] w-[400px] rounded-full bg-blue-500/5 blur-3xl" />
         </div>
 
@@ -86,35 +88,35 @@ export function LandingPage() {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.15 }}
-              className="mb-6 inline-flex items-center gap-2 rounded-full border border-border bg-muted/50 px-4 py-1.5 text-sm"
+              className="mb-8 inline-flex items-center gap-2 rounded-full border border-border bg-muted/50 px-5 py-2 text-sm font-medium"
             >
-              <Sparkles className="h-3.5 w-3.5 text-primary" />
+              <Sparkles className="h-4 w-4 text-brand-primary" />
               <span>SEO Local potenciado con IA</span>
             </motion.div>
 
-            <h1 className="mb-6 text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl">
+            <h1 className="mb-8 text-5xl font-extrabold tracking-tight sm:text-6xl lg:text-7xl">
               Domina el{' '}
-              <span className="bg-gradient-to-r from-primary via-blue-500 to-primary bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-brand-primary via-blue-500 to-brand-primary bg-clip-text text-transparent">
                 SEO Local
               </span>{' '}
               con mapas de calor
             </h1>
 
-            <p className="mb-8 text-lg text-muted-foreground sm:text-xl">
+            <p className="mb-10 text-xl text-muted-foreground leading-relaxed">
               Rastrea el posicionamiento de tu ficha de Google Maps en múltiples
               puntos geográficos. Visualiza, analiza y mejora tu visibilidad local
-              como nunca antes.
+              como nunca antes con <strong>{config.name}</strong>.
             </p>
 
             <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
               <Link to="/register">
-                <Button size="lg" className="gap-2 text-base">
-                  <Zap className="h-4 w-4" />
-                  Comenzar Gratis
+                <Button size="lg" className="h-14 px-8 gap-3 text-lg font-bold bg-brand-primary hover:opacity-95 shadow-xl shadow-brand-primary/20 transition-all active:scale-95">
+                  <Zap className="h-5 w-5 fill-current" />
+                  Comenzar gratis ahora
                 </Button>
               </Link>
               <Link to="/login">
-                <Button variant="outline" size="lg" className="text-base">
+                <Button variant="outline" size="lg" className="h-14 px-8 text-lg font-semibold rounded-xl border-2 transition-all hover:bg-muted active:scale-95">
                   Ya tengo cuenta
                 </Button>
               </Link>
@@ -125,21 +127,20 @@ export function LandingPage() {
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.3 }}
-            className="mt-16 overflow-hidden rounded-2xl border border-border bg-card shadow-2xl"
+            transition={{ duration: 0.8, delay: 0.3 }}
+            className="mt-20 overflow-hidden rounded-3xl border border-border bg-card shadow-[0_32px_64px_-16px_rgba(0,0,0,0.2)]"
           >
-            <div className="flex items-center gap-2 border-b border-border bg-muted/30 px-4 py-3">
-              <div className="h-3 w-3 rounded-full bg-red-400" />
-              <div className="h-3 w-3 rounded-full bg-yellow-400" />
-              <div className="h-3 w-3 rounded-full bg-green-400" />
-              <span className="ml-2 text-xs text-muted-foreground">
-                localrank-pro.app/dashboard
+            <div className="flex items-center gap-2 border-b border-border bg-muted/40 px-5 py-4">
+              <div className="h-3.5 w-3.5 rounded-full bg-red-400" />
+              <div className="h-3.5 w-3.5 rounded-full bg-yellow-400" />
+              <div className="h-3.5 w-3.5 rounded-full bg-green-400" />
+              <span className="ml-3 text-sm font-medium text-muted-foreground opacity-70">
+                {config.name.toLowerCase().replace(/\s+/g, '-')}.app/dashboard
               </span>
             </div>
-            <div className="relative h-64 bg-gradient-to-br from-muted via-background to-muted sm:h-80 lg:h-96">
-              {/* Simulated heatmap grid */}
+            <div className="relative h-72 bg-gradient-to-br from-muted/50 via-background to-muted/50 sm:h-96 lg:h-[450px]">
               <div className="absolute inset-0 flex items-center justify-center">
-                <div className="grid grid-cols-5 gap-3 p-8">
+                <div className="grid grid-cols-5 gap-4 p-10 sm:gap-6">
                   {[
                     '#22c55e', '#4ade80', '#86efac', '#fde047', '#facc15',
                     '#4ade80', '#22c55e', '#22c55e', '#86efac', '#f59e0b',
@@ -150,13 +151,13 @@ export function LandingPage() {
                     <motion.div
                       key={i}
                       initial={{ scale: 0, opacity: 0 }}
-                      animate={{ scale: 1, opacity: 0.85 }}
+                      animate={{ scale: 1, opacity: 0.9 }}
                       transition={{
-                        delay: 0.5 + i * 0.04,
+                        delay: 0.6 + i * 0.04,
                         type: 'spring',
-                        stiffness: 200,
+                        stiffness: 150,
                       }}
-                      className="flex h-10 w-10 items-center justify-center rounded-lg text-xs font-bold text-white shadow-lg sm:h-12 sm:w-12"
+                      className="flex h-12 w-12 items-center justify-center rounded-xl text-sm font-black text-white shadow-lg sm:h-16 sm:w-16"
                       style={{ backgroundColor: color }}
                     >
                       {i < 5 ? i + 1 : i < 10 ? i - 3 : i < 15 ? i - 8 : i < 20 ? i - 12 : i - 17}
@@ -170,20 +171,20 @@ export function LandingPage() {
       </section>
 
       {/* Features */}
-      <section className="border-t border-border bg-muted/30 py-20">
+      <section className="border-t border-border bg-muted/20 py-24">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="mb-12 text-center"
+            className="mb-16 text-center"
           >
-            <h2 className="mb-4 text-3xl font-bold tracking-tight">
+            <h2 className="mb-6 text-4xl font-bold tracking-tight sm:text-5xl">
               Todo lo que necesitas para el SEO Local
             </h2>
-            <p className="text-lg text-muted-foreground">
-              Herramientas profesionales para dominar los resultados de búsqueda
-              local.
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+              Herramientas de nivel empresarial para dominar los resultados de búsqueda
+              local y superar a la competencia.
             </p>
           </motion.div>
 
@@ -192,19 +193,19 @@ export function LandingPage() {
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
-            className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4"
+            className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4"
           >
             {features.map((feature) => (
               <motion.div
                 key={feature.title}
                 variants={itemVariants}
-                className="group rounded-xl border border-border bg-card p-6 transition-all hover:border-primary/30 hover:shadow-lg"
+                className="group rounded-2xl border border-border bg-card p-8 transition-all hover:border-brand-primary/40 hover:shadow-2xl hover:-translate-y-1"
               >
-                <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
-                  <feature.icon className="h-5 w-5" />
+                <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-xl bg-brand-primary/10 text-brand-primary transition-colors group-hover:bg-brand-primary group-hover:text-primary-foreground shadow-sm">
+                  <feature.icon className="h-6 w-6" />
                 </div>
-                <h3 className="mb-2 text-lg font-semibold">{feature.title}</h3>
-                <p className="text-sm text-muted-foreground">
+                <h3 className="mb-3 text-xl font-bold">{feature.title}</h3>
+                <p className="text-muted-foreground leading-relaxed">
                   {feature.description}
                 </p>
               </motion.div>
@@ -214,9 +215,15 @@ export function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-border py-8">
-        <div className="mx-auto max-w-7xl px-4 text-center text-sm text-muted-foreground sm:px-6 lg:px-8">
-          <p>© {new Date().getFullYear()} {APP_CONFIG.name}. Todos los derechos reservados.</p>
+      <footer className="border-t border-border py-12">
+        <div className="mx-auto max-w-7xl px-4 text-center text-muted-foreground sm:px-6 lg:px-8">
+          <div className="flex items-center justify-center gap-2 mb-6">
+            <div className="h-6 w-6 rounded bg-brand-primary flex items-center justify-center">
+               <Map className="h-3 w-3 text-white" />
+            </div>
+            <span className="font-bold text-foreground">{config.name}</span>
+          </div>
+          <p className="text-sm">© {new Date().getFullYear()} {config.name}. Todos los derechos reservados.</p>
         </div>
       </footer>
     </div>

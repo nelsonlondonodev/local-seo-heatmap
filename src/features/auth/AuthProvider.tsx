@@ -1,8 +1,8 @@
 import { useEffect, useState, useCallback, useMemo, useRef, type ReactNode } from 'react';
-import type { Session, User, AuthChangeEvent } from '@supabase/supabase-js';
+import type { Session, User } from '@supabase/supabase-js';
 import { supabase } from '@/lib/supabase';
 import { AuthContext } from './hooks/useAuth';
-import type { UserProfile } from './types';
+import { profileService, type UserProfile } from '@/services/profileService';
 
 interface AuthState {
   user: User | null;
@@ -15,6 +15,7 @@ interface AuthState {
  * CLEAN VERSION: Minimalist AuthProvider.
  * Removed local cache to prevent redirect loops between cookies and storage.
  * Added Panic Timeout (5s) for instant UI unblocking.
+ * Refactored to use profileService for better scalability and multi-tenancy.
  */
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [authState, setAuthState] = useState<AuthState>({
@@ -33,13 +34,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     let mounted = true;
 
-    const fetchProfile = async (id: string): Promise<UserProfile | null> => {
-      try {
-        const { data } = await supabase.from('profiles').select('*').eq('id', id).single();
-        return data as UserProfile;
-      } catch (e) { return null; }
-    };
-
     const handleSession = async (session: Session | null, event?: string) => {
       if (!mounted) return;
       console.log(`[AUTH] Process: ${event || 'init'}`);
@@ -52,7 +46,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       lastTokenRef.current = currentToken;
 
       if (session) {
-        const profile = await fetchProfile(session.user.id);
+        const profile = await profileService.getProfile(session.user.id);
         if (mounted) {
           setAuthState({ user: session.user, session, profile, isLoading: false });
         }
@@ -86,7 +80,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       subscription.unsubscribe();
       clearTimeout(timer);
     };
-  }, []); // Re-renders will not trigger this
+  }, []);
 
   const signIn = useCallback(async (email: string, password: string) => {
     const { error } = await supabase.auth.signInWithPassword({ email, password });

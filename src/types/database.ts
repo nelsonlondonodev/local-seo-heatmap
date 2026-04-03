@@ -15,73 +15,111 @@ export type Json =
 export interface Database {
   public: {
     Tables: {
+      agencies: {
+        Row: {
+          id: string;
+          name: string;
+          logo_url: string | null;
+          primary_color: string | null;
+          secondary_color: string | null;
+          owner_id: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          name: string;
+          logo_url?: string | null;
+          primary_color?: string | null;
+          secondary_color?: string | null;
+          owner_id: string;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          name?: string;
+          logo_url?: string | null;
+          primary_color?: string | null;
+          secondary_color?: string | null;
+          owner_id?: string;
+          created_at?: string;
+        };
+      };
       profiles: {
         Row: {
           id: string;
           email: string;
           full_name: string | null;
           avatar_url: string | null;
+          role: 'super-admin' | 'owner' | 'admin' | 'staff' | 'client';
+          agency_id: string | null;
           plan: 'free' | 'pro' | 'enterprise';
           created_at: string;
-          updated_at: string;
         };
         Insert: {
           id: string;
           email: string;
           full_name?: string | null;
           avatar_url?: string | null;
+          role?: 'super-admin' | 'owner' | 'admin' | 'staff' | 'client';
+          agency_id?: string | null;
           plan?: 'free' | 'pro' | 'enterprise';
           created_at?: string;
-          updated_at?: string;
         };
         Update: {
           id?: string;
           email?: string;
           full_name?: string | null;
           avatar_url?: string | null;
+          role?: 'super-admin' | 'owner' | 'admin' | 'staff' | 'client';
+          agency_id?: string | null;
           plan?: 'free' | 'pro' | 'enterprise';
           created_at?: string;
-          updated_at?: string;
         };
       };
-      search_history: {
+      heatmaps: {
         Row: {
           id: string;
           user_id: string;
+          agency_id: string | null;
           keyword: string;
           business_name: string;
           place_id: string;
-          grid_size: '3x3' | '5x5' | '7x7';
+          grid_size: string;
           radius_km: number;
           center_lat: number;
           center_lng: number;
-          results: Json;
+          points: Json;
+          results_summary: Json | null;
           created_at: string;
         };
         Insert: {
           id?: string;
           user_id: string;
+          agency_id?: string | null;
           keyword: string;
           business_name: string;
           place_id: string;
-          grid_size: '3x3' | '5x5' | '7x7';
+          grid_size: string;
           radius_km: number;
           center_lat: number;
           center_lng: number;
-          results: Json;
+          points: Json;
+          results_summary?: Json | null;
           created_at?: string;
         };
         Update: {
           id?: string;
           user_id?: string;
+          agency_id?: string | null;
           keyword?: string;
           business_name?: string;
           place_id?: string;
-          grid_size?: '3x3' | '5x5' | '7x7';
+          grid_size?: string;
           radius_km?: number;
           center_lat?: number;
           center_lng?: number;
-          results?: Json;
+          points?: Json;
+          results_summary?: Json | null;
           created_at?: string;
         };
       };
