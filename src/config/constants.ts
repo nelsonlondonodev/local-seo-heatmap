@@ -1,9 +1,21 @@
-/** Application-wide configuration constants */
+/** Application-wide configuration and Brand Defaults */
 
-export const APP_CONFIG = {
+export const DEFAULT_BRANDING = {
   name: 'MapRanker Pro',
   description: 'Herramienta SaaS de SEO Local con Mapa de Calor interactivo',
-  version: '0.1.0',
+  logoUrl: null,
+  primaryColor: '#0f172a', // Slate 900
+  secondaryColor: '#3b82f6', // Blue 500
+  accentColor: '#10b981', // Emerald 500
+} as const;
+
+/** 
+ * Static configuration that shouldn't change between domains 
+ * but might be used as fallbacks.
+ */
+export const APP_CONFIG = {
+  ...DEFAULT_BRANDING,
+  version: '0.1.1',
 } as const;
 
 /** Grid size options and their numeric dimensions */
@@ -35,19 +47,19 @@ export const RANK_COLORS = [
 
 /** Get the appropriate color for a given rank */
 export function getRankColor(rank: number | null): string {
-  if (rank === null) return '#374151'; // gray-700 for not found
+  if (rank === null) return '#374151'; // gray-700
   const colorEntry = [...RANK_COLORS].reverse().find((c) => rank >= c.rank);
   return colorEntry?.color ?? '#7f1d1d';
 }
 
-/** Map default center (Madrid, Spain - adjust as needed) */
+/** Map default center (Madrid, Spain) */
 export const MAP_DEFAULT_CENTER = {
   lat: 40.4168,
   lng: -3.7038,
   zoom: 13,
 } as const;
 
-/** Plan limits */
+/** Plan limits for SaaS multi-tenancy */
 export const PLAN_LIMITS = {
   free: {
     searchesPerDay: 3,

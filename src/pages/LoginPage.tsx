@@ -8,10 +8,14 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { useAuth } from '@/features/auth';
-import { APP_CONFIG } from '@/config/constants';
+import { useBranding } from '@/features/branding';
 
+/**
+ * Atomic LoginPage component with dynamic branding.
+ */
 export function LoginPage() {
   const { signIn, signInWithGoogle } = useAuth();
+  const { config } = useBranding();
   const navigate = useNavigate();
   const location = useLocation();
   const from = (location.state as { from?: { pathname: string } })?.from?.pathname ?? '/dashboard';
@@ -46,10 +50,10 @@ export function LoginPage() {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background p-4">
-      {/* Background */}
+      {/* Background with brand colors */}
       <div className="pointer-events-none absolute inset-0 -z-10">
-        <div className="absolute left-1/4 top-1/4 h-[400px] w-[400px] rounded-full bg-primary/5 blur-3xl" />
-        <div className="absolute right-1/4 bottom-1/4 h-[300px] w-[300px] rounded-full bg-blue-500/5 blur-3xl" />
+        <div className="absolute left-1/4 top-1/4 h-[400px] w-[400px] rounded-full bg-brand-primary/5 blur-3xl opacity-50" />
+        <div className="absolute right-1/4 bottom-1/4 h-[300px] w-[300px] rounded-full bg-blue-500/5 blur-3xl opacity-50" />
       </div>
 
       <motion.div
@@ -58,28 +62,32 @@ export function LoginPage() {
         transition={{ duration: 0.4 }}
         className="w-full max-w-md"
       >
-        {/* Logo */}
-        <div className="mb-8 flex flex-col items-center gap-2">
-          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary shadow-lg">
-            <Map className="h-6 w-6 text-primary-foreground" />
-          </div>
-          <h1 className="text-2xl font-bold">{APP_CONFIG.name}</h1>
+        {/* Logo and Dynamic Name */}
+        <div className="mb-8 flex flex-col items-center gap-3">
+          {config.logoUrl ? (
+            <img src={config.logoUrl} alt={config.name} className="h-12 w-auto object-contain mb-2" />
+          ) : (
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-brand-primary shadow-lg shadow-brand-primary/20">
+              <Map className="h-6 w-6 text-primary-foreground" />
+            </div>
+          )}
+          <h1 className="text-3xl font-bold tracking-tight">{config.name}</h1>
         </div>
 
-        <Card className="border-border/50 shadow-xl">
-          <CardHeader className="text-center">
+        <Card className="border-border/50 shadow-2xl bg-card/80 backdrop-blur-sm">
+          <CardHeader className="text-center pb-2">
             <CardTitle className="text-xl">Bienvenido de vuelta</CardTitle>
             <CardDescription>
               Inicia sesión para acceder a tu dashboard
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-4 pt-4">
               {error && (
                 <motion.div
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: 'auto' }}
-                  className="rounded-lg bg-destructive/10 p-3 text-sm text-destructive"
+                  className="rounded-lg bg-destructive/10 p-3 text-sm text-destructive font-medium border border-destructive/20"
                 >
                   {error}
                 </motion.div>
@@ -95,6 +103,7 @@ export function LoginPage() {
                   onChange={(e) => setEmail(e.target.value)}
                   required
                   autoComplete="email"
+                  className="h-11 rounded-xl"
                 />
               </div>
 
@@ -103,7 +112,7 @@ export function LoginPage() {
                   <Label htmlFor="password">Contraseña</Label>
                   <Link
                     to="/forgot-password"
-                    className="text-xs text-primary hover:underline"
+                    className="text-xs text-brand-primary font-semibold hover:underline"
                   >
                     ¿Olvidaste tu contraseña?
                   </Link>
@@ -117,39 +126,44 @@ export function LoginPage() {
                     onChange={(e) => setPassword(e.target.value)}
                     required
                     autoComplete="current-password"
+                    className="h-11 rounded-xl pr-10"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
                   >
                     {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
                 </div>
               </div>
 
-              <Button type="submit" className="w-full" disabled={isLoading}>
+              <Button 
+                type="submit" 
+                className="w-full h-11 rounded-xl bg-brand-primary hover:opacity-90 font-bold shadow-lg shadow-brand-primary/20 active:scale-[0.98] transition-all" 
+                disabled={isLoading}
+              >
                 {isLoading ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <Loader2 className="h-4 w-4 animate-spin text-primary-foreground" />
                 ) : (
                   'Iniciar Sesión'
                 )}
               </Button>
             </form>
 
-            <div className="relative my-6">
+            <div className="relative my-8">
               <Separator />
-              <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-card px-2 text-xs text-muted-foreground">
+              <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-card px-4 text-xs font-medium text-muted-foreground">
                 O continúa con
               </span>
             </div>
 
             <Button
               variant="outline"
-              className="w-full gap-2"
+              className="w-full h-11 rounded-xl gap-2 font-semibold border-2 hover:bg-muted active:scale-[0.98] transition-all"
               onClick={handleGoogleSignIn}
             >
-              <svg className="h-4 w-4" viewBox="0 0 24 24">
+              <svg className="h-5 w-5" viewBox="0 0 24 24">
                 <path
                   d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"
                   fill="#4285F4"
@@ -170,9 +184,9 @@ export function LoginPage() {
               Google
             </Button>
 
-            <p className="mt-6 text-center text-sm text-muted-foreground">
+            <p className="mt-8 text-center text-sm text-muted-foreground">
               ¿No tienes una cuenta?{' '}
-              <Link to="/register" className="font-medium text-primary hover:underline">
+              <Link to="/register" className="font-bold text-brand-primary hover:underline">
                 Regístrate gratis
               </Link>
             </p>
