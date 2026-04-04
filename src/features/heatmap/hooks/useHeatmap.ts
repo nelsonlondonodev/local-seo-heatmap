@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, useRef } from 'react';
+import { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { MAP_DEFAULT_CENTER } from '@/config/constants';
@@ -58,7 +58,6 @@ export function useHeatmap() {
     const historicalData = state?.heatmap;
     
     if (historicalData && !hasLoadedHistory.current) {
-      console.log('[DASHBOARD] Loading historical heatmap:', historicalData.id);
       hasLoadedHistory.current = true; // Mark as loaded for this render cycle
       
       setKeyword(historicalData.keyword || '');
@@ -90,7 +89,7 @@ export function useHeatmap() {
   }, [center, gridSize, radiusKm]);
 
   // 6. Action Handlers
-  const runAnalysis = async () => {
+  const runAnalysis = useCallback(async () => {
     if (!isFormValid) return;
 
     try {
@@ -110,15 +109,15 @@ export function useHeatmap() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [isFormValid, currentConfig, points, saveHeatmap]);
 
-  const handleMapClick = (lat: number, lng: number) => {
+  const handleMapClick = useCallback((lat: number, lng: number) => {
     setCenter([lat, lng]);
-  };
+  }, []);
 
-  const handleResetCenter = () => {
+  const handleResetCenter = useCallback(() => {
     setCenter([MAP_DEFAULT_CENTER.lat, MAP_DEFAULT_CENTER.lng]);
-  };
+  }, []);
 
   return {
     keyword, setKeyword,
