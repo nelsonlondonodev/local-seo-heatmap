@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useMemo, type ReactNode } from 'react';
+import { useEffect, useState, useCallback, useMemo, useRef, type ReactNode } from 'react';
 import type { Session, User } from '@supabase/supabase-js';
 import { supabase } from '@/lib/supabase';
 import { AuthContext } from './hooks/useAuth';
@@ -40,16 +40,32 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => clearTimeout(timer);
   }, []);
 
-  // 2. MAIN AUTH SUBSYSTEM
+  // 2. STATE REF FOR ATOMIC CHECKS (Internal consistency)
+  const stateRef = useRef(authState);
+  useEffect(() => {
+    stateRef.current = authState;
+  }, [authState]);
+
+  // 3. MAIN AUTH SUBSYSTEM
   useEffect(() => {
     let mounted = true;
 
     const handleSession = async (session: Session | null, event: string) => {
       if (!mounted) return;
-      console.log(`[AUTH] Event: ${event} | Session: ${!!session}`);
+      
+      const currentUser = stateRef.current.user;
+      const currentProfile = stateRef.current.profile;
 
       try {
         if (session) {
+          // If we already have this user and profile, we skip the fetch
+          if (session.user.id === currentUser?.id && currentProfile && !stateRef.current.isLoading) {
+            console.log(`[AUTH] Event: ${event} | Skipping redundant profile fetch (Already stabilized)`);
+            setAuthState(prev => ({ ...prev, user: session.user!, session }));
+            return;
+          }
+
+          console.log(`[AUTH] Event: ${event} | Session: ${!!session} | Processing...`);
           let profile = await profileService.getProfile(session.user.id);
           
           // RESCUE LOGIC: If profile doesn't exist, create it manually now
