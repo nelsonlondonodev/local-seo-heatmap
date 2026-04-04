@@ -28,6 +28,21 @@ export function HistoryPage() {
   const navigate = useNavigate();
   const { history, isLoading, deleteHeatmap, isDeleting } = useHeatmaps();
 
+  const handleDelete = async (id: string) => {
+    if (window.confirm('¿Estás seguro de que deseas eliminar este análisis permanentemente? Esta acción no se puede deshacer.')) {
+      try {
+        await deleteHeatmap(id);
+      } catch (error) {
+        console.error('Error deleting heatmap:', error);
+      }
+    }
+  };
+
+  const handleViewDetails = (entry: any) => {
+    // Navigate to dashboard passing the heatmap data in the state
+    navigate('/dashboard', { state: { heatmap: entry } });
+  };
+
   return (
     <motion.div variants={containerVariants} initial="hidden" animate="visible" className="space-y-6">
       <motion.div variants={itemVariants} className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
@@ -47,7 +62,7 @@ export function HistoryPage() {
             <Skeleton key={i} className="h-32 w-full rounded-xl" />
           ))}
         </div>
-      ) : (history as any[]).length === 0 ? (
+      ) : history.length === 0 ? (
         <motion.div variants={itemVariants} className="flex flex-col items-center justify-center rounded-xl border border-dashed p-12 text-center">
           <History className="mb-4 h-12 w-12 text-muted-foreground/30" />
           <h3 className="text-lg font-semibold">No hay búsquedas aún</h3>
@@ -58,8 +73,8 @@ export function HistoryPage() {
         </motion.div>
       ) : (
         <div className="space-y-4">
-          {(history as any[]).map((entry) => {
-            const summary = entry.results_summary || { avgRank: 0, bestRank: null };
+          {history.map((entry) => {
+            const summary = (entry.results_summary as any) || { avgRank: 0, bestRank: null };
             
             return (
               <motion.div key={entry.id} variants={itemVariants}>
@@ -101,7 +116,7 @@ export function HistoryPage() {
                           </div>
                           <div className="text-center sm:text-right">
                             <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider mb-0.5">Promedio</p>
-                            <Badge variant={getRankVariant(Math.round(summary.avgRank))}>
+                            <Badge variant={getRankVariant(Math.round(summary.avgRank || 0))}>
                               #{summary.avgRank?.toFixed(1) || '0.0'}
                             </Badge>
                           </div>
@@ -112,16 +127,16 @@ export function HistoryPage() {
                             variant="outline" 
                             size="sm" 
                             className="gap-2"
-                            onClick={() => navigate('/dashboard', { state: { heatmap: entry } })}
+                            onClick={() => handleViewDetails(entry)}
                           >
                             <ExternalLink className="h-3.5 w-3.5" />
-                            <span className="hidden sm:inline">Ver</span>
+                            <span className="hidden sm:inline">Ver en Mapa</span>
                           </Button>
                           <Button 
                             variant="ghost" 
                             size="icon" 
                             disabled={isDeleting}
-                            onClick={() => deleteHeatmap(entry.id)}
+                            onClick={() => handleDelete(entry.id)}
                             className="h-9 w-9 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
                           >
                             <Trash2 className="h-4 w-4" />

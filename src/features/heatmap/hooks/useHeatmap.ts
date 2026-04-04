@@ -54,11 +54,11 @@ export function useHeatmap() {
   
   // A. Load from History
   useEffect(() => {
-    const state = location.state as { heatmap?: any };
+    const state = location.state as { heatmap?: any } | null;
     const historicalData = state?.heatmap;
     
     if (historicalData && !hasLoadedHistory.current) {
-      hasLoadedHistory.current = true; // Mark as loaded for this render cycle
+      hasLoadedHistory.current = true; // Mark that we've processed this specific state
       
       setKeyword(historicalData.keyword || '');
       setBusinessName(historicalData.business_name || '');
@@ -70,23 +70,24 @@ export function useHeatmap() {
 
       // Clean up navigation state
       navigate(location.pathname, { replace: true, state: {} });
-      
       toast.info(`Cargado: ${historicalData.keyword}`);
+    } else if (!historicalData) {
+      // Reset the one-time load flag when state is cleared
+      hasLoadedHistory.current = false;
     }
   }, [location.state, navigate, location.pathname]);
 
   // B. Sync Grid Points
   useEffect(() => {
-    // If we are currently loading from history, we skip the first sync
-    // which would otherwise overwrite our cloud data with empty points.
-    if (hasLoadedHistory.current) {
-      hasLoadedHistory.current = false; // Release the lock for future manual changes
-      return;
-    }
+    // We only skip grid generation if we are CURRENTLY loading from history.
+    // Once location.state is cleared (in useEffect A), historicalData will be null.
+    const historicalData = (location.state as { heatmap?: any } | null)?.heatmap;
+    if (historicalData) return;
 
+    // Standard grid synchronization for manual changes
     const newPoints = generateGridPoints(center[0], center[1], gridSize, radiusKm);
     setPoints(newPoints);
-  }, [center, gridSize, radiusKm]);
+  }, [center, gridSize, radiusKm, location.state]);
 
   // 6. Action Handlers
   const runAnalysis = useCallback(async () => {

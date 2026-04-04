@@ -34,7 +34,7 @@ export function useHeatmaps() {
       queryClient.invalidateQueries({ queryKey: ['heatmaps', user?.id] });
       toast.success('Escaneo guardado en tu historial');
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       console.error('[USE_HEATMAPS] Save Error:', error);
       toast.error(`Error al guardar: ${error.message || 'Error desconocido'}`);
     },
@@ -47,7 +47,7 @@ export function useHeatmaps() {
       queryClient.invalidateQueries({ queryKey: ['heatmaps', user?.id] });
       toast.success('Escaneo eliminado permanentemente');
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       toast.error(`Error al eliminar: ${error.message}`);
     },
   });
