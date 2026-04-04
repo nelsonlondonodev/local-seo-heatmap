@@ -4,9 +4,12 @@ import type { Database } from '@/types/database';
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
+console.log('[SUPABASE_DEBUG] Linking client to:', supabaseUrl);
+
 if (!supabaseUrl || !supabaseAnonKey) {
+  console.error('[SUPABASE_DEBUG] CRITICAL: Missing credentials in .env');
   throw new Error(
-    "⚠️ CRITICAL: Missing Supabase Environment Variables. Check your .env file and ensure VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY are defined."
+    "⚠️ CRITICAL: Missing Supabase Environment Variables."
   );
 }
 
@@ -15,6 +18,6 @@ export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
     autoRefreshToken: true,
     persistSession: true,
     detectSessionInUrl: true,
-    storageKey: 'mapranker-auth-token',
+    storageKey: 'local-seo-heatmap-session' // Unificamos clave de sesión
   },
 });

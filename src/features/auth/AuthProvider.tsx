@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useMemo, useRef, type ReactNode } from 'react';
+import { useEffect, useState, useCallback, useMemo, type ReactNode } from 'react';
 import type { Session, User } from '@supabase/supabase-js';
 import { supabase } from '@/lib/supabase';
 import { AuthContext } from './hooks/useAuth';
@@ -12,10 +12,9 @@ interface AuthState {
 }
 
 /**
- * CLEAN VERSION: Minimalist AuthProvider.
- * Removed local cache to prevent redirect loops between cookies and storage.
- * Added Panic Timeout (5s) for instant UI unblocking.
- * Refactored to use profileService for better scalability and multi-tenancy.
+ * AUTO-HEALING AUTH PROVIDER.
+ * Detects missing profiles and creates them on-the-fly to ensure stability.
+ * Completely autonomous from database triggers.
  */
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [authState, setAuthState] = useState<AuthState>({
@@ -25,60 +24,77 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     isLoading: true,
   });
 
-  const lastTokenRef = useRef<string>('');
-  const initializedRef = useRef(false);
 
+  // 1. INDEPENDENT PANIC TIMER
   useEffect(() => {
-    if (initializedRef.current) return;
-    initializedRef.current = true;
+    const timer = setTimeout(() => {
+      setAuthState(prev => {
+        if (prev.isLoading) {
+          console.warn('[AUTH_PANIC] Safety timeout triggered. UI unblocked!');
+          return { ...prev, isLoading: false };
+        }
+        return prev;
+      });
+    }, 4000); 
 
+    return () => clearTimeout(timer);
+  }, []);
+
+  // 2. MAIN AUTH SUBSYSTEM
+  useEffect(() => {
     let mounted = true;
 
-    const handleSession = async (session: Session | null, event?: string) => {
+    const handleSession = async (session: Session | null, event: string) => {
       if (!mounted) return;
-      console.log(`[AUTH] Process: ${event || 'init'}`);
+      console.log(`[AUTH] Event: ${event} | Session: ${!!session}`);
 
-      const currentToken = session?.access_token || 'none';
-      if (currentToken === lastTokenRef.current && event !== 'SIGNED_OUT' && event !== 'SIGNED_IN') {
-        if (authState.isLoading) setAuthState(prev => ({ ...prev, isLoading: false }));
-        return;
-      }
-      lastTokenRef.current = currentToken;
+      try {
+        if (session) {
+          let profile = await profileService.getProfile(session.user.id);
+          
+          // RESCUE LOGIC: If profile doesn't exist, create it manually now
+          if (!profile && mounted) {
+             console.log('[AUTH] Profile missing, initiating rescue creation...');
+             profile = await profileService.createInitialProfile(
+               session.user.id, 
+               session.user.email || '', 
+               session.user.user_metadata?.full_name || 'Nuevo Usuario'
+             );
+          }
 
-      if (session) {
-        const profile = await profileService.getProfile(session.user.id);
-        if (mounted) {
-          setAuthState({ user: session.user, session, profile, isLoading: false });
+          if (mounted) {
+            setAuthState({
+              user: session.user,
+              session,
+              profile,
+              isLoading: false,
+            });
+            console.log('[AUTH] Ready: Session and Profile stabilized');
+          }
+        } else {
+          if (mounted) {
+            setAuthState({ user: null, session: null, profile: null, isLoading: false });
+          }
         }
-      } else {
-        if (mounted) {
-          setAuthState({ user: null, session: null, profile: null, isLoading: false });
-        }
+      } catch (err) {
+        console.error('[AUTH] Critical session handler failure:', err);
+        if (mounted) setAuthState(prev => ({ ...prev, isLoading: false }));
       }
     };
 
-    // 1. Initial Wake Up
+    // A. Initial Wakeup
     supabase.auth.getSession().then(({ data: { session } }) => {
-      handleSession(session, 'INITIAL');
+      handleSession(session, 'INITIAL_WAKEUP');
     });
 
-    // 2. Auth Listner
+    // B. Auth State Change Listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       handleSession(session, event);
     });
 
-    // 3. FINAL PANIC: 5 seconds timeout to force unblock UI
-    const timer = setTimeout(() => {
-      if (mounted && authState.isLoading) {
-        console.warn('[AUTH] Panic Timeout: Unblocking UI.');
-        setAuthState(prev => ({ ...prev, isLoading: false }));
-      }
-    }, 5000);
-
     return () => {
       mounted = false;
       subscription.unsubscribe();
-      clearTimeout(timer);
     };
   }, []);
 

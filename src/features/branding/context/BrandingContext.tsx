@@ -10,8 +10,8 @@ interface BrandingContextType extends BrandingState {
 const BrandingContext = createContext<BrandingContextType | undefined>(undefined);
 
 /**
- * Provider that manages high-level branding state and injects CSS variables
- * dynamically into the document root.
+ * Optimized BrandingProvider.
+ * Uses useMemo for the context value to prevent unnecessary re-render chains.
  */
 export const BrandingProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [agencyId, setAgencyId] = useState<string | null>(null);
@@ -31,23 +31,23 @@ export const BrandingProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       setError(null);
       try {
         const data = await brandingService.getAgencyById(agencyId);
-        setAgency(data);
+        if (mounted) setAgency(data);
       } catch (err) {
         console.error('[BRANDING] Fetch error:', err);
-        setError(err instanceof Error ? err : new Error('Unknown error fetching agency'));
+        if (mounted) setError(err instanceof Error ? err : new Error('Unknown error fetching agency'));
       } finally {
-        setIsLoading(false);
+        if (mounted) setIsLoading(false);
       }
     };
 
+    let mounted = true;
     fetchAgency();
+    return () => { mounted = false; };
   }, [agencyId]);
 
   // 2. Reactively inject CSS Variables into the DOM root
   useEffect(() => {
     const root = document.documentElement;
-    
-    // Helper to sync variables with fallbacks
     const syncVar = (name: string, value: string | null | undefined, fallback: string) => {
       if (value) {
         root.style.setProperty(name, value);
@@ -61,14 +61,13 @@ export const BrandingProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       syncVar('--brand-secondary', agency.secondary_color, DEFAULT_BRANDING.secondaryColor);
       syncVar('--brand-accent', agency.accent_color, DEFAULT_BRANDING.accentColor);
     } else {
-      // Revert to global defaults
       syncVar('--brand-primary', null, DEFAULT_BRANDING.primaryColor);
       syncVar('--brand-secondary', null, DEFAULT_BRANDING.secondaryColor);
       syncVar('--brand-accent', null, DEFAULT_BRANDING.accentColor);
     }
   }, [agency]);
 
-  // 3. Computed Branding Object for UI Consumption
+  // 3. SECURE MEMOIZATION: This prevents the Router and sync components from looping
   const config = useMemo<BrandingConfig>(() => ({
     name: agency?.name || DEFAULT_BRANDING.name,
     logoUrl: agency?.logo_url || DEFAULT_BRANDING.logoUrl,
@@ -77,20 +76,17 @@ export const BrandingProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     accentColor: agency?.accent_color || DEFAULT_BRANDING.accentColor,
   }), [agency]);
 
-  const value = {
+  const value = useMemo(() => ({
     config,
     agency,
     isLoading,
     error,
     setAgencyId,
-  };
+  }), [config, agency, isLoading, error]);
 
   return <BrandingContext.Provider value={value}>{children}</BrandingContext.Provider>;
 }
 
-/**
- * Hook to consume the current branding context.
- */
 export const useBranding = () => {
   const context = useContext(BrandingContext);
   if (context === undefined) {

@@ -2,14 +2,14 @@ import { supabase } from '@/lib/supabase';
 import type { Database } from '@/types/database';
 
 export type UserProfile = Database['public']['Tables']['profiles']['Row'];
-export type ProfileUpdate = Database['public']['Tables']['profiles']['Update'];
 
 /**
- * Atomic Service to handle user profile data and role-based actions.
+ * Atomic service to manage User Profiles and multi-tenant data.
+ * Refactored to handle initial profile creation for new registrations.
  */
 export const profileService = {
   /**
-   * Fetches a user profile by ID.
+   * Fetches the user profile from the database.
    */
   async getProfile(id: string): Promise<UserProfile | null> {
     const { data, error } = await supabase
@@ -19,7 +19,7 @@ export const profileService = {
       .single();
 
     if (error) {
-      console.error('[PROFILE_SERVICE] Error fetching profile:', error.message);
+      console.warn('[PROFILE_SERVICE] Profile not found or error:', error.message);
       return null;
     }
 
@@ -27,38 +27,33 @@ export const profileService = {
   },
 
   /**
-   * Updates user profile fields.
+   * Creates a default profile for a newly registered user.
+   * Useful when the database trigger is not configured or in case of race conditions.
    */
-  async updateProfile(id: string, updates: ProfileUpdate): Promise<UserProfile | null> {
+  async createInitialProfile(id: string, email: string, fullName: string): Promise<UserProfile | null> {
+    console.log('[PROFILE_SERVICE] Creating initial profile for:', email);
+    
     const { data, error } = await supabase
       .from('profiles')
-      .update(updates)
-      .eq('id', id)
+      .insert({
+        id,
+        email,
+        full_name: fullName,
+        role: 'owner', // Default role for registering user
+        plan: 'free',  // Default free trial plan
+      })
       .select()
       .single();
 
     if (error) {
-       console.error('[PROFILE_SERVICE] Error updating profile:', error.message);
-       throw error;
+      // If it exists already (trigger worked), we just return it
+      if (error.code === '23505') { // unique violation
+        return this.getProfile(id);
+      }
+      console.error('[PROFILE_SERVICE] Hard failure creating profile:', error.message);
+      return null;
     }
 
     return data as UserProfile;
   },
-
-  /**
-   * Links a user to an agency.
-   */
-  async linkToAgency(userId: string, agencyId: string): Promise<boolean> {
-    const { error } = await supabase
-      .from('profiles')
-      .update({ agency_id: agencyId } as ProfileUpdate)
-      .eq('id', userId);
-
-    if (error) {
-      console.error('[PROFILE_SERVICE] Error linking to agency:', error.message);
-      return false;
-    }
-
-    return true;
-  }
 };
