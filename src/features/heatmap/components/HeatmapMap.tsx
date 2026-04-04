@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { MapContainer, TileLayer, CircleMarker, useMapEvents, Marker, Tooltip, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -69,7 +69,7 @@ export function HeatmapMap({ center, zoom, points, onMapClick }: HeatmapMapProps
   return (
     <div className={cn(
       "relative h-full w-full overflow-hidden rounded-lg border border-border bg-muted/20 transition-all duration-300 shadow-sm",
-      isFullscreen ? "fixed inset-0 z-[9999] rounded-none border-none animate-in fade-in zoom-in duration-300" : "h-full w-full"
+      isFullscreen ? "fixed inset-0 z-[4000] rounded-none border-none animate-in fade-in zoom-in duration-300" : "h-full w-full"
     )}>
       {/* MAP CONTROLS OVERLAY */}
       <div className="absolute right-4 top-4 z-[1000] flex flex-col gap-2">

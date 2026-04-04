@@ -33,7 +33,7 @@ export function Sidebar({ isOpen, onClose, onLogoutClick }: SidebarProps) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-40 bg-black/50 lg:hidden"
+            className="fixed inset-0 z-[4900] bg-black/50 lg:hidden"
             onClick={onClose}
           />
         )}
@@ -41,7 +41,7 @@ export function Sidebar({ isOpen, onClose, onLogoutClick }: SidebarProps) {
 
       {/* Sidebar Content */}
       <motion.aside
-        className={`fixed inset-y-0 left-0 z-50 w-64 border-r border-border bg-card lg:static lg:z-auto ${
+        className={`fixed inset-y-0 left-0 z-[5000] w-64 border-r border-border bg-card lg:static lg:z-auto ${
           isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
         } transition-transform duration-300 ease-in-out`}
       >
