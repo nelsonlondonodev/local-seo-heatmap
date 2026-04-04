@@ -11,7 +11,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Badge } from '@/components/ui/badge';
 import { GRID_OPTIONS, RADIUS_OPTIONS } from '@/config/constants';
 import { HeatmapMap, useHeatmap, BusinessSearch, type PlaceSuggestion } from '@/features/heatmap';
 import { cn } from '@/lib/utils';
@@ -62,23 +61,8 @@ export function DashboardPage() {
                 Define los parámetros de tu búsqueda
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="keyword">Palabra clave</Label>
-                <div className="relative group">
-                  <div className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors">
-                    <Search className="h-4 w-4" />
-                  </div>
-                  <Input
-                    id="keyword"
-                    placeholder="ej: peluquería cerca de mí"
-                    className="pl-9 transition-all focus:ring-primary/20"
-                    value={heatmap.keyword}
-                    onChange={(e) => heatmap.setKeyword(e.target.value)}
-                  />
-                </div>
-              </div>
-
+            <CardContent className="space-y-5">
+              {/* 1. Who: Business Search */}
               <BusinessSearch 
                 initialValue={heatmap.businessName}
                 selectedPlaceId={heatmap.placeId}
@@ -94,8 +78,46 @@ export function DashboardPage() {
                 }}
               />
 
+              {/* 2. What: Keyword */}
               <div className="space-y-2">
-                <Label>Tamaño del grid</Label>
+                <Label htmlFor="keyword">Palabra clave de búsqueda</Label>
+                <div className="relative group">
+                  <div className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors">
+                    <Search className="h-4 w-4" />
+                  </div>
+                  <Input
+                    id="keyword"
+                    placeholder="ej: peluquería cerca de mí"
+                    className="pl-9 transition-all focus:ring-primary/20"
+                    value={heatmap.keyword}
+                    onChange={(e) => heatmap.setKeyword(e.target.value)}
+                  />
+                </div>
+              </div>
+
+              {/* 3. Where: Radius */}
+              <div className="space-y-2">
+                <Label>Radio de análisis (km)</Label>
+                <Select
+                  value={String(heatmap.radiusKm)}
+                  onValueChange={(v) => heatmap.setRadiusKm(Number(v))}
+                >
+                  <SelectTrigger className="hover:border-primary/50 transition-colors">
+                    <SelectValue placeholder="Seleccionar radio" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {RADIUS_OPTIONS.map((radius) => (
+                      <SelectItem key={radius} value={String(radius)}>
+                        {radius} km
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* 4. Density: Grid Size */}
+              <div className="space-y-2">
+                <Label>Puntos del Mapa (Grid)</Label>
                 <div className="grid grid-cols-3 gap-2">
                   {GRID_OPTIONS.map((option) => (
                     <button
@@ -110,56 +132,35 @@ export function DashboardPage() {
                       <span className="text-xs text-muted-foreground">
                         {option.points} puntos
                       </span>
-                      <Badge 
-                        variant={heatmap.gridSize === option.value ? 'default' : 'secondary'} 
-                        className="mt-1 text-[10px]"
-                      >
-                        {option.description}
-                      </Badge>
                     </button>
                   ))}
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <Label>Radio (km)</Label>
-                <Select
-                  value={String(heatmap.radiusKm)}
-                  onValueChange={(v) => heatmap.setRadiusKm(Number(v))}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Seleccionar radio" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {RADIUS_OPTIONS.map((radius) => (
-                      <SelectItem key={radius} value={String(radius)}>
-                        {radius} km
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <Label>Ubicación central</Label>
-                <Button 
-                  variant="outline" 
-                  className="w-full gap-2"
-                  onClick={heatmap.handleResetCenter}
-                >
-                  <Crosshair className="h-4 w-4" />
-                  Resetear al centro
-                </Button>
-                <p className="text-[10px] text-muted-foreground">
-                  Lat: {heatmap.center[0].toFixed(4)}, Lng: {heatmap.center[1].toFixed(4)}
-                </p>
+              {/* 5. Location Reference */}
+              <div className="space-y-2 pt-2 border-t border-border/50">
+                <div className="flex items-center justify-between">
+                  <Label className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider">Centro del análisis</Label>
+                  <button 
+                    onClick={heatmap.handleResetCenter}
+                    className="text-[10px] text-primary hover:underline flex items-center gap-1"
+                  >
+                    <Crosshair className="h-3 w-3" /> Resetear
+                  </button>
+                </div>
+                <div className="rounded-lg bg-secondary/30 p-2 text-center">
+                  <p className="text-[11px] font-medium font-mono text-muted-foreground">
+                    LAT: {heatmap.center[0].toFixed(6)} | LNG: {heatmap.center[1].toFixed(6)}
+                  </p>
+                </div>
               </div>
 
               <Button 
-                className="w-full gap-2" 
+                className="w-full gap-2 h-11 text-base font-bold shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all" 
                 disabled={!heatmap.isFormValid || heatmap.isLoading}
                 onClick={heatmap.runAnalysis}
               >
+
                 {heatmap.isLoading ? (
                   <>
                     <Loader2 className="h-4 w-4 animate-spin" />
