@@ -22,10 +22,11 @@
 Hoy hemos alcanzado hitos críticos para la escalabilidad de **MapRanker Pro**:
 
 1.  **☁️ Cloud Native**: El proyecto ya está conectado 100% a **Supabase Cloud** (Base de Datos y Auth).
-2.  **🔑 Auth Segura**: Implementación de **Google OAuth** y sistema de login real (no más mocks).
-3.  **🏢 Arquitectura Multi-Tenant**: Soporte nativo para múltiples agencias (**Marca Blanca**).
-4.  **🎭 Roles & Jerarquía**: Definición clara de permisos desde el SuperAdmin hasta el Cliente Final.
-5.  **🧩 Estructura Modular**: Refactorización de Auth y Dashboard en componentes atómicos para facilitar el crecimiento.
+2.  **🔑 Auth Segura**: Implementación de **Google OAuth** y sistema de login real y persistente.
+3.  **🏢 Arquitectura Multi-Tenant**: Soporte nativo para múltiples agencias (**Marca Blanca**) y perfiles de usuario.
+4.  **🕵️ Smart Business Search**: Integración de autocompletado de negocios con Google Places (Simulado) y centrado automático de mapa.
+5.  **📜 Historial de Nube**: Persistencia real de escaneos en base de datos con visualización reactiva.
+6.  **🧱 Jerarquía Z-Index**: Estructura de capas robusta para evitar solapamientos en dispositivos móviles y tablets.
 
 > [!TIP]
 > Puedes consultar la documentación detallada de la jerarquía de permisos en [docs/ROLES_AND_HIERARCHY.md](./docs/ROLES_AND_HIERARCHY.md).
@@ -201,13 +202,13 @@ VITE_SUPABASE_ANON_KEY=tu_anon_key_de_supabase
 
 ### ✅ Implementadas (Core Features)
 
-- **Autenticación completa** — Real (Supabase) y **Modo Demo Offline** para desarrollo ágil.
-- **Mapa interactivo real** — Integración completa de Leaflet con cuadrícula dinámica y marcadores reactivos.
+- **Autenticación completa** — Real (Supabase) con persistencia de sesiones y perfiles.
+- **Mapa interactivo real** — Integración completa de Leaflet con controles de pantalla completa y recentrado.
 - **Lógica de Grid Geográfico** — Generación de puntos (3x3 a 7x7) con cálculos de radio precisos en KM.
-- **Motor de Simulación de Rankings** — `searchService` funcional con generación de datos y delay realista (UX).
-- **Persistencia Local** — Historial de búsquedas guardado en `localStorage` (listo para migrar a Supabase).
-- **Dashboard Layout** — Sidebar responsive con menú móvil y navegación animada.
-- **Formulario Reactivo** — Configuración de búsquedas totalmente conectada al mapa y al servicio de análisis.
+- **Buscador Inteligente** — Autocompletado de negocios que captura Place ID y coordenadas automáticamente.
+- **Historial en la Nube** — Persistencia completa en Supabase con visualización de resultados pasados.
+- **Dashboard de 2026** — Interfaz refinada con flujo lógico de configuración: Negocio → Palabra Clave → Radio → Grid.
+- **Modales de UX Premium** — Diálogos de confirmación estilizados con estados de carga y feedback visual.
 
 ### 🔲 Pendiente de Implementar
 
@@ -275,9 +276,9 @@ VITE_SUPABASE_ANON_KEY=tu_anon_key_de_supabase
 
 ## Estado Actual del MVP
 
-> **Versión:** 0.1.1 — Core Interactividad Completado.
+> **Versión:** 0.3.0 — Historial & Smart Search Completado.
 
 Próximas tareas:
-1. **Página de Historial**: Visualizar análisis antiguos desde `localStorage`.
-2. **Conexión Real con Supabase**: Configurar variables de entorno y migrar persistencia.
-3. **Google API**: Implementar el fetching real de rankings.
+1. **Google API Real**: Sustituir el simulador por llamadas reales a Google Places API / Edge Functions.
+2. **Sistema de suscripción**: Implementar pasarela de pago para planes Pro y Enterprise.
+3. **Analítica Comparativa**: Permitir comparar dos escaneos históricos en una misma vista.
