@@ -175,29 +175,23 @@ export function HistoryPage() {
 
       {/* Delete Confirmation Modal */}
       <Dialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-destructive/10 text-destructive">
-              <AlertTriangle className="h-6 w-6" />
+        <DialogContent className="sm:max-w-[400px] border-none shadow-2xl p-0 overflow-hidden">
+          <div className="bg-destructive/5 p-6 pb-0">
+            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10 text-destructive animate-in zoom-in duration-300">
+              <AlertTriangle className="h-7 w-7" />
             </div>
-            <DialogTitle className="text-xl font-bold text-center">Confirmar eliminación</DialogTitle>
-            <DialogDescription className="text-center">
-              ¿Estás seguro de que quieres eliminar este análisis? Esta acción es <strong>irreversible</strong> y los datos se perderán permanentemente de tu historial.
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter className="mt-6 flex sm:flex-col-reverse gap-3">
+            <DialogHeader>
+              <DialogTitle className="text-2xl font-bold text-center text-primary">Confirmar eliminación</DialogTitle>
+              <DialogDescription className="text-center text-muted-foreground pt-2">
+                ¿Estás seguro de que quieres eliminar este análisis? Esta acción es <span className="text-destructive font-bold">irreversible</span> y los datos se perderán de tu historial.
+              </DialogDescription>
+            </DialogHeader>
+          </div>
+          
+          <DialogFooter className="p-6 pt-8 flex sm:flex-col gap-3">
             <Button
-              variant="outline"
-              onClick={() => setDeleteConfirmOpen(false)}
-              className="flex-1 rounded-xl h-11 font-semibold"
-              disabled={isDeleting}
-            >
-              Cancelar
-            </Button>
-            <Button
-              variant="destructive"
+              className="w-full rounded-xl h-12 font-bold text-base bg-red-600 text-white shadow-lg shadow-red-600/20 hover:bg-red-700 transition-all active:scale-[0.98]"
               onClick={confirmDelete}
-              className="flex-1 rounded-xl h-11 font-semibold shadow-lg shadow-destructive/20 active:scale-[0.98] transition-transform"
               disabled={isDeleting}
             >
               {isDeleting ? (
@@ -208,6 +202,14 @@ export function HistoryPage() {
               ) : (
                 'Sí, eliminar permanentemente'
               )}
+            </Button>
+            <Button
+              variant="ghost"
+              onClick={() => setDeleteConfirmOpen(false)}
+              className="w-full rounded-xl h-12 font-semibold text-muted-foreground hover:bg-secondary transition-all"
+              disabled={isDeleting}
+            >
+              No, mantener análisis
             </Button>
           </DialogFooter>
         </DialogContent>
