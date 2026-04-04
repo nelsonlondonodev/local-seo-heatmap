@@ -42,7 +42,7 @@ export const profileService = {
 
     const { data, error } = await supabase
       .from('profiles')
-      .insert(newProfile as any)
+      .insert(newProfile)
       .select()
       .single();
 
@@ -55,6 +55,6 @@ export const profileService = {
       return null;
     }
 
-    return (data as unknown) as UserProfile;
+    return data;
   },
 };

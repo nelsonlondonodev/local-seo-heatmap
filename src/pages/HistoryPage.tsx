@@ -7,6 +7,10 @@ import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useHeatmaps } from '@/hooks';
 
+import type { Database } from '@/types/database';
+
+type HeatmapRecord = Database['public']['Tables']['heatmaps']['Row'];
+
 const containerVariants = { 
   hidden: { opacity: 0 }, 
   visible: { opacity: 1, transition: { staggerChildren: 0.08 } } 
@@ -38,7 +42,7 @@ export function HistoryPage() {
     }
   };
 
-  const handleViewDetails = (entry: any) => {
+  const handleViewDetails = (entry: HeatmapRecord) => {
     // Navigate to dashboard passing the heatmap data in the state
     navigate('/dashboard', { state: { heatmap: entry } });
   };
@@ -74,7 +78,7 @@ export function HistoryPage() {
       ) : (
         <div className="space-y-4">
           {history.map((entry) => {
-            const summary = (entry.results_summary as any) || { avgRank: 0, bestRank: null };
+            const summary = (entry.results_summary as unknown as { avgRank: number; bestRank: number | null }) || { avgRank: 0, bestRank: null };
             
             return (
               <motion.div key={entry.id} variants={itemVariants}>

@@ -6,6 +6,7 @@ import { generateGridPoints } from '../utils/grid';
 import { useHeatmaps } from '@/hooks';
 import { searchService } from '../services/searchService';
 import type { GridSize, HeatmapConfig, GridPoint } from '@/types';
+import type { Database } from '@/types/database';
 
 /**
  * Custom hook to manage the heatmap state and logic.
@@ -54,7 +55,7 @@ export function useHeatmap() {
   
   // A. Load from History
   useEffect(() => {
-    const state = location.state as { heatmap?: any } | null;
+    const state = location.state as { heatmap?: Database['public']['Tables']['heatmaps']['Row'] } | null;
     const historicalData = state?.heatmap;
     
     if (historicalData && !hasLoadedHistory.current) {
@@ -66,7 +67,7 @@ export function useHeatmap() {
       setGridSize(historicalData.grid_size as GridSize);
       setRadiusKm(Number(historicalData.radius_km));
       setCenter([Number(historicalData.center_lat), Number(historicalData.center_lng)]);
-      setPoints(historicalData.points || []);
+      setPoints((historicalData.points as unknown as GridPoint[]) || []);
 
       // Clean up navigation state
       navigate(location.pathname, { replace: true, state: {} });
@@ -81,7 +82,7 @@ export function useHeatmap() {
   useEffect(() => {
     // We only skip grid generation if we are CURRENTLY loading from history.
     // Once location.state is cleared (in useEffect A), historicalData will be null.
-    const historicalData = (location.state as { heatmap?: any } | null)?.heatmap;
+    const historicalData = (location.state as { heatmap?: Database['public']['Tables']['heatmaps']['Row'] } | null)?.heatmap;
     if (historicalData) return;
 
     // Standard grid synchronization for manual changes
