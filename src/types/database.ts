@@ -43,6 +43,7 @@ export interface Database {
           owner_id?: string;
           created_at?: string;
         };
+        Relationships: [];
       };
       profiles: {
         Row: {
@@ -75,6 +76,7 @@ export interface Database {
           plan?: 'free' | 'pro' | 'enterprise';
           created_at?: string;
         };
+        Relationships: [];
       };
       heatmaps: {
         Row: {
@@ -122,6 +124,7 @@ export interface Database {
           results_summary?: Json | null;
           created_at?: string;
         };
+        Relationships: [];
       };
     };
     Views: Record<string, never>;

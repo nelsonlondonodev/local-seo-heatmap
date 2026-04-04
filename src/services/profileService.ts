@@ -32,27 +32,29 @@ export const profileService = {
    */
   async createInitialProfile(id: string, email: string, fullName: string): Promise<UserProfile | null> {
     
+    const newProfile: Database['public']['Tables']['profiles']['Insert'] = {
+      id,
+      email,
+      full_name: fullName,
+      role: 'owner',
+      plan: 'free',
+    };
+
     const { data, error } = await supabase
       .from('profiles')
-      .insert({
-        id,
-        email,
-        full_name: fullName,
-        role: 'owner', 
-        plan: 'free',
-      } as Database['public']['Tables']['profiles']['Insert'])
+      .insert(newProfile as any)
       .select()
       .single();
 
     if (error) {
       // If it exists already (trigger worked), we just return it
-      if (error.code === '23505') { // unique violation
+      if (error.code === '23505') { 
         return this.getProfile(id);
       }
       console.error('[PROFILE_SERVICE] Hard failure creating profile:', error.message);
       return null;
     }
 
-    return data as UserProfile;
+    return (data as unknown) as UserProfile;
   },
 };
