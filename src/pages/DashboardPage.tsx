@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { GRID_OPTIONS, RADIUS_OPTIONS } from '@/config/constants';
-import { HeatmapMap, useHeatmap } from '@/features/heatmap';
+import { HeatmapMap, useHeatmap, BusinessSearch, type PlaceSuggestion } from '@/features/heatmap';
 import { cn } from '@/lib/utils';
 
 const containerVariants = {
@@ -65,33 +65,34 @@ export function DashboardPage() {
             <CardContent className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="keyword">Palabra clave</Label>
-                <Input
-                  id="keyword"
-                  placeholder="ej: peluquería cerca de mí"
-                  value={heatmap.keyword}
-                  onChange={(e) => heatmap.setKeyword(e.target.value)}
-                />
+                <div className="relative group">
+                  <div className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors">
+                    <Search className="h-4 w-4" />
+                  </div>
+                  <Input
+                    id="keyword"
+                    placeholder="ej: peluquería cerca de mí"
+                    className="pl-9 transition-all focus:ring-primary/20"
+                    value={heatmap.keyword}
+                    onChange={(e) => heatmap.setKeyword(e.target.value)}
+                  />
+                </div>
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="business">Nombre del negocio</Label>
-                <Input
-                  id="business"
-                  placeholder="ej: Mi Peluquería"
-                  value={heatmap.businessName}
-                  onChange={(e) => heatmap.setBusinessName(e.target.value)}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="placeId">Google Place ID (Opcional)</Label>
-                <Input
-                  id="placeId"
-                  placeholder="ChIJ..."
-                  value={heatmap.placeId}
-                  onChange={(e) => heatmap.setPlaceId(e.target.value)}
-                />
-              </div>
+              <BusinessSearch 
+                initialValue={heatmap.businessName}
+                selectedPlaceId={heatmap.placeId}
+                onSelect={(place: PlaceSuggestion) => {
+                  heatmap.setBusinessName(place.name);
+                  heatmap.setPlaceId(place.placeId);
+                  // MAGIC: Center map on the business
+                  heatmap.handleMapClick(place.lat, place.lng);
+                }}
+                onClear={() => {
+                  heatmap.setBusinessName('');
+                  heatmap.setPlaceId('');
+                }}
+              />
 
               <div className="space-y-2">
                 <Label>Tamaño del grid</Label>
