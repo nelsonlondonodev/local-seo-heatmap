@@ -1,6 +1,8 @@
 import type { Database } from '@/types/database';
 
-export type Agency = Database['public']['Tables']['agencies']['Row'];
+export type Agency = Database['public']['Tables']['agencies']['Row'] & {
+  accent_color?: string | null;
+};
 
 /**
  * Visual configuration for the current agency or default brand.

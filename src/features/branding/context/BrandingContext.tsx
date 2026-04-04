@@ -21,6 +21,7 @@ export const BrandingProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   // 1. Fetch agency configuration from Supabase
   useEffect(() => {
+    let mounted = true;
     if (!agencyId) {
       setAgency(null);
       return;
@@ -40,7 +41,6 @@ export const BrandingProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       }
     };
 
-    let mounted = true;
     fetchAgency();
     return () => { mounted = false; };
   }, [agencyId]);
@@ -48,23 +48,15 @@ export const BrandingProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   // 2. Reactively inject CSS Variables into the DOM root
   useEffect(() => {
     const root = document.documentElement;
-    const syncVar = (name: string, value: string | null | undefined, fallback: string) => {
-      if (value) {
-        root.style.setProperty(name, value);
-      } else {
-        root.style.setProperty(name, fallback);
-      }
+    const colors = {
+      '--brand-primary': agency?.primary_color || DEFAULT_BRANDING.primaryColor,
+      '--brand-secondary': agency?.secondary_color || DEFAULT_BRANDING.secondaryColor,
+      '--brand-accent': agency?.accent_color || DEFAULT_BRANDING.accentColor,
     };
 
-    if (agency) {
-      syncVar('--brand-primary', agency.primary_color, DEFAULT_BRANDING.primaryColor);
-      syncVar('--brand-secondary', agency.secondary_color, DEFAULT_BRANDING.secondaryColor);
-      syncVar('--brand-accent', agency.accent_color, DEFAULT_BRANDING.accentColor);
-    } else {
-      syncVar('--brand-primary', null, DEFAULT_BRANDING.primaryColor);
-      syncVar('--brand-secondary', null, DEFAULT_BRANDING.secondaryColor);
-      syncVar('--brand-accent', null, DEFAULT_BRANDING.accentColor);
-    }
+    Object.entries(colors).forEach(([name, value]) => {
+      root.style.setProperty(name, value);
+    });
   }, [agency]);
 
   // 3. SECURE MEMOIZATION: This prevents the Router and sync components from looping
