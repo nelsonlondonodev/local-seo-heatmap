@@ -1,10 +1,19 @@
-import { motion } from 'framer-motion';
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { History, Search, Calendar, Grid3X3, MapPin, Trash2, ExternalLink } from 'lucide-react';
+import { History, Search, Calendar, Grid3X3, MapPin, Trash2, ExternalLink, AlertTriangle, Loader2 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { useHeatmaps } from '@/hooks';
 
 import type { Database } from '@/types/database';
@@ -31,14 +40,22 @@ function getRankVariant(rank: number | null): 'default' | 'secondary' | 'destruc
 export function HistoryPage() {
   const navigate = useNavigate();
   const { history, isLoading, deleteHeatmap, isDeleting } = useHeatmaps();
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [idToDelete, setIdToDelete] = useState<string | null>(null);
 
-  const handleDelete = async (id: string) => {
-    if (window.confirm('¿Estás seguro de que deseas eliminar este análisis permanentemente? Esta acción no se puede deshacer.')) {
-      try {
-        await deleteHeatmap(id);
-      } catch (error) {
-        console.error('Error deleting heatmap:', error);
-      }
+  const handleDelete = (id: string) => {
+    setIdToDelete(id);
+    setDeleteConfirmOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!idToDelete) return;
+    try {
+      await deleteHeatmap(idToDelete);
+      setDeleteConfirmOpen(false);
+      setIdToDelete(null);
+    } catch (error) {
+      console.error('Error deleting heatmap:', error);
     }
   };
 
@@ -155,6 +172,46 @@ export function HistoryPage() {
           })}
         </div>
       )}
+
+      {/* Delete Confirmation Modal */}
+      <Dialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-destructive/10 text-destructive">
+              <AlertTriangle className="h-6 w-6" />
+            </div>
+            <DialogTitle className="text-xl font-bold text-center">Confirmar eliminación</DialogTitle>
+            <DialogDescription className="text-center">
+              ¿Estás seguro de que quieres eliminar este análisis? Esta acción es <strong>irreversible</strong> y los datos se perderán permanentemente de tu historial.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="mt-6 flex sm:flex-col-reverse gap-3">
+            <Button
+              variant="outline"
+              onClick={() => setDeleteConfirmOpen(false)}
+              className="flex-1 rounded-xl h-11 font-semibold"
+              disabled={isDeleting}
+            >
+              Cancelar
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={confirmDelete}
+              className="flex-1 rounded-xl h-11 font-semibold shadow-lg shadow-destructive/20 active:scale-[0.98] transition-transform"
+              disabled={isDeleting}
+            >
+              {isDeleting ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Eliminando...
+                </>
+              ) : (
+                'Sí, eliminar permanentemente'
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </motion.div>
   );
 }
