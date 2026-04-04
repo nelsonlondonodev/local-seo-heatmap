@@ -50,7 +50,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     let mounted = true;
 
-    const handleSession = async (session: Session | null, event: string) => {
+    const handleSession = async (session: Session | null, _event: string) => {
       if (!mounted) return;
       
       const currentUser = stateRef.current.user;
@@ -60,17 +60,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (session) {
           // If we already have this user and profile, we skip the fetch
           if (session.user.id === currentUser?.id && currentProfile && !stateRef.current.isLoading) {
-            console.log(`[AUTH] Event: ${event} | Skipping redundant profile fetch (Already stabilized)`);
             setAuthState(prev => ({ ...prev, user: session.user!, session }));
             return;
           }
 
-          console.log(`[AUTH] Event: ${event} | Session: ${!!session} | Processing...`);
           let profile = await profileService.getProfile(session.user.id);
           
           // RESCUE LOGIC: If profile doesn't exist, create it manually now
           if (!profile && mounted) {
-             console.log('[AUTH] Profile missing, initiating rescue creation...');
              profile = await profileService.createInitialProfile(
                session.user.id, 
                session.user.email || '', 
@@ -85,7 +82,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
               profile,
               isLoading: false,
             });
-            console.log('[AUTH] Ready: Session and Profile stabilized');
           }
         } else {
           if (mounted) {

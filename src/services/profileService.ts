@@ -31,7 +31,6 @@ export const profileService = {
    * Useful when the database trigger is not configured or in case of race conditions.
    */
   async createInitialProfile(id: string, email: string, fullName: string): Promise<UserProfile | null> {
-    console.log('[PROFILE_SERVICE] Creating initial profile for:', email);
     
     const { data, error } = await supabase
       .from('profiles')
@@ -39,9 +38,9 @@ export const profileService = {
         id,
         email,
         full_name: fullName,
-        role: 'owner', // Default role for registering user
-        plan: 'free',  // Default free trial plan
-      })
+        role: 'owner', 
+        plan: 'free',
+      } as Database['public']['Tables']['profiles']['Insert'])
       .select()
       .single();
 
