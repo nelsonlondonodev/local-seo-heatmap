@@ -59,7 +59,7 @@ export function useHeatmap() {
     const historicalData = state?.heatmap;
     
     if (historicalData && !hasLoadedHistory.current) {
-      hasLoadedHistory.current = true; // Mark that we've processed this specific state
+      hasLoadedHistory.current = true; // LOCK: Prevent grid sync from overwriting
       
       setKeyword(historicalData.keyword || '');
       setBusinessName(historicalData.business_name || '');
@@ -69,30 +69,33 @@ export function useHeatmap() {
       setCenter([Number(historicalData.center_lat), Number(historicalData.center_lng)]);
       setPoints((historicalData.points as unknown as GridPoint[]) || []);
 
-      // Clean up navigation state
-      navigate(location.pathname, { replace: true, state: {} });
       toast.info(`Cargado: ${historicalData.keyword}`);
-    } else if (!historicalData) {
-      // Reset the one-time load flag when state is cleared
-      hasLoadedHistory.current = false;
     }
   }, [location.state, navigate, location.pathname]);
 
   // B. Sync Grid Points
   useEffect(() => {
-    // We only skip grid generation if we are CURRENTLY loading from history.
-    // Once location.state is cleared (in useEffect A), historicalData will be null.
-    const historicalData = (location.state as { heatmap?: Database['public']['Tables']['heatmaps']['Row'] } | null)?.heatmap;
-    if (historicalData) return;
+    // If the lock is active, skip any automatic sync
+    if (hasLoadedHistory.current) return;
 
-    // Standard grid synchronization for manual changes
     const newPoints = generateGridPoints(center[0], center[1], gridSize, radiusKm);
     setPoints(newPoints);
-  }, [center, gridSize, radiusKm, location.state]);
+  }, [center, gridSize, radiusKm]);
 
-  // 6. Action Handlers
+  // 6. Action Handlers (Explicit Unlockers)
+  const handleMapClick = useCallback((lat: number, lng: number) => {
+    hasLoadedHistory.current = false; // Manually break the lock
+    setCenter([lat, lng]);
+  }, []);
+
+  const handleResetCenter = useCallback(() => {
+    hasLoadedHistory.current = false; // Manually break the lock
+    setCenter([MAP_DEFAULT_CENTER.lat, MAP_DEFAULT_CENTER.lng]);
+  }, []);
+
   const runAnalysis = useCallback(async () => {
     if (!isFormValid) return;
+    hasLoadedHistory.current = false; // Manually break the lock
 
     try {
       setIsLoading(true);
@@ -113,20 +116,38 @@ export function useHeatmap() {
     }
   }, [isFormValid, currentConfig, points, saveHeatmap]);
 
-  const handleMapClick = useCallback((lat: number, lng: number) => {
-    setCenter([lat, lng]);
+  // Handlers for manual parameter changes to break history lock
+  const updateGridSize = useCallback((size: GridSize) => {
+    hasLoadedHistory.current = false;
+    setGridSize(size);
   }, []);
 
-  const handleResetCenter = useCallback(() => {
-    setCenter([MAP_DEFAULT_CENTER.lat, MAP_DEFAULT_CENTER.lng]);
+  const updateRadius = useCallback((radius: number) => {
+    hasLoadedHistory.current = false;
+    setRadiusKm(radius);
+  }, []);
+
+  const updateKeyword = useCallback((val: string) => {
+    hasLoadedHistory.current = false;
+    setKeyword(val);
+  }, []);
+
+  const updateBusinessName = useCallback((val: string) => {
+    hasLoadedHistory.current = false;
+    setBusinessName(val);
+  }, []);
+
+  const updatePlaceId = useCallback((val: string) => {
+    hasLoadedHistory.current = false;
+    setPlaceId(val);
   }, []);
 
   return {
-    keyword, setKeyword,
-    businessName, setBusinessName,
-    placeId, setPlaceId,
-    gridSize, setGridSize,
-    radiusKm, setRadiusKm,
+    keyword, setKeyword: updateKeyword,
+    businessName, setBusinessName: updateBusinessName,
+    placeId, setPlaceId: updatePlaceId,
+    gridSize, setGridSize: updateGridSize,
+    radiusKm, setRadiusKm: updateRadius,
     center,
     points,
     isLoading,
