@@ -1,6 +1,8 @@
+const GOOGLE_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+
 /**
- * Service to simulate Google Places Autocomplete and Details.
- * Ready for real API integration later.
+ * Service to handle Google Places Autocomplete and Details.
+ * Connects to real Google API if key is available, else falls back to mock.
  */
 export interface PlaceSuggestion {
   placeId: string;
@@ -15,7 +17,7 @@ export interface PlaceSuggestion {
 const MOCK_PLACES: PlaceSuggestion[] = [
   {
     placeId: "ChIJ_narbo_1",
-    name: "Narbo's Salón & Spa",
+    name: "Narbo's Salón & Spa (Demo)",
     address: "Calle de la Moda 123, Chía, Colombia",
     lat: 4.8617,
     lng: -74.0531,
@@ -24,37 +26,67 @@ const MOCK_PLACES: PlaceSuggestion[] = [
   },
   {
     placeId: "ChIJ_barber_2",
-    name: "The Barber Shop Chía",
+    name: "The Barber Shop Chía (Demo)",
     address: "Av. Pradilla #45-12, Chía, Colombia",
     lat: 4.8589,
     lng: -74.0582,
     rating: 4.5,
     userRatingsTotal: 89,
   },
-  {
-    placeId: "ChIJ_beauty_3",
-    name: "Beauty Center Profesional",
-    address: "C.C. Fontanar Local 204, Chía, Colombia",
-    lat: 4.8834,
-    lng: -74.0512,
-    rating: 4.9,
-    userRatingsTotal: 432,
-  },
 ];
 
 export const placesService = {
   /**
-   * Search for businesses based on query (mocked autocomplete)
+   * Search for businesses using Google Places API (New V1 version) or Mock
    */
   async searchPlaces(query: string): Promise<PlaceSuggestion[]> {
     if (!query || query.length < 3) return [];
-    
-    // Simulate API delay
-    await new Promise((resolve) => setTimeout(resolve, 300));
-    
-    const searchLower = query.toLowerCase();
-    return MOCK_PLACES.filter(
-      (p) => p.name.toLowerCase().includes(searchLower) || p.address.toLowerCase().includes(searchLower)
-    );
+
+    // Fallback if no API Key provided
+    if (!GOOGLE_API_KEY || GOOGLE_API_KEY === 'your_google_maps_api_key_here') {
+      await new Promise((resolve) => setTimeout(resolve, 300));
+      const searchLower = query.toLowerCase();
+      return MOCK_PLACES.filter(
+        (p) => p.name.toLowerCase().includes(searchLower) || p.address.toLowerCase().includes(searchLower)
+      );
+    }
+
+    try {
+      // Using Google Places API (New Search v1)
+      const response = await fetch(
+        `https://places.googleapis.com/v1/places:searchText`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Goog-Api-Key': GOOGLE_API_KEY,
+            'X-Goog-FieldMask': 'places.id,places.displayName,places.formattedAddress,places.location,places.rating,places.userRatingCount',
+          },
+          body: JSON.stringify({
+            textQuery: query,
+            maxResultCount: 5,
+          }),
+        }
+      );
+
+      if (!response.ok) throw new Error('Error en Google Places API');
+
+      const data = await response.json();
+      
+      // Transform V1 response to our domain model
+      return (data.places || []).map((place: any) => ({
+        placeId: place.id,
+        name: place.displayName?.text || '',
+        address: place.formattedAddress || '',
+        lat: place.location?.latitude || 0,
+        lng: place.location?.longitude || 0,
+        rating: place.rating,
+        userRatingsTotal: place.userRatingCount,
+      }));
+
+    } catch (error) {
+      console.error('PLACES_API_ERROR:', error);
+      return [];
+    }
   },
 };
