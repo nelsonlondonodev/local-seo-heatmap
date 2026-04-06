@@ -45,6 +45,39 @@ export function LandingPage() {
   const { config } = useBranding();
   const { user } = useAuth();
 
+  /**
+   * Atomic sub-component for authentication links within the Landing Page.
+   */
+  const AuthButtons = ({ size = "sm", className = "" }: { size?: "sm" | "lg", className?: string }) => {
+    if (user) {
+      return (
+        <Link to="/dashboard">
+          <Button size={size} className={`gap-2 font-bold bg-brand-primary hover:opacity-90 ${className}`}>
+            {size === "lg" ? <Map className="h-5 w-5" /> : <Globe className="h-3.5 w-3.5" />}
+            {size === "lg" ? "Acceder al Panel" : "Ir al Dashboard"}
+          </Button>
+        </Link>
+      );
+    }
+
+    return (
+      <div className={`flex items-center gap-3 ${className}`}>
+        <Link to="/login">
+          <Button variant={size === "lg" ? "outline" : "ghost"} size={size} className={size === "lg" ? "h-14 px-8 text-lg font-semibold rounded-xl border-2 transition-all hover:bg-muted active:scale-95" : "font-medium"}>
+            {size === "lg" ? "Ya tengo cuenta" : "Iniciar Sesión"}
+          </Button>
+        </Link>
+        <Link to="/register">
+          <Button size={size} className={size === "lg" ? "h-14 px-8 gap-3 text-lg font-bold bg-brand-primary hover:opacity-95 shadow-xl shadow-brand-primary/20 transition-all active:scale-95" : "gap-1 font-semibold bg-brand-primary hover:opacity-90"}>
+            {size === "lg" ? <Zap className="h-5 w-5 fill-current" /> : null}
+            {size === "lg" ? "Comenzar gratis ahora" : "Comenzar Gratis"}
+            {size === "sm" ? <ArrowRight className="h-3.5 w-3.5" /> : null}
+          </Button>
+        </Link>
+      </div>
+    );
+  };
+
   return (
     <div className="min-h-screen bg-background">
       {/* Navbar */}
@@ -57,27 +90,7 @@ export function LandingPage() {
             <span className="text-xl font-bold tracking-tight">{config.name}</span>
           </div>
           <div className="flex items-center gap-3">
-            {user ? (
-              <Link to="/dashboard">
-                <Button size="sm" className="gap-2 font-bold bg-brand-primary hover:opacity-90">
-                  <Globe className="h-3.5 w-3.5" />
-                  Ir al Dashboard
-                </Button>
-              </Link>
-            ) : (
-              <>
-                <Link to="/login">
-                  <Button variant="ghost" size="sm" className="font-medium">
-                    Iniciar Sesión
-                  </Button>
-                </Link>
-                <Link to="/register">
-                  <Button size="sm" className="gap-1 font-semibold bg-brand-primary hover:opacity-90">
-                    Comenzar Gratis <ArrowRight className="h-3.5 w-3.5" />
-                  </Button>
-                </Link>
-              </>
-            )}
+            <AuthButtons size="sm" />
           </div>
         </div>
       </nav>
@@ -122,28 +135,7 @@ export function LandingPage() {
             </p>
 
             <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-              {user ? (
-                <Link to="/dashboard">
-                  <Button size="lg" className="h-14 px-8 gap-3 text-lg font-bold bg-brand-primary hover:opacity-95 shadow-xl shadow-brand-primary/20 transition-all active:scale-95">
-                    <Map className="h-5 w-5" />
-                    Acceder al Panel
-                  </Button>
-                </Link>
-              ) : (
-                <>
-                  <Link to="/register">
-                    <Button size="lg" className="h-14 px-8 gap-3 text-lg font-bold bg-brand-primary hover:opacity-95 shadow-xl shadow-brand-primary/20 transition-all active:scale-95">
-                      <Zap className="h-5 w-5 fill-current" />
-                      Comenzar gratis ahora
-                    </Button>
-                  </Link>
-                  <Link to="/login">
-                    <Button variant="outline" size="lg" className="h-14 px-8 text-lg font-semibold rounded-xl border-2 transition-all hover:bg-muted active:scale-95">
-                      Ya tengo cuenta
-                    </Button>
-                  </Link>
-                </>
-              )}
+              <AuthButtons size="lg" className="flex-col sm:flex-row sm:gap-4" />
             </div>
           </motion.div>
 

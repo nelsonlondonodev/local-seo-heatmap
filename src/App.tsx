@@ -6,6 +6,7 @@ import { AuthProvider } from '@/features/auth';
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import { BrandingProvider, useBranding } from '@/features/branding';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
+import { AuthLoading } from '@/components/auth/AuthLoading';
 import { DashboardLayout } from '@/layouts/DashboardLayout';
 import { LandingPage } from '@/pages/LandingPage';
 import { LoginPage } from '@/pages/LoginPage';
@@ -33,11 +34,7 @@ function PublicOnlyRoute({ children }: { children: React.ReactNode }) {
   const { user, isLoading } = useAuth();
   
   if (isLoading) {
-    return (
-      <div className="flex h-screen items-center justify-center bg-background">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-brand-primary border-t-transparent" />
-      </div>
-    );
+    return <AuthLoading />;
   }
 
   if (user) {
