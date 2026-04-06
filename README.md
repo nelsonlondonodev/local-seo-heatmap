@@ -22,11 +22,12 @@
 Hoy hemos alcanzado hitos críticos para la escalabilidad de **MapRanker Pro**:
 
 1.  **☁️ Cloud Native**: El proyecto ya está conectado 100% a **Supabase Cloud** (Base de Datos y Auth).
-2.  **🔑 Auth Segura**: Implementación de **Google OAuth** y sistema de login real y persistente.
-3.  **🏢 Arquitectura Multi-Tenant**: Soporte nativo para múltiples agencias (**Marca Blanca**) y perfiles de usuario.
-4.  **🕵️ Smart Business Search**: Integración de autocompletado de negocios con Google Places (Simulado) y centrado automático de mapa.
-5.  **📜 Historial de Nube**: Persistencia real de escaneos en base de datos con visualización reactiva.
-6.  **🧱 Jerarquía Z-Index**: Estructura de capas robusta para evitar solapamientos en dispositivos móviles y tablets.
+2.  **🛡️ Seguridad Transitoria**: Implementación de **`sessionStorage`** para tokens de sesión, garantizando que el acceso expire al cerrar el navegador/pestaña para mayor "resistencia" y privacidad.
+3.  **✨ UX de Auth Premium**: Nuevo componente **`AuthLoading`** con animaciones de Framer Motion y botones inteligentes en la Landing que detectan el estado de la sesión.
+4.  **🏢 Arquitectura Multi-Tenant**: Soporte nativo para múltiples agencias (**Marca Blanca**) y perfiles de usuario.
+5.  **🕵️ Smart Business Search**: Integración de autocompletado de negocios con Google Places (Simulado) y centrado automático de mapa.
+6.  **📜 Historial de Nube**: Persistencia real de escaneos en base de datos con visualización reactiva.
+7.  **🧱 Jerarquía Z-Index**: Estructura de capas robusta para evitar solapamientos en dispositivos móviles y tablets.
 
 > [!TIP]
 > Puedes consultar la documentación detallada de la jerarquía de permisos en [docs/ROLES_AND_HIERARCHY.md](./docs/ROLES_AND_HIERARCHY.md).
@@ -208,7 +209,9 @@ VITE_SUPABASE_ANON_KEY=tu_anon_key_de_supabase
 - **Buscador Inteligente** — Autocompletado de negocios que captura Place ID y coordenadas automáticamente.
 - **Historial en la Nube** — Persistencia completa en Supabase con visualización de resultados pasados.
 - **Dashboard de 2026** — Interfaz refinada con flujo lógico de configuración: Negocio → Palabra Clave → Radio → Grid.
-- **Modales de UX Premium** — Diálogos de confirmación estilizados con estados de carga y feedback visual.
+- **Sesiones de Alta Resistencia** — Configuración de seguridad para obligar al re-logueo tras cerrar la sesión del navegador.
+- **Botones de Auth Dinámicos** — La Landing detecta si ya estás logueado y cambia "Iniciar Sesión" por "Ir al Dashboard" automáticamente.
+- **Feedback Visual Premium** — Interfaz de carga unificada con animaciones de alta fidelidad para todos los estados de autenticación.
 
 ### 🔲 Pendiente de Implementar
 
@@ -276,7 +279,7 @@ VITE_SUPABASE_ANON_KEY=tu_anon_key_de_supabase
 
 ## Estado Actual del MVP
 
-> **Versión:** 0.3.0 — Historial & Smart Search Completado.
+> **Versión:** 0.4.0 — Seguridad Transitoria & UX Auth Refinado.
 
 Próximas tareas:
 1. **Google API Real**: Sustituir el simulador por llamadas reales a Google Places API / Edge Functions.
