@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Map, ArrowRight, Zap, BarChart3, Globe, Shield, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useBranding } from '@/features/branding';
+import { useAuth } from '@/features/auth';
 
 const features = [
   {
@@ -42,6 +43,7 @@ const itemVariants = {
 
 export function LandingPage() {
   const { config } = useBranding();
+  const { user } = useAuth();
 
   return (
     <div className="min-h-screen bg-background">
@@ -55,16 +57,27 @@ export function LandingPage() {
             <span className="text-xl font-bold tracking-tight">{config.name}</span>
           </div>
           <div className="flex items-center gap-3">
-            <Link to="/login">
-              <Button variant="ghost" size="sm" className="font-medium">
-                Iniciar Sesión
-              </Button>
-            </Link>
-            <Link to="/register">
-              <Button size="sm" className="gap-1 font-semibold bg-brand-primary hover:opacity-90">
-                Comenzar Gratis <ArrowRight className="h-3.5 w-3.5" />
-              </Button>
-            </Link>
+            {user ? (
+              <Link to="/dashboard">
+                <Button size="sm" className="gap-2 font-bold bg-brand-primary hover:opacity-90">
+                  <Globe className="h-3.5 w-3.5" />
+                  Ir al Dashboard
+                </Button>
+              </Link>
+            ) : (
+              <>
+                <Link to="/login">
+                  <Button variant="ghost" size="sm" className="font-medium">
+                    Iniciar Sesión
+                  </Button>
+                </Link>
+                <Link to="/register">
+                  <Button size="sm" className="gap-1 font-semibold bg-brand-primary hover:opacity-90">
+                    Comenzar Gratis <ArrowRight className="h-3.5 w-3.5" />
+                  </Button>
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </nav>
@@ -109,17 +122,28 @@ export function LandingPage() {
             </p>
 
             <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-              <Link to="/register">
-                <Button size="lg" className="h-14 px-8 gap-3 text-lg font-bold bg-brand-primary hover:opacity-95 shadow-xl shadow-brand-primary/20 transition-all active:scale-95">
-                  <Zap className="h-5 w-5 fill-current" />
-                  Comenzar gratis ahora
-                </Button>
-              </Link>
-              <Link to="/login">
-                <Button variant="outline" size="lg" className="h-14 px-8 text-lg font-semibold rounded-xl border-2 transition-all hover:bg-muted active:scale-95">
-                  Ya tengo cuenta
-                </Button>
-              </Link>
+              {user ? (
+                <Link to="/dashboard">
+                  <Button size="lg" className="h-14 px-8 gap-3 text-lg font-bold bg-brand-primary hover:opacity-95 shadow-xl shadow-brand-primary/20 transition-all active:scale-95">
+                    <Map className="h-5 w-5" />
+                    Acceder al Panel
+                  </Button>
+                </Link>
+              ) : (
+                <>
+                  <Link to="/register">
+                    <Button size="lg" className="h-14 px-8 gap-3 text-lg font-bold bg-brand-primary hover:opacity-95 shadow-xl shadow-brand-primary/20 transition-all active:scale-95">
+                      <Zap className="h-5 w-5 fill-current" />
+                      Comenzar gratis ahora
+                    </Button>
+                  </Link>
+                  <Link to="/login">
+                    <Button variant="outline" size="lg" className="h-14 px-8 text-lg font-semibold rounded-xl border-2 transition-all hover:bg-muted active:scale-95">
+                      Ya tengo cuenta
+                    </Button>
+                  </Link>
+                </>
+              )}
             </div>
           </motion.div>
 

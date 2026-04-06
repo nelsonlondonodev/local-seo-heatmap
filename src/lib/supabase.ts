@@ -17,6 +17,7 @@ export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
     autoRefreshToken: true,
     persistSession: true,
     detectSessionInUrl: true,
-    storageKey: 'local-seo-heatmap-session' // Unificamos clave de sesión
+    storage: typeof window !== 'undefined' ? window.sessionStorage : undefined,
+    storageKey: 'local-seo-heatmap-session'
   },
 });

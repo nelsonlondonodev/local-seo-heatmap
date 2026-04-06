@@ -32,10 +32,12 @@ const queryClient = new QueryClient({
 function PublicOnlyRoute({ children }: { children: React.ReactNode }) {
   const { user, isLoading } = useAuth();
   
-  // If we are loading but have NO user yet, show children optimistically 
-  // to avoid blocking the UI by ghosted session checks.
-  if (isLoading && !user) {
-    return <>{children}</>;
+  if (isLoading) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-background">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-brand-primary border-t-transparent" />
+      </div>
+    );
   }
 
   if (user) {
