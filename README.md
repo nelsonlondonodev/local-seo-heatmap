@@ -23,11 +23,13 @@ Hoy hemos alcanzado hitos críticos para la escalabilidad de **MapRanker Pro**:
 
 1.  **☁️ Cloud Native**: El proyecto ya está conectado 100% a **Supabase Cloud** (Base de Datos y Auth).
 2.  **🛡️ Seguridad Transitoria**: Implementación de **`sessionStorage`** para tokens de sesión, garantizando que el acceso expire al cerrar el navegador/pestaña para mayor "resistencia" y privacidad.
-3.  **✨ UX de Auth Premium**: Nuevo componente **`AuthLoading`** con animaciones de Framer Motion y botones inteligentes en la Landing que detectan el estado de la sesión.
-4.  **🏢 Arquitectura Multi-Tenant**: Soporte nativo para múltiples agencias (**Marca Blanca**) y perfiles de usuario.
-5.  **🕵️ Smart Business Search**: Integración de autocompletado de negocios con Google Places (Simulado) y centrado automático de mapa.
-6.  **📜 Historial de Nube**: Persistencia real de escaneos en base de datos con visualización reactiva.
-7.  **🧱 Jerarquía Z-Index**: Estructura de capas robusta para evitar solapamientos en dispositivos móviles y tablets.
+3.  **🏎️ Motor de Búsqueda Real**: Integración de **Google Places API v1** y **Serper.dev** para escaneo de posicionamiento local en tiempo real.
+4.  **✨ UX de Auth Premium**: Nuevo componente **`AuthLoading`** con animaciones de Framer Motion y botones inteligentes en la Landing que detectan el estado de la sesión.
+5.  **🏢 Arquitectura Multi-Tenant**: Soporte nativo para múltiples agencias (**Marca Blanca**) y perfiles de usuario.
+6.  **🕵️ Smart Business Search**: Autocompletado de negocios real con captura de coordenadas y Place IDs.
+7.  **📜 Historial de Nube**: Persistencia real de escaneos en base de datos con visualización reactiva.
+8.  **🧱 Jerarquía Z-Index**: Estructura de capas robusta para evitar solapamientos en dispositivos móviles y tablets.
+9.  **💅 Logout Premium**: Rediseño de modal de cierre de sesión con estética de alta fidelidad.
 
 > [!TIP]
 > Puedes consultar la documentación detallada de la jerarquía de permisos en [docs/ROLES_AND_HIERARCHY.md](./docs/ROLES_AND_HIERARCHY.md).
