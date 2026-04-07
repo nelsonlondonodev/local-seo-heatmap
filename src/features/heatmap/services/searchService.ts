@@ -38,10 +38,10 @@ export const searchService = {
             },
             body: JSON.stringify({
               q: config.keyword,
-              location: `${point.lat}, ${point.lng}`,
-              // type: "places" is implicit in the endpoint
-              gl: 'co', // TODO: Make these dynamic based on user settings
+              ll: `${point.lat},${point.lng}`,
+              gl: 'es', // Spain (Madrid context)
               hl: 'es',
+              autocorrect: false,
             }),
           });
 
@@ -73,9 +73,10 @@ export const searchService = {
           const rank = businessIndex !== -1 ? businessIndex + 1 : null;
           
           if (rank) {
-            console.log(`[SCAN] ✅ ¡Coincidencia en punto (${point.lat}, ${point.lng})! -> "${config.businessName}" encontrado en pos #${rank}`);
+            console.log(`[SCAN] ✅ ¡Coincidencia! -> "${config.businessName}" en pos #${rank}`);
           } else {
-            console.warn(`[SCAN] ❌ Negocio "${config.businessName}" no encontrado entre los ${placesResults.length} resultados de este punto.`);
+            const firstTitles = placesResults.slice(0, 3).map((p: any) => p.title).join(", ");
+            console.warn(`[SCAN] ❌ "${config.businessName}" no encontrado. Top 3 resultados: [${firstTitles}]`);
           }
 
           return {

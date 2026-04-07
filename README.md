@@ -17,22 +17,32 @@
 
 ---
 
-## 🚀 Estado Actual del Proyecto (White Label MVP)
-
-Hoy hemos alcanzado hitos críticos para la escalabilidad de **MapRanker Pro**:
-
-1.  **☁️ Cloud Native**: El proyecto ya está conectado 100% a **Supabase Cloud** (Base de Datos y Auth).
-2.  **🛡️ Seguridad Transitoria**: Implementación de **`sessionStorage`** para tokens de sesión, garantizando que el acceso expire al cerrar el navegador/pestaña para mayor "resistencia" y privacidad.
-3.  **🏎️ Motor de Búsqueda Real**: Integración de **Google Places API v1** y **Serper.dev** para escaneo de posicionamiento local en tiempo real.
-4.  **✨ UX de Auth Premium**: Nuevo componente **`AuthLoading`** con animaciones de Framer Motion y botones inteligentes en la Landing que detectan el estado de la sesión.
-5.  **🏢 Arquitectura Multi-Tenant**: Soporte nativo para múltiples agencias (**Marca Blanca**) y perfiles de usuario.
-6.  **🕵️ Smart Business Search**: Autocompletado de negocios real con captura de coordenadas y Place IDs.
-7.  **📜 Historial de Nube**: Persistencia real de escaneos en base de datos con visualización reactiva.
-8.  **🧱 Jerarquía Z-Index**: Estructura de capas robusta para evitar solapamientos en dispositivos móviles y tablets.
-9.  **💅 Logout Premium**: Rediseño de modal de cierre de sesión con estética de alta fidelidad.
+10. **🎯 Search Precision (ES)**: Corrección regional de búsqueda configurada para **España (`gl: es`)** y uso del parámetro **`ll`** para geolocalización GPS exacta en Serper API.
+11. **🛡️ Heatmap Robustness**: Blindaje de renderizado contra coordenadas corruptas (`NaN`) y mejora en la lógica de normalización de nombres para un matching de negocios ultra-preciso.
+12. **🩺 Console Diagnostics**: Inyección de logs detallados `[SCAN]` que muestran el Top 3 de resultados encontrados por Google para facilitar el diagnóstico de rankings.
 
 > [!TIP]
 > Puedes consultar la documentación detallada de la jerarquía de permisos en [docs/ROLES_AND_HIERARCHY.md](./docs/ROLES_AND_HIERARCHY.md).
+
+---
+
+## 🚀 Estado Actual del Proyecto (v0.4.5)
+
+Hoy hemos alcanzado hitos críticos para la estabilidad y precisión de **MapRanker Pro**:
+
+1.  **🌍 Regionalización Real**: Escaneo configurado para **España (`gl: es`)** con geolocalización precisa vía coordenadas **`ll`**, eliminando resultados erróneos de otros países.
+2.  **🧠 Smart Matching**: Refactor de la normalización de texto. Ahora el sistema es tolerante a espacios y variaciones de nombre, garantizando que "Bar Restaurante El Mayor" sea detectado correctamente.
+3.  **🎨 Renderizado Seguro**: Implementación de filtros de validación en el mapa para evitar errores de SVG si los datos de coordenadas están incompletos o corruptos.
+4.  **📊 Logs de Diagnóstico**: Nuevo sistema de trazabilidad en consola que muestra los negocios encontrados por punto, permitiendo entender por qué un negocio no rankea en el Top 10.
+5.  **☁️ Cloud Native**: Persistencia 100% operativa en **Supabase Cloud**.
+6.  **🛡️ Seguridad Transitoria**: Implementación de **`sessionStorage`** para tokens de sesión.
+7.  **🏎️ Motor de Búsqueda Real**: Integración de **Serper.dev** para escaneo de posicionamiento local en tiempo real.
+8.  **✨ UX de Auth Premium**: Nuevo componente **`AuthLoading`** y animaciones de alta fidelidad.
+9.  **🏗️ Arquitectura Multi-Tenant**: Soporte para agencias (Marca Blanca).
+10. **🕵️ Smart Business Search**: Autocompletado con captura de coordenadas y Place IDs.
+11. **📜 Historial de Nube**: Historial de escaneos persistente y navegable.
+12. **🧱 Jerarquía Z-Index**: Capas optimizadas para dispositivos móviles.
+
 
 ---
 
