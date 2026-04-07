@@ -129,28 +129,32 @@ export function HeatmapMap({ center, zoom, points, onMapClick }: HeatmapMapProps
         </Marker>
 
         {/* Dynamic points grid */}
-        {points.map((point, index) => {
-          const color = getRankColor(point.rank);
-          return (
-            <CircleMarker
-              key={`${point.lat}-${point.lng}-${index}`}
-              center={[point.lat, point.lng]}
-              radius={isFullscreen ? 14 : 10}
-              pathOptions={{
-                fillColor: color,
-                fillOpacity: 0.8,
-                color: '#ffffff',
-                weight: 1.5,
-              }}
-            >
-              <Tooltip direction="top" offset={[0, -10]} opacity={1}>
-                <div className="text-xs font-semibold">
-                  Rank: {point.rank ?? 'N/A'}
-                </div>
-              </Tooltip>
-            </CircleMarker>
-          );
-        })}
+        {points
+          .filter(p => !isNaN(p.lat) && !isNaN(p.lng))
+          .map((point, index) => {
+            const color = getRankColor(point.rank);
+            const isValidRank = typeof point.rank === 'number' && point.rank !== null;
+            
+            return (
+              <CircleMarker
+                key={`${point.lat}-${point.lng}-${index}`}
+                center={[point.lat, point.lng]}
+                radius={isFullscreen ? 14 : 10}
+                pathOptions={{
+                  fillColor: color,
+                  fillOpacity: isValidRank ? 0.8 : 0.4, // Dim invalid points
+                  color: isValidRank ? '#ffffff' : '#94a3b8',
+                  weight: isValidRank ? 1.5 : 1,
+                }}
+              >
+                <Tooltip direction="top" offset={[0, -10]} opacity={1}>
+                  <div className="text-xs font-semibold">
+                    Rank: {point.rank ?? 'N/A'}
+                  </div>
+                </Tooltip>
+              </CircleMarker>
+            );
+          })}
       </MapContainer>
     </div>
   );

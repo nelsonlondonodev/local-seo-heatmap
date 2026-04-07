@@ -50,26 +50,33 @@ export const searchService = {
           const data = await response.json();
           const placesResults = data.places || [];
           
-          // Función para limpiar texto (quitar tildes y caracteres especiales)
+          // Función para limpiar texto (quitar tildes y normalizar a minúsculas)
           const normalize = (text: string) => 
             text.toLowerCase()
                 .normalize("NFD")
-                .replace(/[\u0300-\u036f]/g, "") // Quita acentos
-                .replace(/[^a-z0-9]/g, "");    // Deja solo letras y números
+                .replace(/[\u0300-\u036f]/g, "") // Quita acentos eñes, etc.
+                .trim();
 
+          const normalizedConfigName = normalize(config.businessName || "");
+          
           const businessIndex = placesResults.findIndex((item: any) => {
             const itemTitle = normalize(item.title || "");
-            const configName = normalize(config.businessName || "");
+            const cidMatch = config.placeId && item.cid && String(config.placeId).includes(String(item.cid));
             
-            const isMatch = itemTitle.includes(configName) || 
-                            configName.includes(itemTitle) ||
-                            (config.placeId && item.cid && config.placeId.includes(item.cid));
+            const isMatch = itemTitle.includes(normalizedConfigName) || 
+                            normalizedConfigName.includes(itemTitle) ||
+                            cidMatch;
 
             return isMatch;
           });
 
           const rank = businessIndex !== -1 ? businessIndex + 1 : null;
-          if (rank) console.log(`[SCAN] ✅ match! punto (${point.lat}, ${point.lng}) -> Posición: ${rank}`);
+          
+          if (rank) {
+            console.log(`[SCAN] ✅ ¡Coincidencia en punto (${point.lat}, ${point.lng})! -> "${config.businessName}" encontrado en pos #${rank}`);
+          } else {
+            console.warn(`[SCAN] ❌ Negocio "${config.businessName}" no encontrado entre los ${placesResults.length} resultados de este punto.`);
+          }
 
           return {
             ...point,
