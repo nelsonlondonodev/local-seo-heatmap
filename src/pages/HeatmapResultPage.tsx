@@ -1,6 +1,6 @@
 import { useLocation, useNavigate, Navigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { MapPin, Search, Calendar, Grid3X3, ArrowLeft, Plus } from 'lucide-react';
+import { MapPin, Search, Calendar, Grid3X3, ArrowLeft, Plus, Printer, FileDown } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { HeatmapMap, HeatmapLegend } from '@/features/heatmap';
@@ -60,7 +60,21 @@ export function HeatmapResultPage() {
 
   return (
     <motion.div variants={containerVariants} initial="hidden" animate="visible" className="space-y-6">
-      {/* Header */}
+      {/* Print-only Header */}
+      <div className="print-only mb-8 border-b pb-6">
+        <div className="flex justify-between items-end">
+          <div>
+            <h1 className="text-3xl font-extrabold text-primary">MapRanker Pro</h1>
+            <p className="text-sm text-muted-foreground uppercase tracking-widest font-bold">Informe de Posicionamiento Local</p>
+          </div>
+          <div className="text-right">
+            <p className="text-sm font-medium">Analizado por Nelson Londoño SEO</p>
+            <p className="text-xs text-muted-foreground">{formatDate(heatmap.created_at)}</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Header UI */}
       <motion.div variants={itemVariants} className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <div className="flex items-center gap-2 mb-1">
@@ -77,7 +91,11 @@ export function HeatmapResultPage() {
         </div>
         <div className="flex gap-2">
           <Button variant="outline" onClick={() => navigate('/history')}>
-            Volver al Historial
+            Volver
+          </Button>
+          <Button variant="secondary" onClick={() => window.print()} className="gap-2 font-semibold">
+            <Printer className="h-4 w-4" />
+            Imprimir Reporte
           </Button>
           <Button onClick={() => navigate('/dashboard')} className="gap-2 focus:ring-primary/20 transition-all font-bold">
             <Plus className="h-4 w-4" />

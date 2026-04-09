@@ -141,3 +141,81 @@
     @apply font-sans;
     }
 }
+
+/** 
+ * SEO Report Print Optimization
+ */
+@media print {
+  /* Hide UI elements unnecessary for the report */
+  nav, 
+  aside, 
+  header, 
+  footer,
+  button,
+  .no-print {
+    display: none !important;
+  }
+
+  /* Force background colors and colors to print */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  body {
+    background-color: white !important;
+    color: black !important;
+    font-size: 12pt;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Reset layout constraints for A4 */
+  .container, 
+  main, 
+  .space-y-6 {
+    width: 100% !important;
+    max-width: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* Ensure the map and cards look good */
+  .lg\:grid-cols-3 {
+    display: block !important;
+  }
+
+  .lg\:col-span-1, 
+  .lg\:col-span-2 {
+    width: 100% !important;
+    margin-bottom: 20px;
+  }
+
+  .min-h-\[600px\] {
+    min-h: auto !important;
+    height: 500px !important;
+  }
+
+  .rounded-lg, .rounded-xl {
+    border-radius: 4px !important;
+  }
+
+  .border {
+    border: 1px solid #eee !important;
+  }
+
+  /* Specific tweaks for Leaflet map visibility in print */
+  .leaflet-container {
+    height: 100% !important;
+    width: 100% !important;
+  }
+
+  /* Add a "Report Metadata" section visible only in print */
+  .print-only {
+    display: block !important;
+  }
+}
+
+.print-only {
+  display: none;
+}
