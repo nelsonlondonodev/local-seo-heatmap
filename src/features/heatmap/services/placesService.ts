@@ -73,8 +73,18 @@ export const placesService = {
 
       const data = await response.json();
       
+      // Define a loose but strict-friendly type for the Google API response chunk we care about
+      interface GooglePlaceResult {
+        id: string;
+        displayName?: { text: string };
+        formattedAddress?: string;
+        location?: { latitude: number; longitude: number };
+        rating?: number;
+        userRatingCount?: number;
+      }
+
       // Transform V1 response to our domain model
-      return (data.places || []).map((place: any) => ({
+      return (data.places || []).map((place: GooglePlaceResult) => ({
         placeId: place.id,
         name: place.displayName?.text || '',
         address: place.formattedAddress || '',

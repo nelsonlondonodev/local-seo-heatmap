@@ -23,7 +23,7 @@ const itemVariants = {
   visible: { opacity: 1, y: 0 },
 };
 
-function StatRow({ icon: Icon, label, value, colorClass }: { icon: any, label: string, value: string, colorClass: string }) {
+function StatRow({ icon: Icon, label, value, colorClass }: { icon: React.ElementType, label: string, value: string, colorClass: string }) {
   return (
     <div className="flex gap-3">
       <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${colorClass}`}>
