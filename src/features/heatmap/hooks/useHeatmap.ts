@@ -52,6 +52,10 @@ export function useHeatmap() {
     centerLng: center[1],
   }), [keyword, businessName, placeId, gridSize, radiusKm, center]);
 
+  const estimatedCost = useMemo(() => {
+    return points.length;
+  }, [points]);
+
   // 5. Side Effects
   
   // A. [Removed] Load from History - This is now handled by HeatmapResultPage
@@ -141,6 +145,7 @@ export function useHeatmap() {
     points,
     isLoading,
     scanProgress,
+    estimatedCost,
     isFormValid,
     handleMapClick,
     handleResetCenter,
