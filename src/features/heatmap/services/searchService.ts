@@ -45,7 +45,7 @@ async function scanSinglePoint(
   config: HeatmapConfig
 ): Promise<GridPoint> {
   try {
-    const response = await fetch('https://google.serper.dev/places', {
+    const response = await fetch('https://google.serper.dev/maps', {
       method: 'POST',
       headers: {
         'X-API-KEY': SERPER_API_KEY,
@@ -54,7 +54,6 @@ async function scanSinglePoint(
       body: JSON.stringify({
         q: config.keyword,
         ll: `@${point.lat},${point.lng},15z`,
-        location: 'Chía, Cundinamarca, Colombia',
         gl: 'co',
         hl: 'es',
         autocorrect: false,
