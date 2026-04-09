@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { MapContainer, TileLayer, CircleMarker, useMapEvents, Marker, Tooltip, useMap } from 'react-leaflet';
+import { MapContainer, TileLayer, useMapEvents, Marker, Tooltip, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { Maximize2, Minimize2, Crosshair, MapPin } from 'lucide-react';
@@ -28,6 +28,48 @@ interface HeatmapMapProps {
 }
 
 /**
+ * Creates a Leaflet DivIcon that renders a colored circle with the rank number inside.
+ */
+function createRankIcon(rank: number | null, isFullscreen: boolean): L.DivIcon {
+  const size = isFullscreen ? 32 : 24;
+  const fontSize = isFullscreen ? 12 : 10;
+  const color = getRankColor(rank);
+  const isValidRank = typeof rank === 'number' && rank !== null;
+  const displayText = isValidRank ? String(rank) : '–';
+  const opacity = isValidRank ? 0.9 : 0.45;
+  const borderColor = isValidRank ? '#ffffff' : '#94a3b8';
+  const borderWidth = isValidRank ? 2 : 1;
+  const textColor = isValidRank ? '#ffffff' : '#cbd5e1';
+  const shadow = isValidRank ? '0 2px 6px rgba(0,0,0,0.35)' : 'none';
+
+  return L.divIcon({
+    className: '', // Remove default Leaflet class to avoid unwanted styles
+    iconSize: [size, size],
+    iconAnchor: [size / 2, size / 2],
+    html: `
+      <div style="
+        width: ${size}px;
+        height: ${size}px;
+        border-radius: 50%;
+        background-color: ${color};
+        opacity: ${opacity};
+        border: ${borderWidth}px solid ${borderColor};
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: ${fontSize}px;
+        font-weight: 700;
+        color: ${textColor};
+        line-height: 1;
+        box-shadow: ${shadow};
+        font-family: 'Inter', system-ui, sans-serif;
+        cursor: pointer;
+      ">${displayText}</div>
+    `,
+  });
+}
+
+/**
  * Syncs the map view when the 'center' prop changes.
  */
 function ChangeView({ center }: { center: [number, number] }) {
@@ -52,7 +94,7 @@ function MapEvents({ onMapClick }: { onMapClick?: (lat: number, lng: number) => 
 
 /**
  * HeatmapMap Component
- * Visualizes geographic data using Leaflet. Uses CircleMarkers for rank representation.
+ * Visualizes geographic data using Leaflet with DivIcon markers for rank display.
  */
 export function HeatmapMap({ center, zoom, points, onMapClick }: HeatmapMapProps) {
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -128,33 +170,22 @@ export function HeatmapMap({ center, zoom, points, onMapClick }: HeatmapMapProps
           </Tooltip>
         </Marker>
 
-        {/* Dynamic points grid */}
+        {/* Dynamic points grid with rank numbers */}
         {points
           .filter(p => !isNaN(p.lat) && !isNaN(p.lng))
-          .map((point, index) => {
-            const color = getRankColor(point.rank);
-            const isValidRank = typeof point.rank === 'number' && point.rank !== null;
-            
-            return (
-              <CircleMarker
-                key={`${point.lat}-${point.lng}-${index}`}
-                center={[point.lat, point.lng]}
-                radius={isFullscreen ? 14 : 10}
-                pathOptions={{
-                  fillColor: color,
-                  fillOpacity: isValidRank ? 0.8 : 0.4, // Dim invalid points
-                  color: isValidRank ? '#ffffff' : '#94a3b8',
-                  weight: isValidRank ? 1.5 : 1,
-                }}
-              >
-                <Tooltip direction="top" offset={[0, -10]} opacity={1}>
-                  <div className="text-xs font-semibold">
-                    Rank: {point.rank ?? 'N/A'}
-                  </div>
-                </Tooltip>
-              </CircleMarker>
-            );
-          })}
+          .map((point, index) => (
+            <Marker
+              key={`${point.lat}-${point.lng}-${index}`}
+              position={[point.lat, point.lng]}
+              icon={createRankIcon(point.rank, isFullscreen)}
+            >
+              <Tooltip direction="top" offset={[0, -14]} opacity={1}>
+                <div className="text-xs font-semibold">
+                  Rank: {point.rank ?? 'N/A'}
+                </div>
+              </Tooltip>
+            </Marker>
+          ))}
       </MapContainer>
     </div>
   );
