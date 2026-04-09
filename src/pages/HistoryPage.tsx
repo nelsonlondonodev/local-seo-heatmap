@@ -60,8 +60,8 @@ export function HistoryPage() {
   };
 
   const handleViewDetails = (entry: HeatmapRecord) => {
-    // Navigate to dashboard passing the heatmap data in the state
-    navigate('/dashboard', { state: { heatmap: entry } });
+    // Navigate to the viewing page passing the heatmap data in the state
+    navigate('/result', { state: { heatmap: entry } });
   };
 
   return (

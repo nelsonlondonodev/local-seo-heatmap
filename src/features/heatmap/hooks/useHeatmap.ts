@@ -54,25 +54,7 @@ export function useHeatmap() {
 
   // 5. Side Effects
   
-  // A. Load from History
-  useEffect(() => {
-    const state = location.state as { heatmap?: Database['public']['Tables']['heatmaps']['Row'] } | null;
-    const historicalData = state?.heatmap;
-    
-    if (historicalData && !hasLoadedHistory.current) {
-      hasLoadedHistory.current = true; // LOCK: Prevent grid sync from overwriting
-      
-      setKeyword(historicalData.keyword || '');
-      setBusinessName(historicalData.business_name || '');
-      setPlaceId(historicalData.place_id || '');
-      setGridSize(historicalData.grid_size as GridSize);
-      setRadiusKm(Number(historicalData.radius_km));
-      setCenter([Number(historicalData.center_lat), Number(historicalData.center_lng)]);
-      setPoints((historicalData.points as unknown as GridPoint[]) || []);
-
-      toast.info(`Cargado: ${historicalData.keyword}`);
-    }
-  }, [location.state, navigate, location.pathname]);
+  // A. [Removed] Load from History - This is now handled by HeatmapResultPage
 
   // B. Sync Grid Points
   useEffect(() => {

@@ -13,6 +13,7 @@ import { LoginPage } from '@/pages/LoginPage';
 import { RegisterPage } from '@/pages/RegisterPage';
 import { DashboardPage } from '@/pages/DashboardPage';
 import { HistoryPage } from '@/pages/HistoryPage';
+import { HeatmapResultPage } from '@/pages/HeatmapResultPage';
 import { SettingsPage } from '@/pages/SettingsPage';
 import './index.css';
 
@@ -71,6 +72,7 @@ const router = createBrowserRouter([
     children: [
       { path: '/dashboard', element: <DashboardPage /> },
       { path: '/history', element: <HistoryPage /> },
+      { path: '/result', element: <HeatmapResultPage /> },
       { path: '/settings', element: <SettingsPage /> },
     ],
   },
