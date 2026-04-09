@@ -53,7 +53,8 @@ async function scanSinglePoint(
       },
       body: JSON.stringify({
         q: config.keyword,
-        ll: `${point.lat},${point.lng}`,
+        ll: `@${point.lat},${point.lng},15z`,
+        location: 'Chía, Cundinamarca, Colombia',
         gl: 'co',
         hl: 'es',
         autocorrect: false,
