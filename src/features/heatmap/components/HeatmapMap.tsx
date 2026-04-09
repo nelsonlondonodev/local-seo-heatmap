@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { MapContainer, TileLayer, useMapEvents, Marker, Tooltip, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -84,7 +84,21 @@ function ChangeView({ center }: { center: [number, number] }) {
 }
 
 /**
- * ClickHandler component to capture map events and notify the parent
+ * Captures the Leaflet map instance for parent component control
+ */
+function MapInstanceCapture({ mapRef }: { mapRef: React.MutableRefObject<L.Map | null> }) {
+  const map = useMap();
+  useEffect(() => {
+    mapRef.current = map;
+    return () => {
+      mapRef.current = null;
+    };
+  }, [map, mapRef]);
+  return null;
+}
+
+/**
+ * MapEvents component to capture map events and notify the parent
  */
 function MapEvents({ onMapClick }: { onMapClick?: (lat: number, lng: number) => void }) {
   useMapEvents({
@@ -101,28 +115,63 @@ function MapEvents({ onMapClick }: { onMapClick?: (lat: number, lng: number) => 
  */
 export function HeatmapMap({ center, zoom, points, onMapClick }: HeatmapMapProps) {
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const mapRef = useRef<L.Map | null>(null);
 
-  // Keyboard shortcut for ESC to exit fullscreen
+  // Sync state with native fullscreen changes
   useEffect(() => {
-    const handleEsc = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setIsFullscreen(false);
+    const handleFullscreenChange = () => {
+      const isNowFull = !!document.fullscreenElement;
+      setIsFullscreen(isNowFull);
+      
+      // Critical: Tell Leaflet to recalculate its size after the transition
+      setTimeout(() => {
+        if (mapRef.current) {
+          mapRef.current.invalidateSize();
+        }
+      }, 100);
     };
-    window.addEventListener('keydown', handleEsc);
-    return () => window.removeEventListener('keydown', handleEsc);
+    
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
   }, []);
 
+  const toggleFullscreen = async () => {
+    try {
+      if (!document.fullscreenElement) {
+        await containerRef.current?.requestFullscreen();
+      } else {
+        await document.exitFullscreen();
+      }
+    } catch (err) {
+      console.error("Error toggling fullscreen", err);
+    }
+  };
+
+  const handleRecenter = () => {
+    if (mapRef.current) {
+      mapRef.current.flyTo(center, zoom || 13, {
+        duration: 1.5,
+        easeLinearity: 0.25
+      });
+    }
+  };
+
   return (
-    <div className={cn(
-      "relative h-full w-full overflow-hidden rounded-lg border border-border bg-muted/20 transition-all duration-300 shadow-sm",
-      isFullscreen ? "fixed inset-0 z-[4000] rounded-none border-none animate-in fade-in zoom-in duration-300" : "h-full w-full"
-    )}>
+    <div 
+      ref={containerRef}
+      className={cn(
+        "relative h-full w-full overflow-hidden rounded-lg border border-border bg-background transition-all duration-300 shadow-sm",
+        isFullscreen ? "h-screen w-screen" : ""
+      )}
+    >
       {/* MAP CONTROLS OVERLAY */}
       <div className="absolute right-4 top-4 z-[1000] flex flex-col gap-2">
         <Button 
           variant="secondary" 
           size="icon" 
           className="h-10 w-10 bg-background/90 backdrop-blur-sm shadow-md hover:bg-background border border-border"
-          onClick={() => setIsFullscreen(!isFullscreen)}
+          onClick={toggleFullscreen}
           title={isFullscreen ? "Salir de pantalla completa" : "Pantalla completa"}
         >
           {isFullscreen ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
@@ -131,10 +180,7 @@ export function HeatmapMap({ center, zoom, points, onMapClick }: HeatmapMapProps
           variant="secondary" 
           size="icon" 
           className="h-10 w-10 bg-background/90 backdrop-blur-sm shadow-md hover:bg-background border border-border"
-          onClick={() => {
-            // Force Fly to center via a workaround or direct center re-sync
-            onMapClick?.(center[0], center[1]);
-          }}
+          onClick={handleRecenter}
           title="Recentrar en el negocio"
         >
           <Crosshair className="h-4 w-4" />
@@ -155,6 +201,7 @@ export function HeatmapMap({ center, zoom, points, onMapClick }: HeatmapMapProps
         scrollWheelZoom={true}
         zoomControl={false} // We can hide default zoom control to look cleaner
       >
+        <MapInstanceCapture mapRef={mapRef} />
         <ChangeView center={center} />
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
