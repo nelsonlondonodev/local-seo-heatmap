@@ -156,6 +156,13 @@
     display: none !important;
   }
 
+  /* NEW: Force containers to allow full content visibility without scrollbars */
+  html, body, #root, #root > div, main {
+    height: auto !important;
+    overflow: visible !important;
+    position: static !important;
+  }
+
   /* Force background colors and colors to print */
   * {
     -webkit-print-color-adjust: exact !important;
@@ -165,7 +172,7 @@
   body {
     background-color: white !important;
     color: black !important;
-    font-size: 12pt;
+    font-size: 10.5pt; /* Slightly smaller */
     margin: 0;
     padding: 0;
   }
@@ -178,36 +185,70 @@
     max-width: none !important;
     padding: 0 !important;
     margin: 0 !important;
+    gap: 0.75rem !important; /* Smaller gaps */
   }
 
-  /* Ensure the map and cards look good */
+  /* Compact the cards padding */
+  .p-6, .p-4 {
+    padding: 12px !important;
+  }
+
+  .gap-6, .gap-4 {
+    gap: 10px !important;
+  }
+
+  /* Layout reorganization for print */
   .lg\:grid-cols-3 {
-    display: block !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  /* Put Stats Side by Side to save space */
+  .grid.grid-cols-1.sm\:grid-cols-2.gap-4 {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 10px !important;
   }
 
   .lg\:col-span-1, 
   .lg\:col-span-2 {
     width: 100% !important;
-    margin-bottom: 20px;
+    margin-bottom: 5px;
   }
 
-  .min-h-\[600px\] {
-    min-h: auto !important;
-    height: 500px !important;
+  /* Prevent elements from being cut in half across pages */
+  .rounded-lg, .rounded-xl, .border, Card, .Card, .card {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+
+  /* Optimized Map Height for A4 Portrait */
+  .min-h-\[600px\], 
+  .h-full.min-h-\[600px\] {
+    min-height: auto !important;
+    height: 380px !important; 
   }
 
   .rounded-lg, .rounded-xl {
-    border-radius: 4px !important;
+    border-radius: 6px !important;
   }
 
   .border {
-    border: 1px solid #eee !important;
+    border: 1px solid #e2e8f0 !important;
   }
 
   /* Specific tweaks for Leaflet map visibility in print */
   .leaflet-container {
     height: 100% !important;
     width: 100% !important;
+    z-index: 1 !important;
+  }
+
+  /* Hide the zoom/fullscreen controls on the map during print */
+  .leaflet-control-zoom,
+  .leaflet-control-attribution,
+  .absolute.right-4.top-4.z-\[1000\] {
+    display: none !important;
   }
 
   /* Add a "Report Metadata" section visible only in print */
