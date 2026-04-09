@@ -35,7 +35,7 @@ function createRankIcon(rank: number | null, isFullscreen: boolean): L.DivIcon {
   const fontSize = isFullscreen ? 12 : 10;
   const color = getRankColor(rank);
   const isValidRank = typeof rank === 'number' && rank !== null;
-  const displayText = isValidRank ? String(rank) : '–';
+  const displayText = isValidRank ? String(rank) : '20+';
   const opacity = isValidRank ? 0.9 : 0.7;
   const borderColor = isValidRank ? '#ffffff' : '#94a3b8';
   const borderWidth = isValidRank ? 2 : 1.5;

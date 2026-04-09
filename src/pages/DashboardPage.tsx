@@ -238,8 +238,8 @@ export function DashboardPage() {
                       { color: '#facc15', label: '#4-6' },
                       { color: '#f97316', label: '#7-9' },
                       { color: '#dc2626', label: '#10-15' },
-                      { color: '#7f1d1d', label: '16+' },
-                      { color: '#374151', label: 'N/A' },
+                      { color: '#7f1d1d', label: '16-20' },
+                      { color: '#374151', label: '20+' },
                     ].map((item) => (
                       <div key={item.label} className="flex items-center gap-1.5">
                         <div
