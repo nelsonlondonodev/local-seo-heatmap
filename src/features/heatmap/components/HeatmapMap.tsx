@@ -36,11 +36,11 @@ function createRankIcon(rank: number | null, isFullscreen: boolean): L.DivIcon {
   const color = getRankColor(rank);
   const isValidRank = typeof rank === 'number' && rank !== null;
   const displayText = isValidRank ? String(rank) : '–';
-  const opacity = isValidRank ? 0.9 : 0.45;
+  const opacity = isValidRank ? 0.9 : 0.7;
   const borderColor = isValidRank ? '#ffffff' : '#94a3b8';
-  const borderWidth = isValidRank ? 2 : 1;
-  const textColor = isValidRank ? '#ffffff' : '#cbd5e1';
-  const shadow = isValidRank ? '0 2px 6px rgba(0,0,0,0.35)' : 'none';
+  const borderWidth = isValidRank ? 2 : 1.5;
+  const textColor = isValidRank ? '#ffffff' : '#e2e8f0';
+  const shadow = isValidRank ? '0 2px 6px rgba(0,0,0,0.35)' : '0 1px 4px rgba(0,0,0,0.25)';
 
   return L.divIcon({
     className: '', // Remove default Leaflet class to avoid unwanted styles

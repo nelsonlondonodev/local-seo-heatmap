@@ -52,10 +52,10 @@ export function getRankColor(rank: number | null): string {
   return colorEntry?.color ?? '#7f1d1d';
 }
 
-/** Map default center (Madrid, Spain) */
+/** Map default center (Chía, Colombia) */
 export const MAP_DEFAULT_CENTER = {
-  lat: 40.4168,
-  lng: -3.7038,
+  lat: 4.8634,
+  lng: -74.0339,
   zoom: 13,
 } as const;
 
