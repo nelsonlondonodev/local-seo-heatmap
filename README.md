@@ -26,23 +26,16 @@
 
 ---
 
-## 🚀 Estado Actual del Proyecto (v0.4.5)
+## 🚀 Estado Actual del Proyecto (v0.5.0)
 
-Hoy hemos alcanzado hitos críticos para la estabilidad y precisión de **MapRanker Pro**:
+Hoy hemos transformado la herramienta en una plataforma lista para el uso comercial y prospección masiva:
 
-1.  **🌍 Regionalización Real**: Escaneo configurado para **España (`gl: es`)** con geolocalización precisa vía coordenadas **`ll`**, eliminando resultados erróneos de otros países.
-2.  **🧠 Smart Matching**: Refactor de la normalización de texto. Ahora el sistema es tolerante a espacios y variaciones de nombre, garantizando que "Bar Restaurante El Mayor" sea detectado correctamente.
-3.  **🎨 Renderizado Seguro**: Implementación de filtros de validación en el mapa para evitar errores de SVG si los datos de coordenadas están incompletos o corruptos.
-4.  **📊 Logs de Diagnóstico**: Nuevo sistema de trazabilidad en consola que muestra los negocios encontrados por punto, permitiendo entender por qué un negocio no rankea en el Top 10.
-5.  **☁️ Cloud Native**: Persistencia 100% operativa en **Supabase Cloud**.
-6.  **🛡️ Seguridad Transitoria**: Implementación de **`sessionStorage`** para tokens de sesión.
-7.  **🏎️ Motor de Búsqueda Real**: Integración de **Serper.dev** para escaneo de posicionamiento local en tiempo real.
-8.  **✨ UX de Auth Premium**: Nuevo componente **`AuthLoading`** y animaciones de alta fidelidad.
-9.  **🏗️ Arquitectura Multi-Tenant**: Soporte para agencias (Marca Blanca).
-10. **🕵️ Smart Business Search**: Autocompletado con captura de coordenadas y Place IDs.
-11. **📜 Historial de Nube**: Historial de escaneos persistente y navegable.
-12. **🧱 Jerarquía Z-Index**: Capas optimizadas para dispositivos móviles.
-
+1.  **🏗️ Arquitectura de Vistas Desacoplada**: Separación entre Dashboard y Vista de Resultados.
+2.  **📄 Generación de Informes PDF**: Motor de exportación profesional para ventas.
+3.  **💰 Transparencia de Costes**: Indicador de consumo de créditos en tiempo real.
+4.  **🗺️ Control del Mapa Maestro**: API Fullscreen nativa y controles de recentrado precisos.
+5.  **🧪 TypeScript Strict Mode**: Eliminación total de tipos `any`.
+6.  **🌍 Búsqueda de Alta Precisión**: Integración definitiva con el endpoint `/maps` de Serper.
 
 ---
 
@@ -224,13 +217,15 @@ VITE_SUPABASE_ANON_KEY=tu_anon_key_de_supabase
 - **Sesiones de Alta Resistencia** — Configuración de seguridad para obligar al re-logueo tras cerrar la sesión del navegador.
 - **Botones de Auth Dinámicos** — La Landing detecta si ya estás logueado y cambia "Iniciar Sesión" por "Ir al Dashboard" automáticamente.
 - **Feedback Visual Premium** — Interfaz de carga unificada con animaciones de alta fidelidad para todos los estados de autenticación.
+- **Exportación de Reportes** — Generación de PDF optimizado para ventas en frío y prospección con diseño SEO profesional.
+- **Calculadora de Créditos** — Visualización dinámica del coste de API antes de ejecutar el análisis.
 
-### 🔲 Pendiente de Implementar
+### 🔲 Próximas Mejoras (Roadmap de Negocio)
 
-- **Motor de búsqueda REAL** — Sustituir el simulador por llamadas reales a Google Places API / Edge Functions.
-- **Migración a Base de Datos** — Mover el historial de `localStorage` a las tablas de Supabase (SQL ya preparado).
-- **Página de Historial Visual** — Mostrar los resultados guardados en una lista interactiva.
-- **Sistema de planes progresivo** — Lógica de restricciones por plan (free/pro/enterprise).
+1.  **Punto 2: Marca Blanca / White Label** — Permitir a Nelson o a sus agencias subir su propio logotipo y nombre comercial para los reportes PDF.
+2.  **Punto 3: Enlace Público Seguro** — Generar URLs temporales para que el cliente final pueda ver el mapa interactivo en su móvil sin entrar a la app.
+3.  **Punto 4: Historial con Filtros Avanzados** — Búsqueda por palabra clave o negocio dentro del historial de Supabase.
+4.  **Punto 5: Panel de Créditos por Usuario** — Controlar cuántos créditos ha gastado cada comercial en el equipo de ventas.
 
 ---
 
