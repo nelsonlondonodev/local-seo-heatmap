@@ -25,8 +25,8 @@ export const GRID_OPTIONS = [
   { value: '7x7' as const, label: '7×7', points: 49, description: 'Detallado' },
 ] as const;
 
-/** Cost in credits per analysis point */
-export const COST_PER_POINT = 1;
+/** Cost in credits per analysis point (Serper /maps endpoint costs 3 credits) */
+export const COST_PER_POINT = 3;
 
 /** Radius options in kilometers */
 export const RADIUS_OPTIONS = [1, 2, 3, 5, 10, 15, 20] as const;

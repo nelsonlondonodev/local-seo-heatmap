@@ -1,7 +1,7 @@
 import { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
-import { MAP_DEFAULT_CENTER } from '@/config/constants';
+import { MAP_DEFAULT_CENTER, COST_PER_POINT } from '@/config/constants';
 import { generateGridPoints } from '../utils/grid';
 import { useHeatmaps } from '@/hooks';
 import { searchService } from '../services/searchService';
@@ -53,7 +53,7 @@ export function useHeatmap() {
   }), [keyword, businessName, placeId, gridSize, radiusKm, center]);
 
   const estimatedCost = useMemo(() => {
-    return points.length;
+    return points.length * COST_PER_POINT;
   }, [points]);
 
   // 5. Side Effects
