@@ -3,6 +3,7 @@ export { HeatmapMap } from './components/HeatmapMap';
 export { BusinessSearch } from './components/BusinessSearch';
 export { ScanProgress } from './components/ScanProgress';
 export { HeatmapLegend } from './components/HeatmapLegend';
+export { CostIndicator } from './components/CostIndicator';
 export { useHeatmap } from './hooks/useHeatmap';
 export type { PlaceSuggestion } from './services/placesService';
 export * from './services/placesService';
