@@ -33,6 +33,7 @@ export function useHeatmap() {
   ]);
   const [points, setPoints] = useState<GridPoint[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [scanProgress, setScanProgress] = useState<{ current: number; total: number } | null>(null);
 
   // 4. Derived State (Computed values)
   const isFormValid = useMemo(() => {
@@ -99,9 +100,14 @@ export function useHeatmap() {
 
     try {
       setIsLoading(true);
+      setScanProgress({ current: 0, total: 0 });
       toast.loading('Iniciando análisis...', { id: 'search-exec' });
       
-      const result = await searchService.executeSearch(currentConfig, points);
+      const result = await searchService.executeSearch(
+        currentConfig,
+        points,
+        (current, total) => setScanProgress({ current, total })
+      );
       
       // Save to Cloud
       await saveHeatmap(result);
@@ -113,6 +119,7 @@ export function useHeatmap() {
       toast.error('Error al ejecutar el análisis', { id: 'search-exec' });
     } finally {
       setIsLoading(false);
+      setScanProgress(null);
     }
   }, [isFormValid, currentConfig, points, saveHeatmap]);
 
@@ -151,6 +158,7 @@ export function useHeatmap() {
     center,
     points,
     isLoading,
+    scanProgress,
     isFormValid,
     handleMapClick,
     handleResetCenter,

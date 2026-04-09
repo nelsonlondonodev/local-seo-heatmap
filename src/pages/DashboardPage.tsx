@@ -197,6 +197,35 @@ export function DashboardPage() {
                 onMapClick={heatmap.handleMapClick}
               />
 
+              {/* Scan Progress Overlay */}
+              {heatmap.isLoading && (
+                <div className="absolute inset-0 z-[1500] flex items-center justify-center bg-background/60 backdrop-blur-sm">
+                  <div className="flex flex-col items-center gap-4 rounded-2xl border border-border bg-background/95 p-8 shadow-2xl">
+                    <Loader2 className="h-10 w-10 animate-spin text-primary" />
+                    <div className="text-center space-y-1">
+                      <p className="text-sm font-bold text-foreground">
+                        Escaneando posiciones...
+                      </p>
+                      {heatmap.scanProgress && heatmap.scanProgress.total > 0 && (
+                        <>
+                          <p className="text-xs text-muted-foreground">
+                            Lote {heatmap.scanProgress.current} de {heatmap.scanProgress.total}
+                          </p>
+                          <div className="mt-2 h-1.5 w-48 overflow-hidden rounded-full bg-muted">
+                            <div
+                              className="h-full rounded-full bg-primary transition-all duration-500 ease-out"
+                              style={{
+                                width: `${(heatmap.scanProgress.current / heatmap.scanProgress.total) * 100}%`,
+                              }}
+                            />
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
+
               {/* Color Legend Overlay */}
               <div className="absolute bottom-4 left-4 z-[1000] rounded-md border border-border bg-background/90 p-3 shadow-sm backdrop-blur-sm">
                 <div className="flex flex-col gap-2">

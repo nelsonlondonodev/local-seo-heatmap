@@ -111,10 +111,12 @@ async function scanSinglePoint(
 export const searchService = {
   /**
    * Executes ranking search for each grid point using throttled batches.
+   * Accepts an optional onProgress callback to report batch-level progress.
    */
   async executeSearch(
     config: HeatmapConfig,
-    points: GridPoint[]
+    points: GridPoint[],
+    onProgress?: (current: number, total: number) => void
   ): Promise<HeatmapResult> {
     // Fallback: simulated data when no API key is configured
     if (!SERPER_API_KEY || SERPER_API_KEY === 'your_serper_api_key_here') {
@@ -150,6 +152,9 @@ export const searchService = {
           batch.map((point) => scanSinglePoint(point, config))
         );
         results.push(...batchResults);
+
+        // Report progress to the UI
+        onProgress?.(i + 1, batches.length);
 
         // Pause between batches to respect rate limits (skip after last batch)
         if (i < batches.length - 1) {
