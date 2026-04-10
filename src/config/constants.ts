@@ -31,28 +31,23 @@ export const COST_PER_POINT = 3;
 /** Radius options in kilometers */
 export const RADIUS_OPTIONS = [1, 2, 3, 5, 10, 15, 20] as const;
 
-/** Color scale for ranking visualization on the heatmap */
+/** Color scale for ranking visualization on the heatmap (Commercial Impact Edition) */
 export const RANK_COLORS = [
-  { rank: 1, color: '#22c55e', label: '#1 - Excelente' },
-  { rank: 2, color: '#4ade80', label: '#2' },
-  { rank: 3, color: '#86efac', label: '#3' },
-  { rank: 4, color: '#fde047', label: '#4' },
-  { rank: 5, color: '#facc15', label: '#5' },
-  { rank: 6, color: '#f59e0b', label: '#6' },
-  { rank: 7, color: '#fb923c', label: '#7' },
-  { rank: 8, color: '#f97316', label: '#8' },
-  { rank: 9, color: '#ef4444', label: '#9' },
-  { rank: 10, color: '#dc2626', label: '#10' },
-  { rank: 11, color: '#b91c1c', label: '#11-15' },
-  { rank: 16, color: '#991b1b', label: '#16-20' },
-  { rank: 20, color: '#7f1d1d', label: '20+ / No encontrado' },
+  { rank: 1, color: '#22c55e', label: '1 - Excelente' },
+  { rank: 2, color: '#16a34a', label: '2' },
+  { rank: 3, color: '#15803d', label: '3' },
+  { rank: 4, color: '#eab308', label: '4-5 (Alarma)' },
+  { rank: 6, color: '#ea580c', label: '6-9 (Urgente)' },
+  { rank: 10, color: '#dc2626', label: '10-14 (Crítico)' },
+  { rank: 15, color: '#991b1b', label: '15-19 (Invisibilidad)' },
+  { rank: 20, color: '#450a0a', label: '20+ / No Encontrado' },
 ] as const;
 
 /** Get the appropriate color for a given rank */
 export function getRankColor(rank: number | null): string {
-  if (rank === null) return '#374151'; // gray-700
+  if (rank === null || rank === 0) return '#450a0a'; // Deep red / Out of results
   const colorEntry = [...RANK_COLORS].reverse().find((c) => rank >= c.rank);
-  return colorEntry?.color ?? '#7f1d1d';
+  return colorEntry?.color ?? '#450a0a';
 }
 
 /** Map default center (Chía, Colombia) */
