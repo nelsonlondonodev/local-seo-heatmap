@@ -87,7 +87,6 @@ export function useHeatmap() {
     try {
       setIsLoading(true);
       setScanProgress({ current: 0, total: 0 });
-      toast.loading('Iniciando análisis...', { id: 'search-exec' });
       
       const result = await searchService.executeSearch(
         currentConfig,
@@ -99,10 +98,9 @@ export function useHeatmap() {
       await saveHeatmap(result);
       
       setPoints(result.points);
-      toast.success('Análisis completado', { id: 'search-exec' });
     } catch (error) {
       console.error('Heatmap analysis failed', error);
-      toast.error('Error al ejecutar el análisis', { id: 'search-exec' });
+      toast.error('Error al ejecutar el análisis');
     } finally {
       setIsLoading(false);
       setScanProgress(null);
