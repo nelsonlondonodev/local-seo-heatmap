@@ -172,6 +172,7 @@ export function HeatmapResultPage() {
                 center={center}
                 zoom={13}
                 points={points}
+                businessName={heatmap.business_name}
                 // View-only mode implies no click handler needed
               />
 

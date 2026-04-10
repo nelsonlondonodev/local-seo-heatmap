@@ -196,6 +196,7 @@ export function DashboardPage() {
                 center={heatmap.center}
                 zoom={13}
                 points={heatmap.points}
+                businessName={heatmap.businessName}
                 onMapClick={heatmap.handleMapClick}
               />
 

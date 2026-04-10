@@ -24,6 +24,7 @@ interface HeatmapMapProps {
   center: [number, number];
   zoom: number;
   points: GridPoint[];
+  businessName?: string;
   onMapClick?: (lat: number, lng: number) => void;
 }
 
@@ -113,7 +114,7 @@ function MapEvents({ onMapClick }: { onMapClick?: (lat: number, lng: number) => 
  * HeatmapMap Component
  * Visualizes geographic data using Leaflet with DivIcon markers for rank display.
  */
-export function HeatmapMap({ center, zoom, points, onMapClick }: HeatmapMapProps) {
+export function HeatmapMap({ center, zoom, points, businessName, onMapClick }: HeatmapMapProps) {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<L.Map | null>(null);
@@ -199,7 +200,7 @@ export function HeatmapMap({ center, zoom, points, onMapClick }: HeatmapMapProps
         zoom={zoom}
         style={{ height: '100%', width: '100%' }}
         scrollWheelZoom={true}
-        zoomControl={false} // We can hide default zoom control to look cleaner
+        zoomControl={false}
       >
         <MapInstanceCapture mapRef={mapRef} />
         <ChangeView center={center} />
@@ -212,10 +213,13 @@ export function HeatmapMap({ center, zoom, points, onMapClick }: HeatmapMapProps
         
         {/* Center marker indicating current selection */}
         <Marker position={center} icon={DefaultIcon}>
-          <Tooltip permanent direction="top" offset={[0, -40]}>
-            <div className="flex items-center gap-1.5 font-bold text-[10px]">
-              <MapPin className="h-3 w-3 text-primary fill-primary/20" />
-              Negocio Seleccionado
+          <Tooltip permanent direction="top" offset={[0, -40]} opacity={1}>
+            <div className="flex flex-col items-center gap-0.5 min-w-[120px]">
+              <div className="flex items-center gap-1.5 font-extrabold text-[11px] text-primary uppercase tracking-tight">
+                <MapPin className="h-3 w-3 fill-primary/20" />
+                {businessName || 'Negocio Seleccionado'}
+              </div>
+              <div className="h-1 w-12 rounded-full bg-primary/20 mt-0.5" />
             </div>
           </Tooltip>
         </Marker>
