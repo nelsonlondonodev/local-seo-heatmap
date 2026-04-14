@@ -256,6 +256,7 @@ export function HeatmapResultPage() {
           businessName={heatmap.business_name}
           keyword={heatmap.keyword}
           location="tu zona local"
+          heatmapId={heatmap.id}
         />
       </motion.div>
 

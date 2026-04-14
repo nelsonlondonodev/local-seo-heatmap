@@ -1,10 +1,11 @@
 import { useState, useRef } from 'react';
-import { Sparkles, Copy, RefreshCw, Check, MessageSquareMore, Wand2, ImagePlus, X, FileSearch } from 'lucide-react';
+import { Sparkles, Copy, RefreshCw, Check, MessageSquareMore, Wand2, ImagePlus, X, FileSearch, Save } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { aiService } from '@/services/aiService';
+import { useAuth } from '@/features/auth/hooks/useAuth';
 import type { AITone, GeneratedGBPPost } from '@/features/ai-optimization/types';
 import { toast } from 'sonner';
 
@@ -12,11 +13,14 @@ interface PostGeneratorCardProps {
   businessName: string;
   keyword: string;
   location: string;
+  heatmapId?: string;
 }
 
-export function PostGeneratorCard({ businessName, keyword, location }: PostGeneratorCardProps) {
+export function PostGeneratorCard({ businessName, keyword, location, heatmapId }: PostGeneratorCardProps) {
+  const { user } = useAuth();
   const [tone, setTone] = useState<AITone>('professional');
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [generatedPost, setGeneratedPost] = useState<GeneratedGBPPost | null>(null);
   const [copied, setCopied] = useState(false);
   
@@ -49,6 +53,11 @@ export function PostGeneratorCard({ businessName, keyword, location }: PostGener
   };
 
   const handleGenerate = async () => {
+    if (!user) {
+      toast.error('Debes estar autenticado para generar contenido');
+      return;
+    }
+
     setIsGenerating(true);
     const response = await aiService.generateGBPPost({
       businessName,
@@ -61,6 +70,25 @@ export function PostGeneratorCard({ businessName, keyword, location }: PostGener
     if (response.data) {
       setGeneratedPost(response.data);
       toast.success('¡Contenido generado con éxito!');
+      
+      // Persist automatically to DB
+      setIsSaving(true);
+      const saveResult = await aiService.saveGeneratedContent({
+        userId: user.id,
+        heatmapId,
+        businessName,
+        keyword,
+        content: response.data.content,
+        hashtags: response.data.hashtags,
+        optimizedFilename: response.data.optimizedFilename
+      });
+      
+      if (saveResult.error) {
+        toast.error(saveResult.error);
+      } else {
+        toast.success('Guardado en el historial');
+      }
+      setIsSaving(false);
     } else {
       toast.error(response.error || 'Error al generar contenido');
     }

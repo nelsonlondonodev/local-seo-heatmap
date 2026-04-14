@@ -1,3 +1,4 @@
+import { supabase } from '@/lib/supabase';
 import type { AIResponse, GeneratedGBPPost, PostPromptContent } from '@/features/ai-optimization/types';
 
 const OPENAI_API_KEY = import.meta.env.VITE_OPENAI_API_KEY;
@@ -93,6 +94,39 @@ export const aiService = {
     } catch (error: any) {
       console.error('[AI_SERVICE_ERROR]:', error);
       return { error: error.message || 'No se pudo conectar con el motor de IA. Revisa tu clave de API.' };
+    }
+  },
+
+  /**
+   * Persists generated AI content to Supabase database.
+   */
+  async saveGeneratedContent(data: {
+    userId: string;
+    heatmapId?: string;
+    businessName: string;
+    keyword: string;
+    content: string;
+    hashtags: string[];
+    optimizedFilename?: string;
+  }): Promise<{ error?: string }> {
+    try {
+      const { error } = await supabase
+        .from('ai_generated_content')
+        .insert({
+          user_id: data.userId,
+          heatmap_id: data.heatmapId,
+          business_name: data.businessName,
+          keyword: data.keyword,
+          content: data.content,
+          hashtags: data.hashtags,
+          optimized_filename: data.optimizedFilename
+        });
+
+      if (error) throw error;
+      return {};
+    } catch (error: any) {
+      console.error('[SAVE_AI_CONTENT_ERROR]:', error);
+      return { error: 'No se pudo guardar el contenido en el historial.' };
     }
   }
 };
