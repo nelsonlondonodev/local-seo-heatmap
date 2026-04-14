@@ -45,3 +45,23 @@ export function isAdvertiser(
     return normTitle.includes(normAd) || normAd.includes(normTitle);
   });
 }
+
+/**
+ * Surgically cleans business names by removing common SEO suffixes.
+ * e.g. "Malanga del trópico | Medellín" -> "Malanga del trópico"
+ */
+export function cleanBusinessName(name: string): string {
+  if (!name) return '';
+  
+  // Split by common separators and take the first part
+  const separators = [' | ', ' - ', ' – ', ' l ', ' : '];
+  let cleaned = name;
+  
+  for (const sep of separators) {
+    if (cleaned.includes(sep)) {
+      cleaned = cleaned.split(sep)[0];
+    }
+  }
+  
+  return cleaned.trim();
+}
