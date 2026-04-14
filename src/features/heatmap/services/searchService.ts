@@ -1,7 +1,7 @@
 import type { HeatmapConfig, HeatmapResult, GridPoint } from '@/types';
 import { delay, chunkArray } from '@/lib/utils';
 import { isBusinessMatch } from '../utils/textUtils';
-import type { SerperMapsResponse, SerperPlace } from '../types/serper';
+import type { SerperMapsResponse, SerperPlace, SerperSearchResponse } from '../types/serper';
 
 const SERPER_API_KEY = import.meta.env.VITE_SERPER_API_KEY;
 
