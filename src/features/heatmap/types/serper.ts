@@ -10,7 +10,19 @@ export interface SerperPlace {
   position?: number;
 }
 
+export interface SerperAd {
+  position: number;
+  title: string;
+  link: string;
+  snippet?: string;
+}
+
 export interface SerperMapsResponse {
   places: SerperPlace[];
+  credits?: number;
+}
+
+export interface SerperSearchResponse {
+  ads?: SerperAd[];
   credits?: number;
 }

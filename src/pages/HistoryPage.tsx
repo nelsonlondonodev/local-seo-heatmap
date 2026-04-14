@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { History, Search, Calendar, Grid3X3, MapPin, Trash2, ExternalLink, AlertTriangle, Loader2, Target, Mail } from 'lucide-react';
+import { History, Search, Calendar, Grid3X3, MapPin, Trash2, ExternalLink, AlertTriangle, Loader2, Target, Mail, Megaphone } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -137,6 +137,14 @@ export function HistoryPage() {
                                 {entry.prospect_email}
                               </span>
                             )}
+                          </div>
+                        )}
+                        {entry.advertisers && (entry.advertisers as string[]).length > 0 && (
+                          <div className="flex items-center gap-2 pt-1">
+                            <Badge variant="outline" className="text-amber-600 border-amber-500/30 bg-amber-500/5 text-[10px] gap-1 px-1.5 h-5 font-bold">
+                              <Megaphone className="h-3 w-3" />
+                              ADS DETECTADOS: {(entry.advertisers as string[]).length}
+                            </Badge>
                           </div>
                         )}
                       </div>

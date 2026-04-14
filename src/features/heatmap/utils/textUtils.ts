@@ -27,3 +27,21 @@ export function isBusinessMatch(
   // Match by partial name
   return normResult.includes(normConfig) || normConfig.includes(normResult) || !!cidMatch;
 }
+
+/**
+ * Checks if a business title matches any of the detected advertiser titles.
+ */
+export function isAdvertiser(
+  businessTitle: string,
+  advertisers: string[]
+): boolean {
+  if (!advertisers.length) return false;
+  
+  const normTitle = normalizeText(businessTitle);
+  
+  return advertisers.some(adTitle => {
+    const normAd = normalizeText(adTitle);
+    // Fuzzy match: either one contains the other
+    return normTitle.includes(normAd) || normAd.includes(normTitle);
+  });
+}

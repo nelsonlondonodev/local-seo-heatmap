@@ -27,6 +27,7 @@ export interface HeatmapResult {
   id: string;
   config: HeatmapConfig;
   points: GridPoint[];
+  advertisers?: string[];
   createdAt: string;
 }
 

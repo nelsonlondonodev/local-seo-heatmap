@@ -68,6 +68,42 @@ async function scanSinglePoint(
 }
 
 /**
+ * Detects advertisers for a specific keyword using Serper Search endpoint.
+ */
+async function getAdvertisers(keyword: string): Promise<string[]> {
+  if (!SERPER_API_KEY) return [];
+  
+  try {
+    const response = await fetch('https://google.serper.dev/search', {
+      method: 'POST',
+      headers: {
+        'X-API-KEY': SERPER_API_KEY,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        q: keyword,
+        gl: CONFIG.DEFAULT_GL,
+        hl: CONFIG.DEFAULT_HL,
+      }),
+    });
+
+    if (!response.ok) return [];
+
+    const data: SerperSearchResponse = await response.json();
+    const advertiserTitles = (data.ads || []).map(ad => ad.title);
+    
+    if (advertiserTitles.length > 0) {
+      console.log(`[ADS] Detectados ${advertiserTitles.length} anunciantes para "${keyword}"`);
+    }
+    
+    return advertiserTitles;
+  } catch (err) {
+    console.error('[ADS] Error detecting advertisers:', err);
+    return [];
+  }
+}
+
+/**
  * Service to handle heatmap search logic using Serper.dev.
  */
 export const searchService = {
@@ -92,11 +128,15 @@ export const searchService = {
           rank: Math.random() > 0.1 ? Math.floor(Math.random() * 20) + 1 : null,
           totalResults: Math.floor(Math.random() * 50) + 1,
         })),
+        advertisers: ['Negocio Pro en Ads', 'Competidor Top'],
         createdAt: new Date().toISOString(),
       };
     }
 
     try {
+      // Step 1: Detect Advertisers (Parallel to starting batches)
+      const advertisersPromise = getAdvertisers(config.keyword);
+
       const batches = chunkArray(points, CONFIG.BATCH_SIZE);
       const results: GridPoint[] = [];
 
@@ -117,10 +157,13 @@ export const searchService = {
         }
       }
 
+      const advertisers = await advertisersPromise;
+
       return {
         id: crypto.randomUUID(),
         config,
         points: results,
+        advertisers,
         createdAt: new Date().toISOString(),
       };
     } catch (error) {

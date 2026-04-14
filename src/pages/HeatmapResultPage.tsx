@@ -1,12 +1,13 @@
 import { useLocation, useNavigate, Navigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { MapPin, Search, Calendar, Grid3X3, ArrowLeft, Plus, Printer, Target, Mail } from 'lucide-react';
+import { MapPin, Search, Calendar, Grid3X3, ArrowLeft, Plus, Printer, Target, Mail, Megaphone, CheckCircle2, AlertCircle } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { HeatmapMap, HeatmapLegend } from '@/features/heatmap';
 import { StatRow } from '@/features/heatmap/components/ui/StatRow';
 import { getRankColor } from '@/config/constants';
+import { isAdvertiser } from '@/features/heatmap/utils/textUtils';
 import type { Database } from '@/types/database';
 import type { GridPoint, ResultsSummary } from '@/types';
 
@@ -39,6 +40,8 @@ export function HeatmapResultPage() {
   const center: [number, number] = [Number(heatmap.center_lat), Number(heatmap.center_lng)];
   const points = (heatmap.points as unknown as GridPoint[]) || [];
   const summary = (heatmap.results_summary as unknown as ResultsSummary) || { avgRank: 0, bestRank: null, foundCount: 0, totalCount: 0 };
+  const advertisers = (heatmap.advertisers as string[]) || [];
+  const isTargetInAds = isAdvertiser(heatmap.business_name, advertisers);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('es-ES', {
@@ -148,6 +151,47 @@ export function HeatmapResultPage() {
                   <div className="flex items-center gap-2 text-sm font-medium bg-secondary/30 p-2 rounded-md">
                     <Mail className="h-4 w-4 text-primary" />
                     {heatmap.prospect_email}
+                  </div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Google Ads Intelligence */}
+          <Card className={`${isTargetInAds ? 'border-amber-500/30 bg-amber-500/5' : 'border-border'}`}>
+            <CardHeader className="pb-3">
+              <CardTitle className="flex items-center gap-2 text-md">
+                <Megaphone className={`h-4 w-4 ${isTargetInAds ? 'text-amber-500' : 'text-muted-foreground'}`} />
+                Inteligencia Google Ads
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-start gap-3">
+                <div className={`mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${isTargetInAds ? 'bg-amber-100 text-amber-600' : 'bg-secondary text-muted-foreground'}`}>
+                  {isTargetInAds ? <CheckCircle2 className="h-5 w-5" /> : <AlertCircle className="h-5 w-5" />}
+                </div>
+                <div>
+                  <p className="text-sm font-bold">
+                    {isTargetInAds ? 'Anunciante Activo' : 'Sin Inversión en Ads'}
+                  </p>
+                  <p className="text-[11px] text-muted-foreground leading-tight">
+                    {isTargetInAds 
+                      ? 'Este negocio está invirtiendo dinero para aparecer en los primeros resultados.' 
+                      : 'No hemos detectado campañas activas para este negocio en esta zona.'}
+                  </p>
+                </div>
+              </div>
+
+              {advertisers.length > 0 && (
+                <div className="pt-3 border-t border-border/50">
+                  <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider mb-2">Competencia con Ads ({advertisers.length})</p>
+                  <div className="space-y-1.5 max-h-[120px] overflow-y-auto pr-1">
+                    {advertisers.map((ad, idx) => (
+                      <div key={idx} className="flex items-center gap-2 text-[11px] font-medium bg-secondary/20 p-1.5 rounded border border-transparent hover:border-amber-500/20 transition-colors">
+                        <div className="h-1.5 w-1.5 rounded-full bg-amber-500" />
+                        <span className="truncate">{ad}</span>
+                      </div>
+                    ))}
                   </div>
                 </div>
               )}
