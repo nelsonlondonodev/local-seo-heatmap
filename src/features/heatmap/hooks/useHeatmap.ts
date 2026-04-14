@@ -34,6 +34,8 @@ export function useHeatmap() {
   const [points, setPoints] = useState<GridPoint[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [scanProgress, setScanProgress] = useState<{ current: number; total: number } | null>(null);
+  const [prospectName, setProspectName] = useState('');
+  const [prospectEmail, setProspectEmail] = useState('');
 
   // 4. Derived State (Computed values)
   const isFormValid = useMemo(() => {
@@ -133,6 +135,14 @@ export function useHeatmap() {
     setPlaceId(val);
   }, []);
 
+  const updateProspectName = useCallback((val: string) => {
+    setProspectName(val);
+  }, []);
+
+  const updateProspectEmail = useCallback((val: string) => {
+    setProspectEmail(val);
+  }, []);
+
   return {
     keyword, setKeyword: updateKeyword,
     businessName, setBusinessName: updateBusinessName,
@@ -148,5 +158,7 @@ export function useHeatmap() {
     handleMapClick,
     handleResetCenter,
     runAnalysis,
+    prospectName, setProspectName: updateProspectName,
+    prospectEmail, setProspectEmail: updateProspectEmail,
   };
 }
