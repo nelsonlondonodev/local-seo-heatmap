@@ -1,8 +1,9 @@
 import { useLocation, useNavigate, Navigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { MapPin, Search, Calendar, Grid3X3, ArrowLeft, Plus, Printer, FileDown } from 'lucide-react';
+import { MapPin, Search, Calendar, Grid3X3, ArrowLeft, Plus, Printer, FileDown, Target, Mail } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { HeatmapMap, HeatmapLegend } from '@/features/heatmap';
 import { getRankColor } from '@/config/constants';
 import type { Database } from '@/types/database';
@@ -84,6 +85,12 @@ export function HeatmapResultPage() {
             <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
               Resultado del Análisis
             </h1>
+            {heatmap.prospect_name && (
+              <Badge className="bg-primary/10 text-primary border-primary/20 gap-1.5 px-3 py-1 text-sm font-bold">
+                <Target className="h-4 w-4" />
+                AUDITORÍA DE PROSPECCIÓN
+              </Badge>
+            )}
           </div>
           <p className="text-muted-foreground pl-8">
             Visualización estática de reporte guardado
@@ -113,8 +120,15 @@ export function HeatmapResultPage() {
               <CardDescription>Detalles del negocio y configuración</CardDescription>
             </CardHeader>
             <CardContent className="pt-6 space-y-6">
-              
               <div className="space-y-4">
+                {heatmap.prospect_name && (
+                  <StatRow 
+                    icon={Target} 
+                    label="Lead / Prospecto" 
+                    value={heatmap.prospect_name} 
+                    colorClass="bg-primary/20 text-primary border border-primary/20" 
+                  />
+                )}
                 <StatRow 
                   icon={Search} 
                   label="Palabra Clave" 
@@ -141,6 +155,15 @@ export function HeatmapResultPage() {
                 />
               </div>
 
+              {heatmap.prospect_email && (
+                <div className="pt-4 border-t border-border/50">
+                  <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider mb-2">Contacto del Lead</p>
+                  <div className="flex items-center gap-2 text-sm font-medium bg-secondary/30 p-2 rounded-md">
+                    <Mail className="h-4 w-4 text-primary" />
+                    {heatmap.prospect_email}
+                  </div>
+                </div>
+              )}
             </CardContent>
           </Card>
 
