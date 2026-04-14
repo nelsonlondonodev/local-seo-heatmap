@@ -1,26 +1,64 @@
 import type { AIResponse, GeneratedGBPPost, PostPromptContent } from '@/features/ai-optimization/types';
 
+const OPENAI_API_KEY = import.meta.env.VITE_OPENAI_API_KEY;
+
 /**
  * Service to handle AI-powered local SEO optimizations.
- * This service communicates with the backend (Supabase Edge Functions) 
- * to generate content using LLMs.
  */
 export const aiService = {
   /**
    * Generates a Google Business Profile post based on provided business context.
    */
   async generateGBPPost(prompt: PostPromptContent): Promise<AIResponse<GeneratedGBPPost>> {
-    try {
-      // TODO: Implement actual call to Supabase Edge Function or OpenAI API
-      // For now, we simulate a delay and return a structured mock response
-      // following the robust solution plan.
-      
-      await new Promise(resolve => setTimeout(resolve, 1500));
+    if (!OPENAI_API_KEY) {
+      return { error: '⚠️ Por favor, configura VITE_OPENAI_API_KEY en tu archivo .env para usar esta función.' };
+    }
 
-      const mockResponse: GeneratedGBPPost = {
+    try {
+      const response = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${OPENAI_API_KEY}`
+        },
+        body: JSON.stringify({
+          model: 'gpt-4o-mini',
+          messages: [
+            {
+              role: 'system',
+              content: `Eres un consultor experto en SEO Local y Copywriting Persuasivo. 
+              Tu objetivo es crear publicaciones para el perfil de Google Business (GBP) que aumenten el CTR y mejoren el posicionamiento local.
+              Reglas:
+              - Tono: ${prompt.tone}.
+              - Máximo 1500 caracteres pero idealmente entre 300-600.
+              - Usa emojis relevantes.
+              - Integra la palabra clave "${prompt.keyword}" de forma natural.
+              - Incluye un Call to Action (CTA) potente.
+              - Formato de respuesta: Devuelve solo un objeto JSON con los campos: "content" (string con el texto), "hashtags" (array de 4-6 strings).`
+            },
+            {
+              role: 'user',
+              content: `Genera una publicación para el negocio "${prompt.businessName}" ubicado en "${prompt.location}". 
+              Palabra clave objetivo: "${prompt.keyword}". 
+              ${prompt.offer ? `Incluye esta oferta: ${prompt.offer}` : ''}`
+            }
+          ],
+          response_format: { type: "json_object" }
+        })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error?.message || 'Error en la API de OpenAI');
+      }
+
+      const rawData = await response.json();
+      const aiContent = JSON.parse(rawData.choices[0].message.content);
+
+      const post: GeneratedGBPPost = {
         id: crypto.randomUUID(),
-        content: `¡Descubre por qué somos los mejores en ${prompt.location}! 🚀\n\nEn ${prompt.businessName} nos especializamos en ${prompt.keyword}. Si buscas calidad y cercanía, ¡somos tu mejor opción!\n\n${prompt.offer ? `Aprovecha hoy: ${prompt.offer}` : ''}\n\n📍 Te esperamos para brindarte la mejor atención.`,
-        hashtags: ['LocalSEO', prompt.keyword.replace(/\s+/g, ''), prompt.location.replace(/\s+/g, ''), 'GoogleMyBusiness'],
+        content: aiContent.content,
+        hashtags: aiContent.hashtags || [],
         createdAt: new Date().toISOString(),
         metadata: {
           tone: prompt.tone,
@@ -28,10 +66,13 @@ export const aiService = {
         }
       };
 
-      return { data: mockResponse };
-    } catch (error) {
+      return { 
+        data: post,
+        usage: { totalTokens: rawData.usage?.total_tokens || 0 }
+      };
+    } catch (error: any) {
       console.error('[AI_SERVICE_ERROR]:', error);
-      return { error: 'No se pudo generar el contenido en este momento. Inténtalo de nuevo.' };
+      return { error: error.message || 'No se pudo conectar con el motor de IA. Revisa tu clave de API.' };
     }
   }
 };
