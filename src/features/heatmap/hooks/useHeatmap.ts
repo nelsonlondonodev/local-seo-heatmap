@@ -52,7 +52,9 @@ export function useHeatmap() {
     radiusKm,
     centerLat: center[0],
     centerLng: center[1],
-  }), [keyword, businessName, placeId, gridSize, radiusKm, center]);
+    prospectName,
+    prospectEmail,
+  }), [keyword, businessName, placeId, gridSize, radiusKm, center, prospectName, prospectEmail]);
 
   const estimatedCost = useMemo(() => {
     return points.length * COST_PER_POINT;

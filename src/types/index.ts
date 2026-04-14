@@ -18,6 +18,8 @@ export interface HeatmapConfig {
   radiusKm: number;
   centerLat: number;
   centerLng: number;
+  prospectName?: string;
+  prospectEmail?: string;
 }
 
 /** Full heatmap result including all grid points */
@@ -60,4 +62,6 @@ export interface SearchHistoryEntry {
     pointsFound: number;
     totalPoints: number;
   };
+  prospectName?: string | null;
+  prospectEmail?: string | null;
 }

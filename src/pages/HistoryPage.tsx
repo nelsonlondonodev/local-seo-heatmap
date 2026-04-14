@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { History, Search, Calendar, Grid3X3, MapPin, Trash2, ExternalLink, AlertTriangle, Loader2 } from 'lucide-react';
+import { History, Search, Calendar, Grid3X3, MapPin, Trash2, ExternalLink, AlertTriangle, Loader2, Target, Mail } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -125,6 +125,20 @@ export function HistoryPage() {
                             })}
                           </span>
                         </div>
+                        {entry.prospect_name && (
+                          <div className="flex items-center gap-2 pt-1">
+                            <Badge variant="outline" className="text-primary border-primary/30 bg-primary/5 text-[10px] gap-1 px-1.5 h-5 font-bold">
+                              <Target className="h-3 w-3" />
+                              PROSPECTO: {entry.prospect_name}
+                            </Badge>
+                            {entry.prospect_email && (
+                              <span className="text-[10px] text-muted-foreground flex items-center gap-1">
+                                <Mail className="h-2.5 w-2.5" />
+                                {entry.prospect_email}
+                              </span>
+                            )}
+                          </div>
+                        )}
                       </div>
                       
                       <div className="flex items-center gap-4">

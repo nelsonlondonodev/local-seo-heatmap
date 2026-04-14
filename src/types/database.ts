@@ -92,6 +92,8 @@ export interface Database {
           center_lng: number;
           points: Json;
           results_summary: Json | null;
+          prospect_name: string | null;
+          prospect_email: string | null;
           created_at: string;
         };
         Insert: {
@@ -107,6 +109,8 @@ export interface Database {
           center_lng: number;
           points: Json;
           results_summary?: Json | null;
+          prospect_name?: string | null;
+          prospect_email?: string | null;
           created_at?: string;
         };
         Update: {
@@ -122,6 +126,8 @@ export interface Database {
           center_lng?: number;
           points?: Json;
           results_summary?: Json | null;
+          prospect_name?: string | null;
+          prospect_email?: string | null;
           created_at?: string;
         };
         Relationships: [];
