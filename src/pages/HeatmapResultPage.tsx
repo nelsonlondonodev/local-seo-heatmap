@@ -1,10 +1,11 @@
 import { useLocation, useNavigate, Navigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { MapPin, Search, Calendar, Grid3X3, ArrowLeft, Plus, Printer, FileDown, Target, Mail } from 'lucide-react';
+import { MapPin, Search, Calendar, Grid3X3, ArrowLeft, Plus, Printer, Target, Mail } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { HeatmapMap, HeatmapLegend } from '@/features/heatmap';
+import { StatRow } from '@/features/heatmap/components/ui/StatRow';
 import { getRankColor } from '@/config/constants';
 import type { Database } from '@/types/database';
 import type { GridPoint } from '@/types';
@@ -23,20 +24,6 @@ const itemVariants = {
   hidden: { opacity: 0, y: 12 },
   visible: { opacity: 1, y: 0 },
 };
-
-function StatRow({ icon: Icon, label, value, colorClass }: { icon: React.ElementType, label: string, value: string, colorClass: string }) {
-  return (
-    <div className="flex gap-3">
-      <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${colorClass}`}>
-        <Icon className="h-5 w-5" />
-      </div>
-      <div>
-        <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider mb-0.5">{label}</p>
-        <p className="font-semibold line-clamp-2">{value}</p>
-      </div>
-    </div>
-  );
-}
 
 export function HeatmapResultPage() {
   const location = useLocation();
