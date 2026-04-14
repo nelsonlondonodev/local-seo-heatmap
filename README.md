@@ -252,7 +252,7 @@ Basado en el análisis competitivo y las necesidades de Nelson, este es nuestro 
 Inspirado en el análisis de herramientas líderes como **DinoRank**, hemos trazado el siguiente plan de expansión para MapRanker Pro:
 
 1.  **🤖 Inteligencia Artificial (Dino-Style)**:
-    *   **GBP Post Generator**: Generación de publicaciones para Google Business Profile optimizadas con keywords del heatmap.
+    *   **GBP Post Generator**: Generación de publicaciones con Vision AI y optimización SEO (Completado ✅).
     *   **Review Reply AI**: Asistente para responder reseñas de forma profesional y optimizada para SEO.
     *   **Local Bio Optimizer**: IA que analiza competidores y sugiere la descripción perfecta para el negocio.
 
@@ -331,10 +331,10 @@ Inspirado en el análisis de herramientas líderes como **DinoRank**, hemos traz
 
 ## Estado Actual del Proyecto
 
-> **Versión:** 0.6.5 — Sales Intelligence & Market Share Core.
+> **Versión:** 0.7.0 — AI Vision Assistant & Local Content Core.
 
 Próximas tareas:
-1. **🤖 Implementación de IA (GBP Post Generator)**: Comenzar con el módulo de generación de contenido local.
+1. **🤖 Implementación de IA (GBP Post Generator)** ✅: Generación de contenido local con visión completada.
 2. **📉 Gráfica de Visibilidad Local**: Panel histórico de evolución de rankings.
 3. **Google API Real**: Sustituir el simulador por llamadas reales a Google Places API / Edge Functions.
 4. **Sistema de suscripción**: Implementar pasarela de pago para planes Pro y Enterprise.
