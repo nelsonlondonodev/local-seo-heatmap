@@ -247,6 +247,33 @@ Basado en el análisis competitivo y las necesidades de Nelson, este es nuestro 
 
 ---
 
+## 🪐 Roadmap de Innovación SEO Local (v0.7.0+)
+
+Inspirado en el análisis de herramientas líderes como **DinoRank**, hemos trazado el siguiente plan de expansión para MapRanker Pro:
+
+1.  **🤖 Inteligencia Artificial (Dino-Style)**:
+    *   **GBP Post Generator**: Generación de publicaciones para Google Business Profile optimizadas con keywords del heatmap.
+    *   **Review Reply AI**: Asistente para responder reseñas de forma profesional y optimizada para SEO.
+    *   **Local Bio Optimizer**: IA que analiza competidores y sugiere la descripción perfecta para el negocio.
+
+2.  **🔍 Análisis de Brechas (Local Content Gap)**:
+    *   **Category Gap**: Identificación de categorías de negocio que los competidores usan y nuestro cliente no.
+    *   **Services Comparison**: Panel comparativo de servicios y atributos (amenities) frente al Top 3.
+
+3.  **📈 Monitorización Presencial y Proactiva**:
+    *   **Alertas de Desplazamiento**: Notificaciones cuando un competidor nos quita el puesto en el Local Pack de una coordenada.
+    *   **Local Visibility Graph**: Evolución histórica del "Share of Local Pack" y ranking promedio.
+
+4.  **🌐 SEO On-Page Local & LLMs**:
+    *   **Schema & Sync Audit**: Verificación de datos estructurados en la web vinculada a la ficha.
+    *   **AI Search Sim (SGE/LLM)**: Simulación de cómo mencionan las IAs (ChatGPT/Gemini) al negocio en búsquedas locales.
+
+5.  **💼 Business Intelligence para Agencias**:
+    *   **ROI Dashboard**: Cálculo de ahorro estimado frente a inversión en Google Ads.
+    *   **Lead Spy Ads**: Seguimiento detallado de competidores que usan anuncios LSA en las coordenadas del heatmap.
+
+---
+
 ## Modelo de Datos
 
 ### Tabla `profiles`
@@ -307,6 +334,7 @@ Basado en el análisis competitivo y las necesidades de Nelson, este es nuestro 
 > **Versión:** 0.6.5 — Sales Intelligence & Market Share Core.
 
 Próximas tareas:
-1. **Google API Real**: Sustituir el simulador por llamadas reales a Google Places API / Edge Functions.
-2. **Sistema de suscripción**: Implementar pasarela de pago para planes Pro y Enterprise.
-3. **Analítica Comparativa**: Permitir comparar dos escaneos históricos en una misma vista.
+1. **🤖 Implementación de IA (GBP Post Generator)**: Comenzar con el módulo de generación de contenido local.
+2. **📉 Gráfica de Visibilidad Local**: Panel histórico de evolución de rankings.
+3. **Google API Real**: Sustituir el simulador por llamadas reales a Google Places API / Edge Functions.
+4. **Sistema de suscripción**: Implementar pasarela de pago para planes Pro y Enterprise.
