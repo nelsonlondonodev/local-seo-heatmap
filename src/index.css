@@ -220,6 +220,24 @@
   .rounded-lg, .rounded-xl, .border, Card, .Card, .card {
     break-inside: avoid !important;
     page-break-inside: avoid !important;
+    margin-bottom: 20px !important;
+  }
+
+  /* Specific tweaks for CompetitorsTable */
+  tr {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+
+  /* Ensure background colors for badges and progress bars print correctly */
+  .bg-primary, .bg-amber-500, .bg-rose-500, .bg-secondary {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .w-24.h-1\.5.bg-secondary {
+    border: 1px solid #e2e8f0 !important;
+    height: 8px !important;
   }
 
   /* Optimized Map Height for A4 Portrait */
@@ -227,6 +245,7 @@
   .h-full.min-h-\[600px\] {
     min-height: auto !important;
     height: 380px !important; 
+    margin-bottom: 20px !important;
   }
 
   .rounded-lg, .rounded-xl {
@@ -255,8 +274,21 @@
   .print-only {
     display: block !important;
   }
+
+  /* Footer for the PDF */
+  .print-footer {
+    display: block !important;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+    font-size: 8pt;
+    color: #64748b;
+    border-top: 1px solid #e2e8f0;
+    padding-top: 10px;
+  }
 }
 
-.print-only {
+.print-only, .print-footer {
   display: none;
 }

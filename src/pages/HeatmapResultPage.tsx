@@ -54,15 +54,15 @@ export function HeatmapResultPage() {
   return (
     <motion.div variants={containerVariants} initial="hidden" animate="visible" className="space-y-6">
       {/* Print-only Header */}
-      <div className="print-only mb-8 border-b pb-6">
-        <div className="flex justify-between items-end">
-          <div>
-            <h1 className="text-3xl font-extrabold text-primary">MapRanker Pro</h1>
-            <p className="text-sm text-muted-foreground uppercase tracking-widest font-bold">Informe de Posicionamiento Local</p>
+      <div className="print-only mb-10 border-b-4 border-primary pb-8">
+        <div className="flex justify-between items-start">
+          <div className="space-y-2">
+            <h1 className="text-4xl font-black text-primary tracking-tighter">ESTUDIO DE VISIBILIDAD LOCAL</h1>
+            <Badge variant="outline" className="text-primary border-primary/30 font-bold px-3">MAPRANKER PRO v0.6.3</Badge>
           </div>
-          <div className="text-right">
-            <p className="text-sm font-medium">Analizado por Nelson Londoño SEO</p>
-            <p className="text-xs text-muted-foreground">{formatDate(heatmap.created_at)}</p>
+          <div className="text-right space-y-1">
+            <p className="text-sm font-black uppercase tracking-widest text-muted-foreground">Informe Confidencial</p>
+            <p className="text-xs font-bold text-primary">{formatDate(heatmap.created_at)}</p>
           </div>
         </div>
       </div>
@@ -248,6 +248,33 @@ export function HeatmapResultPage() {
           keyword={heatmap.keyword}
         />
       </motion.div>
+
+      {/* Print-only conversion footer */}
+      <div className="print-only mt-12 bg-primary/5 p-8 rounded-2xl border-2 border-primary/20">
+        <div className="flex flex-col items-center text-center space-y-4">
+          <Trophy className="h-12 w-12 text-primary" />
+          <h2 className="text-2xl font-black">Plan de Acción Estratégico</h2>
+          <p className="text-muted-foreground text-sm max-w-2xl">
+            Basado en este análisis, el negocio presenta oportunidades críticas de mejora en el posicionamiento local. 
+            La optimización del perfil de negocio y la gestión de reseñas podrían incrementar el Share of Local Pack 
+            en un 40% en los próximos 90 días.
+          </p>
+          <div className="pt-4 flex gap-8">
+            <div className="text-left">
+              <p className="text-[10px] font-bold uppercase tracking-widest text-primary">Consultor SEO</p>
+              <p className="text-lg font-bold">Nelson Londoño</p>
+            </div>
+            <div className="text-left">
+              <p className="text-[10px] font-bold uppercase tracking-widest text-primary">Contacto</p>
+              <p className="text-lg font-bold">nelson@agencia.com</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="print-footer">
+        MapRanker Pro — Reporte de Inteligencia Local generado el {formatDate(heatmap.created_at)}
+      </div>
     </motion.div>
   );
 }
