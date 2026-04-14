@@ -26,16 +26,16 @@
 
 ---
 
-## 🚀 Estado Actual del Proyecto (v0.5.0)
+## 🚀 Estado Actual del Proyecto (v0.6.5 - Sales Intelligence Edition)
 
-Hoy hemos transformado la herramienta en una plataforma lista para el uso comercial y prospección masiva:
+Hemos transformado la herramienta en una plataforma de ventas profesional (Sales-Ready) con inteligencia competitiva avanzada:
 
-1.  **🏗️ Arquitectura de Vistas Desacoplada**: Separación entre Dashboard y Vista de Resultados.
-2.  **📄 Generación de Informes PDF**: Motor de exportación profesional para ventas.
-3.  **💰 Transparencia de Costes**: Indicador de consumo de créditos en tiempo real.
-4.  **🗺️ Control del Mapa Maestro**: API Fullscreen nativa y controles de recentrado precisos.
-5.  **🧪 TypeScript Strict Mode**: Eliminación total de tipos `any`.
-6.  **🌍 Búsqueda de Alta Precisión**: Integración definitiva con el endpoint `/maps` de Serper.
+1.  **🏗️ Arquitectura de Vistas Desacoplada**: Separación total entre Dashboard, Prospección y Resultados.
+2.  **📢 Inteligencia de Google Ads**: Motor híbrido que detecta anunciantes activos en tiempo real para identificar leads con presupuesto.
+3.  **🏆 Análisis de Competencia (Market Share)**: Cálculo automático de "Share of Local Pack" y ranking promedio de los Top 10 competidores.
+4.  **📄 Generación de Informes PDF Premium**: Reportes optimizados para impresión con plan de acción estratégico e identidad de agencia.
+5.  **🧪 TypeScript Strict Mode**: Código 100% blindado contra errores en tiempo de ejecución, eliminando todo rastro de `any`.
+6.  **📊 Persistencia de Prospección**: Guardado automático de leads (nombres/emails) y datos de competencia en Supabase.
 
 ---
 
@@ -219,6 +219,9 @@ VITE_SUPABASE_ANON_KEY=tu_anon_key_de_supabase
 - **Feedback Visual Premium** — Interfaz de carga unificada con animaciones de alta fidelidad para todos los estados de autenticación.
 - **Exportación de Reportes** — Generación de PDF optimizado para ventas en frío y prospección con diseño SEO profesional.
 - **Calculadora de Créditos** — Visualización dinámica del coste de API antes de ejecutar el análisis.
+- **Detección de Google Ads** — Identificación de anunciantes activos para prospección de leads de alta conversión.
+- **Market Dominance Tracker** — Tabla de líderes locales con métricas de cuota de mercado (% Top 3).
+- **Prospección de Leads** — Captura de datos de contacto integrada directamente en el flujo de escaneo.
 
 ## 📊 Benchmarking & Referencias (Collac.io)
 
@@ -236,11 +239,11 @@ Para alcanzar la excelencia en el sector, hemos analizado a **Collac.io**, líde
 
 Basado en el análisis competitivo y las necesidades de Nelson, este es nuestro plan de desarrollo inmediato:
 
-1.  **🎯 Módulo de Prospección Comercial**: Sección dedicada a la generación de leads con mensajes de "Oportunidad de Venta" integrados. (EN PROCESO)
-2.  **📢 Detección de Competidores con Ads**: Marcado visual de negocios que pagan por posicionamiento en el heatmap.
-3.  **📈 Histórico & Evolución**: Guardado de escaneos previos en Supabase para visualizar el progreso mediante gráficas.
-4.  **🏆 Métricas "Share of Local Pack"**: Cálculo del % de dominancia (Top 3) en el área escaneada.
-5.  **💼 Reportes de Venta (Sales-Focused)**: Rediseño de PDFs orientados a cerrar ventas, resaltando deficiencias críticas.
+1.  **🎯 Módulo de Prospección Comercial**: Sección dedicada a la generación de leads con mensajes de "Oportunidad de Venta" integrados. ✅
+2.  **📢 Detección de Competidores con Ads**: Marcado visual de negocios que pagan por posicionamiento en el heatmap. ✅
+3.  **📈 Histórico & Evolución**: Guardado de escaneos previos en Supabase para visualizar el progreso mediante gráficas. ✅
+4.  **🏆 Métricas "Share of Local Pack"**: Cálculo del % de dominancia (Top 3) en el área escaneada. ✅
+5.  **💼 Reportes de Venta (Sales-Focused)**: Rediseño de PDFs orientados a cerrar ventas, resaltando deficiencias críticas. ✅
 
 ---
 
@@ -299,9 +302,9 @@ Basado en el análisis competitivo y las necesidades de Nelson, este es nuestro 
 
 ---
 
-## Estado Actual del MVP
+## Estado Actual del Proyecto
 
-> **Versión:** 0.4.0 — Seguridad Transitoria & UX Auth Refinado.
+> **Versión:** 0.6.5 — Sales Intelligence & Market Share Core.
 
 Próximas tareas:
 1. **Google API Real**: Sustituir el simulador por llamadas reales a Google Places API / Edge Functions.
