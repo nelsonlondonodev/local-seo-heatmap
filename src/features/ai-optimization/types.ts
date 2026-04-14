@@ -7,12 +7,14 @@ export interface PostPromptContent {
   tone: AITone;
   offer?: string;
   callToAction?: string;
+  image?: string; // Base64 image string for vision analysis
 }
 
 export interface GeneratedGBPPost {
   id: string;
   content: string;
   hashtags: string[];
+  optimizedFilename?: string; // SEO-friendly filename recommendation
   createdAt: string;
   metadata: {
     tone: AITone;

@@ -13,8 +13,46 @@ export const aiService = {
     if (!OPENAI_API_KEY) {
       return { error: '⚠️ Por favor, configura VITE_OPENAI_API_KEY en tu archivo .env para usar esta función.' };
     }
-
     try {
+      const messages: any[] = [
+        {
+          role: 'system',
+          content: `Eres un consultor experto en SEO Local y Vision AI. 
+          Tu objetivo es crear publicaciones para el perfil de Google Business (GBP) que aumenten el CTR y mejoren el posicionamiento local.
+          Reglas:
+          - Tono: ${prompt.tone}.
+          - Usa emojis relevantes.
+          - Integra la palabra clave "${prompt.keyword}" de forma natural.
+          - Si se proporciona una imagen, analízala detalladamente para que el copy mencione elementos reales y específicos que se ven en ella. No seas genérico.
+          - Incluye un Call to Action (CTA) potente.
+          - Genera un "optimizedFilename" que sea una cadena de texto (slug) optimizada para SEO local (ej: peluqueria-madrid-balayage-oferta).
+          - Formato de respuesta: Devuelve solo un objeto JSON con los campos: "content" (texto del post), "hashtags" (array), "optimizedFilename" (string).`
+        }
+      ];
+
+      const userContent: any[] = [
+        {
+          type: "text",
+          text: `Genera una publicación para el negocio "${prompt.businessName}" ubicado en "${prompt.location}". 
+          Palabra clave objetivo: "${prompt.keyword}". 
+          ${prompt.offer ? `Incluye esta oferta: ${prompt.offer}` : ''}`
+        }
+      ];
+
+      if (prompt.image) {
+        userContent.push({
+          type: "image_url",
+          image_url: {
+            url: prompt.image // Base64 data:image/...
+          }
+        });
+      }
+
+      messages.push({
+        role: 'user',
+        content: userContent
+      });
+
       const response = await fetch('https://api.openai.com/v1/chat/completions', {
         method: 'POST',
         headers: {
@@ -23,26 +61,7 @@ export const aiService = {
         },
         body: JSON.stringify({
           model: 'gpt-4o-mini',
-          messages: [
-            {
-              role: 'system',
-              content: `Eres un consultor experto en SEO Local y Copywriting Persuasivo. 
-              Tu objetivo es crear publicaciones para el perfil de Google Business (GBP) que aumenten el CTR y mejoren el posicionamiento local.
-              Reglas:
-              - Tono: ${prompt.tone}.
-              - Máximo 1500 caracteres pero idealmente entre 300-600.
-              - Usa emojis relevantes.
-              - Integra la palabra clave "${prompt.keyword}" de forma natural.
-              - Incluye un Call to Action (CTA) potente.
-              - Formato de respuesta: Devuelve solo un objeto JSON con los campos: "content" (string con el texto), "hashtags" (array de 4-6 strings).`
-            },
-            {
-              role: 'user',
-              content: `Genera una publicación para el negocio "${prompt.businessName}" ubicado en "${prompt.location}". 
-              Palabra clave objetivo: "${prompt.keyword}". 
-              ${prompt.offer ? `Incluye esta oferta: ${prompt.offer}` : ''}`
-            }
-          ],
+          messages,
           response_format: { type: "json_object" }
         })
       });
@@ -59,6 +78,7 @@ export const aiService = {
         id: crypto.randomUUID(),
         content: aiContent.content,
         hashtags: aiContent.hashtags || [],
+        optimizedFilename: aiContent.optimizedFilename,
         createdAt: new Date().toISOString(),
         metadata: {
           tone: prompt.tone,
