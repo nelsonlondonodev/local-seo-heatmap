@@ -220,12 +220,27 @@ VITE_SUPABASE_ANON_KEY=tu_anon_key_de_supabase
 - **Exportación de Reportes** — Generación de PDF optimizado para ventas en frío y prospección con diseño SEO profesional.
 - **Calculadora de Créditos** — Visualización dinámica del coste de API antes de ejecutar el análisis.
 
-### 🔲 Próximas Mejoras (Roadmap de Negocio)
+## 📊 Benchmarking & Referencias (Collac.io)
 
-1.  **Punto 2: Marca Blanca / White Label** — Permitir a Nelson o a sus agencias subir su propio logotipo y nombre comercial para los reportes PDF.
-2.  **Punto 3: Enlace Público Seguro** — Generar URLs temporales para que el cliente final pueda ver el mapa interactivo en su móvil sin entrar a la app.
-3.  **Punto 4: Historial con Filtros Avanzados** — Búsqueda por palabra clave o negocio dentro del historial de Supabase.
-4.  **Punto 5: Panel de Créditos por Usuario** — Controlar cuántos créditos ha gastado cada comercial en el equipo de ventas.
+Para alcanzar la excelencia en el sector, hemos analizado a **Collac.io**, líder en Rank Tracking Local. Estos son los pilares que estamos integrando:
+
+- **Análisis de SERP Local**: Emulación de ubicación exacta (Ubicación GPS real).
+- **Georank**: Cálculo de visibilidad consolidada por zona.
+- **Detección de ADS**: Identificación activa de competidores pautando en el Local Pack.
+- **Gráfica Evolutiva**: Trazabilidad del ranking frente a la competencia en el tiempo.
+- **Prospección de Leads**: Módulos específicos para captación de clientes locales.
+
+---
+
+## 🚀 Roadmap de Robustecimiento (v0.6.0+)
+
+Basado en el análisis competitivo y las necesidades de Nelson, este es nuestro plan de desarrollo inmediato:
+
+1.  **🎯 Módulo de Prospección Comercial**: Sección dedicada a la generación de leads con mensajes de "Oportunidad de Venta" integrados. (EN PROCESO)
+2.  **📢 Detección de Competidores con Ads**: Marcado visual de negocios que pagan por posicionamiento en el heatmap.
+3.  **📈 Histórico & Evolución**: Guardado de escaneos previos en Supabase para visualizar el progreso mediante gráficas.
+4.  **🏆 Métricas "Share of Local Pack"**: Cálculo del % de dominancia (Top 3) en el área escaneada.
+5.  **💼 Reportes de Venta (Sales-Focused)**: Rediseño de PDFs orientados a cerrar ventas, resaltando deficiencias críticas.
 
 ---
 
