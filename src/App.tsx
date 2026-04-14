@@ -13,6 +13,7 @@ import { LoginPage } from '@/pages/LoginPage';
 import { RegisterPage } from '@/pages/RegisterPage';
 import { DashboardPage } from '@/pages/DashboardPage';
 import { HistoryPage } from '@/pages/HistoryPage';
+import { AIHistoryPage } from '@/pages/AIHistoryPage';
 import { HeatmapResultPage } from '@/pages/HeatmapResultPage';
 import { SettingsPage } from '@/pages/SettingsPage';
 import './index.css';
@@ -28,8 +29,6 @@ const queryClient = new QueryClient({
 
 /**
  * Public routes should redirect to dashboard if user is authenticated.
- * Optimistic version: allows child rendering while loading to avoid "Blank White Screen" 
- * but still enforces protection once state is confirmed.
  */
 function PublicOnlyRoute({ children }: { children: React.ReactNode }) {
   const { user, isLoading } = useAuth();
@@ -72,6 +71,7 @@ const router = createBrowserRouter([
     children: [
       { path: '/dashboard', element: <DashboardPage /> },
       { path: '/history', element: <HistoryPage /> },
+      { path: '/ai-history', element: <AIHistoryPage /> },
       { path: '/result', element: <HeatmapResultPage /> },
       { path: '/settings', element: <SettingsPage /> },
     ],

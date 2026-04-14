@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Map, History, Settings, X, ChevronRight } from 'lucide-react';
+import { Map, History, Settings, X, ChevronRight, Sparkles } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { useBranding } from '@/features/branding';
 import { UserSection } from './UserSection';
@@ -8,6 +8,7 @@ import { UserSection } from './UserSection';
 const navItems = [
   { path: '/dashboard', label: 'Mapa de Calor', icon: Map },
   { path: '/history', label: 'Historial', icon: History },
+  { path: '/ai-history', label: 'Contenidos IA', icon: Sparkles },
   { path: '/settings', label: 'Configuración', icon: Settings },
 ];
 

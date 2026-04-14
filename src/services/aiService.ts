@@ -128,5 +128,24 @@ export const aiService = {
       console.error('[SAVE_AI_CONTENT_ERROR]:', error);
       return { error: 'No se pudo guardar el contenido en el historial.' };
     }
+  },
+
+  /**
+   * Fetches history of AI-generated content for a specific user.
+   */
+  async getUserContentHistory(userId: string): Promise<AIResponse<any[]>> {
+    try {
+      const { data, error } = await supabase
+        .from('ai_generated_content')
+        .select('*')
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      return { data };
+    } catch (error: any) {
+      console.error('[GET_AI_HISTORY_ERROR]:', error);
+      return { error: 'No se pudo cargar el historial de contenidos.' };
+    }
   }
 };
