@@ -7,6 +7,7 @@ export interface GridPoint {
   lng: number;
   rank: number | null;
   totalResults: number;
+  topCompetitors?: string[]; // Store top 5 names for this point
 }
 
 /** Configuration for a heatmap search */
@@ -28,7 +29,17 @@ export interface HeatmapResult {
   config: HeatmapConfig;
   points: GridPoint[];
   advertisers?: string[];
+  competitors?: CompetitorStat[];
   createdAt: string;
+}
+
+/** Competition metrics per business */
+export interface CompetitorStat {
+  name: string;
+  avgRank: number;
+  top3Count: number;
+  presenceCount: number;
+  shareOfLocalPack: number;
 }
 
 /** Color scale for ranking visualization */

@@ -28,6 +28,7 @@ export const heatmapService = {
       prospect_name: result.config.prospectName || null,
       prospect_email: result.config.prospectEmail || null,
       advertisers: result.advertisers as unknown as Database['public']['Tables']['heatmaps']['Row']['advertisers'],
+      competitors: result.competitors as unknown as Database['public']['Tables']['heatmaps']['Row']['competitors'],
     };
 
     const { data, error } = await supabase

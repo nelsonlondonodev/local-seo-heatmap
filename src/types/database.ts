@@ -95,6 +95,7 @@ export interface Database {
           prospect_name: string | null;
           prospect_email: string | null;
           advertisers: Json | null;
+          competitors: Json | null;
           created_at: string;
         };
         Insert: {
@@ -113,6 +114,7 @@ export interface Database {
           prospect_name?: string | null;
           prospect_email?: string | null;
           advertisers?: Json | null;
+          competitors?: Json | null;
           created_at?: string;
         };
         Update: {
@@ -131,6 +133,7 @@ export interface Database {
           prospect_name?: string | null;
           prospect_email?: string | null;
           advertisers?: Json | null;
+          competitors?: Json | null;
           created_at?: string;
         };
         Relationships: [];

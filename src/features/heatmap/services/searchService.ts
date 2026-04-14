@@ -1,4 +1,4 @@
-import type { HeatmapConfig, HeatmapResult, GridPoint } from '@/types';
+import type { HeatmapConfig, HeatmapResult, GridPoint, CompetitorStat } from '@/types';
 import { delay, chunkArray } from '@/lib/utils';
 import { isBusinessMatch } from '../utils/textUtils';
 import type { SerperMapsResponse, SerperPlace, SerperSearchResponse } from '../types/serper';
@@ -52,15 +52,21 @@ async function scanSinglePoint(
     );
 
     const rank = businessIndex !== -1 ? businessIndex + 1 : null;
+    const topCompetitors = placesResults.slice(0, 10).map((p: SerperPlace) => p.title);
 
     if (rank) {
       console.log(`[SCAN] ✅ "${businessName}" → pos #${rank}`);
     } else {
-      const top3 = placesResults.slice(0, 3).map(p => p.title).join(', ');
+      const top3 = topCompetitors.slice(0, 3).join(', ');
       console.warn(`[SCAN] ❌ "${businessName}" no encontrado. Top 3: [${top3}]`);
     }
 
-    return { ...point, rank, totalResults: placesResults.length };
+    return { 
+      ...point, 
+      rank, 
+      totalResults: placesResults.length,
+      topCompetitors 
+    };
   } catch (err) {
     console.error(`[SCAN] Error at (${point.lat}, ${point.lng}):`, err);
     return { ...point, rank: null, totalResults: 0 };
@@ -68,9 +74,47 @@ async function scanSinglePoint(
 }
 
 /**
+ * Calculates aggregated competition statistics from all grid points.
+ */
+function calculateCompetitorStats(points: GridPoint[]): CompetitorStat[] {
+  const statsMap = new Map<string, {
+    totalRank: number;
+    top3Count: number;
+    presenceCount: number;
+  }>();
+
+  points.forEach(point => {
+    (point.topCompetitors || []).forEach((name, idx) => {
+      const rank = idx + 1;
+      const current = statsMap.get(name) || { totalRank: 0, top3Count: 0, presenceCount: 0 };
+      
+      current.totalRank += rank;
+      current.presenceCount += 1;
+      if (rank <= 3) current.top3Count += 1;
+      
+      statsMap.set(name, current);
+    });
+  });
+
+  const totalPoints = points.length;
+
+  return Array.from(statsMap.entries())
+    .map(([name, data]) => ({
+      name,
+      avgRank: Number((data.totalRank / data.presenceCount).toFixed(1)),
+      top3Count: data.top3Count,
+      presenceCount: data.presenceCount,
+      shareOfLocalPack: Number(((data.top3Count / totalPoints) * 100).toFixed(1))
+    }))
+    .sort((a, b) => b.top3Count - a.top3Count || a.avgRank - b.avgRank)
+    .slice(0, 12); // Best 12 competitors
+}
+
+/**
  * Detects advertisers for a specific keyword using Serper Search endpoint.
  */
 async function getAdvertisers(keyword: string): Promise<string[]> {
+// ... (existing code)
   if (!SERPER_API_KEY) return [];
   
   try {
@@ -158,12 +202,14 @@ export const searchService = {
       }
 
       const advertisers = await advertisersPromise;
+      const competitors = calculateCompetitorStats(results);
 
       return {
         id: crypto.randomUUID(),
         config,
         points: results,
         advertisers,
+        competitors,
         createdAt: new Date().toISOString(),
       };
     } catch (error) {

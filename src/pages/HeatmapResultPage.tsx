@@ -1,15 +1,15 @@
 import { useLocation, useNavigate, Navigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { MapPin, Search, Calendar, Grid3X3, ArrowLeft, Plus, Printer, Target, Mail, Megaphone, CheckCircle2, AlertCircle } from 'lucide-react';
+import { MapPin, Search, Calendar, Grid3X3, ArrowLeft, Plus, Printer, Target, Mail, Megaphone, CheckCircle2, AlertCircle, Trophy, Users, BarChart3, TrendingUp } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { HeatmapMap, HeatmapLegend } from '@/features/heatmap';
 import { StatRow } from '@/features/heatmap/components/ui/StatRow';
 import { getRankColor } from '@/config/constants';
-import { isAdvertiser } from '@/features/heatmap/utils/textUtils';
+import { isAdvertiser, isBusinessMatch } from '@/features/heatmap/utils/textUtils';
 import type { Database } from '@/types/database';
-import type { GridPoint, ResultsSummary } from '@/types';
+import type { GridPoint, ResultsSummary, CompetitorStat } from '@/types';
 
 type HeatmapRecord = Database['public']['Tables']['heatmaps']['Row'];
 
@@ -41,6 +41,7 @@ export function HeatmapResultPage() {
   const points = (heatmap.points as unknown as GridPoint[]) || [];
   const summary = (heatmap.results_summary as unknown as ResultsSummary) || { avgRank: 0, bestRank: null, foundCount: 0, totalCount: 0 };
   const advertisers = (heatmap.advertisers as string[]) || [];
+  const competitors = (heatmap.competitors as unknown as CompetitorStat[]) || [];
   const isTargetInAds = isAdvertiser(heatmap.business_name, advertisers);
 
   const formatDate = (dateString: string) => {
@@ -236,6 +237,106 @@ export function HeatmapResultPage() {
           </Card>
         </motion.div>
       </div>
+
+      {/* Competition Leaderboard */}
+      <motion.div variants={itemVariants}>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+            <div>
+              <CardTitle className="text-xl flex items-center gap-2">
+                <Trophy className="h-5 w-5 text-amber-500" />
+                Líderes del Mercado Local
+              </CardTitle>
+              <CardDescription>Comparativa de presencia en el Top 3 (Local Pack) para "{heatmap.keyword}"</CardDescription>
+            </div>
+            <div className="hidden sm:block">
+              <Badge variant="secondary" className="gap-1 px-3 py-1">
+                <Users className="h-3.5 w-3.5" />
+                {competitors.length} Competidores rastreados
+              </Badge>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
+                    <th className="h-12 px-4 text-left align-middle font-bold text-muted-foreground uppercase tracking-wider text-[10px]">Rank</th>
+                    <th className="h-12 px-4 text-left align-middle font-bold text-muted-foreground uppercase tracking-wider text-[10px]">Competidor</th>
+                    <th className="h-12 px-4 text-center align-middle font-bold text-muted-foreground uppercase tracking-wider text-[10px]">Promedio</th>
+                    <th className="h-12 px-4 text-center align-middle font-bold text-muted-foreground uppercase tracking-wider text-[10px]">Top 3</th>
+                    <th className="h-12 px-4 text-right align-middle font-bold text-muted-foreground uppercase tracking-wider text-[10px]">Share of Local Pack</th>
+                  </tr>
+                </thead>
+                <tbody className="[&_tr:last-child]:border-0">
+                  {competitors.map((comp, idx) => {
+                    const isTarget = isBusinessMatch(heatmap.business_name, comp.name, heatmap.place_id, '');
+                    return (
+                      <tr key={idx} className={`border-b transition-all hover:bg-muted/50 ${isTarget ? 'bg-primary/5 font-bold' : ''}`}>
+                        <td className="p-4 align-middle">
+                          <div className={`flex h-6 w-6 items-center justify-center rounded-full text-[10px] ${idx < 3 ? 'bg-amber-500 text-white font-bold' : 'bg-secondary text-muted-foreground'}`}>
+                            {idx + 1}
+                          </div>
+                        </td>
+                        <td className="p-4 align-middle">
+                          <div className="flex items-center gap-2">
+                            <span className="truncate max-w-[200px] sm:max-w-none">{comp.name}</span>
+                            {isTarget && <Badge className="h-4 text-[9px] px-1.5 uppercase bg-primary text-white">Tu Negocio</Badge>}
+                          </div>
+                        </td>
+                        <td className="p-4 align-middle text-center">
+                          <span className="font-medium">#{comp.avgRank.toFixed(1)}</span>
+                        </td>
+                        <td className="p-4 align-middle text-center">
+                          <div className="flex flex-col items-center">
+                            <span className="text-sm">{comp.top3Count}</span>
+                            <span className="text-[9px] text-muted-foreground leading-none">puntos</span>
+                          </div>
+                        </td>
+                        <td className="p-4 align-middle">
+                          <div className="flex items-center justify-end gap-3">
+                            <div className="w-24 hidden sm:block h-2 bg-secondary rounded-full overflow-hidden">
+                              <div 
+                                className="h-full bg-primary" 
+                                style={{ width: `${comp.shareOfLocalPack}%` }}
+                              />
+                            </div>
+                            <span className="text-right tabular-nums w-12 font-bold">{comp.shareOfLocalPack}%</span>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                  {competitors.length === 0 && (
+                    <tr>
+                      <td colSpan={5} className="p-8 text-center text-muted-foreground">
+                        No hay suficientes datos de competencia en este análisis.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+            
+            <div className="mt-6 p-4 rounded-xl bg-primary/5 border border-primary/10 flex flex-col sm:flex-row gap-4 items-center">
+              <div className="h-10 w-10 shrink-0 bg-primary/10 rounded-full flex items-center justify-center text-primary">
+                <BarChart3 className="h-5 w-5" />
+              </div>
+              <div className="flex-1 text-center sm:text-left">
+                <p className="text-sm font-semibold text-primary">Insight de Dominancia Market Share</p>
+                <p className="text-xs text-muted-foreground">
+                  <strong>{competitors[0]?.name || 'Nadie'}</strong> lidera el mercado local captando el <strong>{competitors[0]?.shareOfLocalPack || 0}%</strong> de las vitrinas de Google (Top 3) en esta área.
+                </p>
+              </div>
+              <div className="shrink-0">
+                <Badge variant="outline" className="text-[10px] text-primary bg-primary/5">
+                  <TrendingUp className="h-3 w-3 mr-1" /> ALTA DINÁMICA
+                </Badge>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </motion.div>
     </motion.div>
   );
 }
