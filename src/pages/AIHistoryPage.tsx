@@ -1,13 +1,14 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Sparkles, Search, Copy, Check, MessageSquareMore, Calendar, Store, Tag, FileText } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Sparkles, Search, Copy, Check, MessageSquareMore, Calendar, Store, FileText } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { aiService } from '@/services/aiService';
 import { useAuth } from '@/features/auth/hooks/useAuth';
+import type { StoredAIContent } from '@/features/ai-optimization/types';
 import { toast } from 'sonner';
 
 const containerVariants = {
@@ -25,7 +26,7 @@ const itemVariants = {
 
 export function AIHistoryPage() {
   const { user } = useAuth();
-  const [history, setHistory] = useState<any[]>([]);
+  const [history, setHistory] = useState<StoredAIContent[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [copiedId, setCopiedId] = useState<string | null>(null);

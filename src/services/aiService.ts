@@ -1,5 +1,5 @@
 import { supabase } from '@/lib/supabase';
-import type { AIResponse, GeneratedGBPPost, PostPromptContent } from '@/features/ai-optimization/types';
+import type { AIResponse, GeneratedGBPPost, PostPromptContent, StoredAIContent } from '@/features/ai-optimization/types';
 
 const OPENAI_API_KEY = import.meta.env.VITE_OPENAI_API_KEY;
 
@@ -112,7 +112,7 @@ export const aiService = {
     try {
       const { error } = await supabase
         .from('ai_generated_content')
-        .insert({
+        .insert([{
           user_id: data.userId,
           heatmap_id: data.heatmapId,
           business_name: data.businessName,
@@ -120,7 +120,7 @@ export const aiService = {
           content: data.content,
           hashtags: data.hashtags,
           optimized_filename: data.optimizedFilename
-        });
+        }]);
 
       if (error) throw error;
       return {};
@@ -133,7 +133,7 @@ export const aiService = {
   /**
    * Fetches history of AI-generated content for a specific user.
    */
-  async getUserContentHistory(userId: string): Promise<AIResponse<any[]>> {
+  async getUserContentHistory(userId: string): Promise<AIResponse<StoredAIContent[]>> {
     try {
       const { data, error } = await supabase
         .from('ai_generated_content')
@@ -142,7 +142,7 @@ export const aiService = {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      return { data };
+      return { data: data as StoredAIContent[] };
     } catch (error: any) {
       console.error('[GET_AI_HISTORY_ERROR]:', error);
       return { error: 'No se pudo cargar el historial de contenidos.' };

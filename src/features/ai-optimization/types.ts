@@ -29,3 +29,15 @@ export interface AIResponse<T> {
     totalTokens: number;
   };
 }
+
+export interface StoredAIContent {
+  id: string;
+  user_id: string;
+  heatmap_id?: string;
+  business_name: string;
+  keyword: string;
+  content: string;
+  hashtags: string[];
+  optimized_filename?: string;
+  created_at: string;
+}
