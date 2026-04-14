@@ -11,6 +11,7 @@ import {
 import { GRID_OPTIONS, RADIUS_OPTIONS } from '@/config/constants';
 import { BusinessSearch, CostIndicator, type PlaceSuggestion } from '@/features/heatmap';
 import { useHeatmap } from '../../hooks/useHeatmap';
+import type { GridSize } from '@/types';
 
 interface SearchFormProps {
   heatmap: ReturnType<typeof useHeatmap>;
@@ -77,7 +78,7 @@ export function SearchForm({ heatmap }: SearchFormProps) {
           <Label>Grid</Label>
           <Select
             value={heatmap.gridSize}
-            onValueChange={(v) => heatmap.setGridSize(v as any)}
+            onValueChange={(v) => heatmap.setGridSize(v as GridSize)}
           >
             <SelectTrigger className="hover:border-primary/50 transition-colors">
               <SelectValue placeholder="Grid" />

@@ -8,7 +8,7 @@ import { HeatmapMap, HeatmapLegend } from '@/features/heatmap';
 import { StatRow } from '@/features/heatmap/components/ui/StatRow';
 import { getRankColor } from '@/config/constants';
 import type { Database } from '@/types/database';
-import type { GridPoint } from '@/types';
+import type { GridPoint, ResultsSummary } from '@/types';
 
 type HeatmapRecord = Database['public']['Tables']['heatmaps']['Row'];
 
@@ -38,7 +38,7 @@ export function HeatmapResultPage() {
 
   const center: [number, number] = [Number(heatmap.center_lat), Number(heatmap.center_lng)];
   const points = (heatmap.points as unknown as GridPoint[]) || [];
-  const summary = (heatmap.results_summary as unknown as { avgRank: number; bestRank: number | null }) || { avgRank: 0, bestRank: null };
+  const summary = (heatmap.results_summary as unknown as ResultsSummary) || { avgRank: 0, bestRank: null, foundCount: 0, totalCount: 0 };
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('es-ES', {

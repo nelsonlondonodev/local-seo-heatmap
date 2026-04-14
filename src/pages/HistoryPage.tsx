@@ -15,7 +15,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { useHeatmaps } from '@/hooks';
-
+import type { ResultsSummary } from '@/types';
 import type { Database } from '@/types/database';
 
 type HeatmapRecord = Database['public']['Tables']['heatmaps']['Row'];
@@ -95,7 +95,7 @@ export function HistoryPage() {
       ) : (
         <div className="space-y-4">
           {history.map((entry) => {
-            const summary = (entry.results_summary as unknown as { avgRank: number; bestRank: number | null }) || { avgRank: 0, bestRank: null };
+            const summary = (entry.results_summary as unknown as ResultsSummary) || { avgRank: 0, bestRank: null, foundCount: 0, totalCount: 0 };
             
             return (
               <motion.div key={entry.id} variants={itemVariants}>

@@ -47,6 +47,14 @@ export interface UserProfile {
   createdAt: string;
 }
 
+/** Summary of heatmap results stored in DB */
+export interface ResultsSummary {
+  avgRank: number;
+  bestRank: number | null;
+  foundCount: number;
+  totalCount: number;
+}
+
 /** Search history entry */
 export interface SearchHistoryEntry {
   id: string;
@@ -55,13 +63,7 @@ export interface SearchHistoryEntry {
   gridSize: GridSize;
   radiusKm: number;
   createdAt: string;
-  resultsSummary: {
-    avgRank: number;
-    bestRank: number;
-    worstRank: number;
-    pointsFound: number;
-    totalPoints: number;
-  };
+  resultsSummary: ResultsSummary;
   prospectName?: string | null;
   prospectEmail?: string | null;
 }
