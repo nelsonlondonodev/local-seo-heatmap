@@ -1,9 +1,8 @@
-import * as React from 'react';
 import { 
-  LineChart, Line, XAxis, YAxis, CartesianGrid, 
+  XAxis, YAxis, CartesianGrid, 
   Tooltip, ResponsiveContainer, Area, AreaChart 
 } from 'recharts';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { TrendingUp, TrendingDown, Minus } from 'lucide-react';
 import { useRankingHistory } from '../../hooks/useRankingHistory';
 
