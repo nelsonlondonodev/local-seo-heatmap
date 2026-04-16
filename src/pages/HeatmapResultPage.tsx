@@ -97,6 +97,31 @@ export function HeatmapResultPage() {
           <Button variant="outline" onClick={() => navigate('/history')}>
             Volver
           </Button>
+          <Button 
+            variant="outline" 
+            className="border-dashed border-primary/40 text-primary"
+            onClick={async () => {
+              const { supabase } = await import('@/lib/supabase');
+              const mock = {
+                ...heatmap,
+                id: crypto.randomUUID(),
+                created_at: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
+                results_summary: {
+                  ...(heatmap.results_summary as any || {}),
+                  avgRank: ((heatmap.results_summary as any)?.avgRank || 10) + 5,
+                  bestRank: ((heatmap.results_summary as any)?.bestRank || 5) + 2
+                }
+              };
+              const { error } = await supabase.from('heatmaps').insert(mock);
+              if (error) alert('Error: ' + error.message);
+              else {
+                alert('¡Dato histórico creado! Recarga la página.');
+                window.location.reload();
+              }
+            }}
+          >
+            🧪 Simular Historial
+          </Button>
           <Button variant="secondary" onClick={() => window.print()} className="gap-2 font-semibold">
             <Printer className="h-4 w-4" />
             Imprimir Reporte

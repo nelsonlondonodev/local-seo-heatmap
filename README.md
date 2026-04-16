@@ -247,14 +247,14 @@ Basado en el análisis competitivo y las necesidades de Nelson, este es nuestro 
 
 ---
 
-## 🪐 Roadmap de Innovación SEO Local (v0.7.0+)
+## 🚀 Roadmap de Innovación SEO Local (v0.8.0+)
 
 Inspirado en el análisis de herramientas líderes como **DinoRank**, hemos trazado el siguiente plan de expansión para MapRanker Pro:
 
 1.  **🤖 Inteligencia Artificial (Dino-Style)**:
     *   **GBP Post Generator**: Generación de publicaciones con Vision AI y optimización SEO (Completado ✅).
-    *   **Review Reply AI**: Asistente para responder reseñas de forma profesional y optimizada para SEO.
-    *   **Local Bio Optimizer**: IA que analiza competidores y sugiere la descripción perfecta para el negocio.
+    *   **Review Reply AI**: Asistente para responder reseñas de forma profesional y optimizada para SEO (Completado ✅).
+    *   **Local Bio Optimizer**: IA que analiza competidores y sugiere la descripción perfecta para el negocio (Completado ✅).
 
 2.  **🔍 Análisis de Brechas (Local Content Gap)**:
     *   **Category Gap**: Identificación de categorías de negocio que los competidores usan y nuestro cliente no.
@@ -262,7 +262,7 @@ Inspirado en el análisis de herramientas líderes como **DinoRank**, hemos traz
 
 3.  **📈 Monitorización Presencial y Proactiva**:
     *   **Alertas de Desplazamiento**: Notificaciones cuando un competidor nos quita el puesto en el Local Pack de una coordenada.
-    *   **Local Visibility Graph**: Evolución histórica del "Share of Local Pack" y ranking promedio.
+    *   **Local Visibility Graph**: Evolución histórica del "Share of Local Pack" y ranking promedio (Lógica implementada ✅ - Visual en ajuste 🛠️).
 
 4.  **🌐 SEO On-Page Local & LLMs**:
     *   **Schema & Sync Audit**: Verificación de datos estructurados en la web vinculada a la ficha.
@@ -282,13 +282,13 @@ Inspirado en el análisis de herramientas líderes como **DinoRank**, hemos traz
 |---|---|---|
 | `id` | `string` (UUID) | FK a `auth.users` |
 | `email` | `string` | Email del usuario |
-| `full_name` | `string \| null` | Nombre completo |
-| `avatar_url` | `string \| null` | URL del avatar |
-| `plan` | `enum` | `'free' \| 'pro' \| 'enterprise'` |
+| `full_name` | `string | null` | Nombre completo |
+| `avatar_url` | `string | null` | URL del avatar |
+| `plan` | `enum` | `'free' | 'pro' | 'enterprise'` |
 | `created_at` | `timestamp` | Fecha de creación |
 | `updated_at` | `timestamp` | Última actualización |
 
-### Tabla `search_history`
+### Tabla `heatmaps`
 
 | Campo | Tipo | Descripción |
 |---|---|---|
@@ -297,11 +297,7 @@ Inspirado en el análisis de herramientas líderes como **DinoRank**, hemos traz
 | `keyword` | `string` | Palabra clave buscada |
 | `business_name` | `string` | Nombre del negocio |
 | `place_id` | `string` | Google Place ID |
-| `grid_size` | `enum` | `'3x3' \| '5x5' \| '7x7'` |
-| `radius_km` | `number` | Radio en kilómetros |
-| `center_lat` | `number` | Latitud del centro |
-| `center_lng` | `number` | Longitud del centro |
-| `results` | `JSON` | Resultados de la cuadrícula |
+| `results_summary` | `JSON` | Resumen de métricas (Avg/Best Rank) |
 | `created_at` | `timestamp` | Fecha de creación |
 
 ---
@@ -331,10 +327,10 @@ Inspirado en el análisis de herramientas líderes como **DinoRank**, hemos traz
 
 ## Estado Actual del Proyecto
 
-> **Versión:** 0.7.0 — AI Vision Assistant & Local Content Core.
+> **Versión:** 0.8.0 — Sales Strategy Hub & AI Engagement Kit.
 
 Próximas tareas:
-1. **🤖 Implementación de IA (GBP Post Generator)** ✅: Generación de contenido local con visión completada.
-2. **📉 Gráfica de Visibilidad Local**: Panel histórico de evolución de rankings.
+1. **📉 Local Visibility Graph (UI Polish)**: Ajuste fino de renderizado de `recharts`.
+2. **🔍 Analysis de Brechas (Category Gap)**: Siguiente módulo de inteligencia competitiva.
 3. **Google API Real**: Sustituir el simulador por llamadas reales a Google Places API / Edge Functions.
 4. **Sistema de suscripción**: Implementar pasarela de pago para planes Pro y Enterprise.

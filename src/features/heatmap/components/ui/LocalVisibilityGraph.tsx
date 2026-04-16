@@ -50,9 +50,10 @@ export function LocalVisibilityGraph({ placeId, keyword }: LocalVisibilityGraphP
           </div>
         </div>
       </CardHeader>
-      <CardContent className="h-[200px] pt-4 pr-0">
-        <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={chartData}>
+      <CardContent className="pt-4 pr-0">
+        <div style={{ width: '100%', height: 180 }}>
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart data={chartData} margin={{ top: 5, right: 30, left: 0, bottom: 0 }}>
             <defs>
               <linearGradient id="colorAvg" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.15}/>
@@ -93,7 +94,8 @@ export function LocalVisibilityGraph({ placeId, keyword }: LocalVisibilityGraphP
               animationDuration={1500}
             />
           </AreaChart>
-        </ResponsiveContainer>
+          </ResponsiveContainer>
+        </div>
       </CardContent>
     </Card>
   );
