@@ -1,9 +1,10 @@
-import { MessageSquare, RefreshCw, Wand2, Star, Copy, Check } from 'lucide-react';
+import * as React from 'react';
 import { useState } from 'react';
+import { MessageSquare, RefreshCw, Wand2, Star, Copy, Check } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Textarea } from '@/components/ui/textarea';
+import { Textarea } from '../../../components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useReviewReplyGeneration } from '../hooks/useReviewReplyGeneration';
 import { toast } from 'sonner';
@@ -65,7 +66,7 @@ export function ReviewReplyCard({ businessName }: ReviewReplyCardProps) {
                 placeholder="Ej: 'Me encantó el servicio, muy profesionales y puntuales...'" 
                 className="min-h-[120px] bg-background/50 border-primary/10 rounded-xl resize-none focus:ring-2 focus:ring-primary/20 transition-all font-medium"
                 value={reviewText}
-                onChange={(e) => setReviewText(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setReviewText(e.target.value)}
               />
             </div>
 
