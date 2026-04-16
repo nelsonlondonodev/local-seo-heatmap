@@ -1,6 +1,6 @@
 import { useLocation, useNavigate, Navigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { MapPin, Search, Calendar, Grid3X3, ArrowLeft, Plus, Printer, Target, Mail, Megaphone, CheckCircle2, AlertCircle, Trophy, Users, BarChart3, TrendingUp, Sparkles, MessageSquare } from 'lucide-react';
+import { MapPin, Search, Calendar, Grid3X3, ArrowLeft, Plus, Printer, Target, Mail, Megaphone, CheckCircle2, AlertCircle, Trophy, Users, BarChart3, TrendingUp, Sparkles, MessageSquare, FileText } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { HeatmapMap, HeatmapLegend } from '@/features/heatmap';
 import { StatRow } from '@/features/heatmap/components/ui/StatRow';
 import { CompetitorsTable } from '@/features/heatmap/components/ui/CompetitorsTable';
-import { PostGeneratorCard, ReviewReplyCard } from '@/features/ai-optimization';
+import { PostGeneratorCard, ReviewReplyCard, LocalBioOptimizerCard } from '@/features/ai-optimization';
 import { getRankColor } from '@/config/constants';
 import { isAdvertiser, isBusinessMatch } from '@/features/heatmap/utils/textUtils';
 import type { Database } from '@/types/database';
@@ -261,14 +261,18 @@ export function HeatmapResultPage() {
         </div>
 
         <Tabs defaultValue="posts" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 lg:w-[400px] mb-4">
+          <TabsList className="grid w-full grid-cols-3 lg:w-[600px] mb-4">
             <TabsTrigger value="posts" className="gap-2">
               <Megaphone className="h-4 w-4" />
-              Publicaciones GBP
+              Publicaciones
             </TabsTrigger>
             <TabsTrigger value="reviews" className="gap-2">
               <MessageSquare className="h-4 w-4" />
-              Respuesta a Reseñas
+              Reseñas
+            </TabsTrigger>
+            <TabsTrigger value="bio" className="gap-2">
+              <FileText className="h-4 w-4" />
+              Biografía SEO
             </TabsTrigger>
           </TabsList>
 
@@ -284,6 +288,13 @@ export function HeatmapResultPage() {
           <TabsContent value="reviews" className="mt-0">
             <ReviewReplyCard 
               businessName={heatmap.business_name}
+            />
+          </TabsContent>
+
+          <TabsContent value="bio" className="mt-0">
+            <LocalBioOptimizerCard 
+              businessName={heatmap.business_name}
+              keyword={heatmap.keyword}
             />
           </TabsContent>
         </Tabs>

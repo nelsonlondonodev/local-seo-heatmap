@@ -1,5 +1,5 @@
 import { supabase } from '@/lib/supabase';
-import type { AIResponse, GeneratedGBPPost, PostPromptContent, StoredAIContent, ReviewReplyPrompt, GeneratedReviewReply } from '@/features/ai-optimization/types';
+import type { AIResponse, GeneratedGBPPost, PostPromptContent, StoredAIContent, ReviewReplyPrompt, GeneratedReviewReply, BioOptimizerPrompt, GeneratedBio } from '@/features/ai-optimization/types';
 
 const OPENAI_API_KEY = import.meta.env.VITE_OPENAI_API_KEY;
 
@@ -78,6 +78,50 @@ export const aiService = {
     } catch (error: any) {
       console.error('[AI_REPLY_ERROR]:', error);
       return { error: error.message || 'No se pudo generar la respuesta a la reseña.' };
+    }
+  },
+
+  /**
+   * Generates an SEO-optimized business description (Bio) for GBP.
+   */
+  async generateLocalBio(prompt: BioOptimizerPrompt): Promise<AIResponse<GeneratedBio>> {
+    try {
+      const messages = [
+        {
+          role: 'system',
+          content: `Eres un experto en Copywriting y SEO Local para perfiles de Google Business (GBP). 
+          Tu objetivo es redactar la descripción perfecta para el negocio "${prompt.businessName}" (Categoría: "${prompt.category}").
+          
+          Reglas:
+          - Longitud máxima: 750 caracteres.
+          - Tono: ${prompt.tone}.
+          - Integra de forma orgánica las palabras clave: ${prompt.targetKeywords?.join(', ') || 'relevantes al sector'}.
+          - No seas genérico. Enfócate en la propuesta de valor.
+          - Si se proporciona una "descripción actual", mejórala pero mantén la esencia del negocio.
+          - Formato de respuesta: Devuelve solo un objeto JSON con los campos: "content" (texto de la bio) y "usedKeywords" (array de las keywords integradas).`
+        },
+        {
+          role: 'user',
+          content: `Descripción actual: "${prompt.currentDescription || 'No proporcionada'}"`
+        }
+      ];
+
+      const rawData = await callOpenAI(messages);
+      const aiContent = JSON.parse(rawData.choices[0].message.content);
+
+      return { 
+        data: {
+          id: crypto.randomUUID(),
+          content: aiContent.content,
+          usedKeywords: aiContent.usedKeywords || [],
+          createdAt: new Date().toISOString(),
+          metadata: { tone: prompt.tone }
+        },
+        usage: { totalTokens: rawData.usage?.total_tokens || 0 }
+      };
+    } catch (error: any) {
+      console.error('[AI_BIO_ERROR]:', error);
+      return { error: error.message || 'No se pudo generar la descripción optimizada.' };
     }
   },
 

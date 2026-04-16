@@ -22,6 +22,24 @@ export interface GeneratedGBPPost {
   };
 }
 
+export interface BioOptimizerPrompt {
+  businessName: string;
+  category: string;
+  currentDescription?: string;
+  targetKeywords?: string[];
+  tone: AITone;
+}
+
+export interface GeneratedBio {
+  id: string;
+  content: string;
+  usedKeywords: string[];
+  createdAt: string;
+  metadata: {
+    tone: AITone;
+  };
+}
+
 export interface ReviewReplyPrompt {
   businessName: string;
   reviewText: string;
