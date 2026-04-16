@@ -11,6 +11,7 @@ import { Badge } from '@/components/ui/badge';
 import { HeatmapMap, HeatmapLegend } from '@/features/heatmap';
 import { StatRow } from '@/features/heatmap/components/ui/StatRow';
 import { SalesStrategyHub } from '@/features/heatmap/components/ui/SalesStrategyHub';
+import { LocalVisibilityGraph } from '@/features/heatmap/components/ui/LocalVisibilityGraph';
 import { getRankColor } from '@/config/constants';
 import { isAdvertiser } from '../features/heatmap/utils/textUtils';
 import type { Database } from '@/types/database';
@@ -204,23 +205,30 @@ export function HeatmapResultPage() {
             </CardContent>
           </Card>
 
-          <div className="grid grid-cols-2 gap-4">
-            <Card className="bg-primary/5 border-primary/20 shadow-sm">
-              <CardContent className="p-4 text-center">
-                <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider mb-1">Mejor Rango</p>
-                <div className="text-3xl font-extrabold text-foreground" style={{ color: getRankColor(summary.bestRank) }}>
-                  #{summary.bestRank || '-'}
-                </div>
-              </CardContent>
-            </Card>
-            <Card className="bg-primary/5 border-primary/20 shadow-sm">
-              <CardContent className="p-4 text-center">
-                <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider mb-1">Promedio</p>
-                <div className="text-3xl font-extrabold text-foreground" style={{ color: getRankColor(Math.round(summary.avgRank)) }}>
-                  #{summary.avgRank ? summary.avgRank.toFixed(1) : '-'}
-                </div>
-              </CardContent>
-            </Card>
+          <div className="space-y-4">
+            <LocalVisibilityGraph 
+              placeId={heatmap.place_id}
+              keyword={heatmap.keyword}
+            />
+
+            <div className="grid grid-cols-2 gap-4">
+              <Card className="bg-primary/5 border-primary/20 shadow-sm">
+                <CardContent className="p-4 text-center">
+                  <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider mb-1">Mejor Rango</p>
+                  <div className="text-3xl font-extrabold text-foreground" style={{ color: getRankColor(summary.bestRank) }}>
+                    #{summary.bestRank || '-'}
+                  </div>
+                </CardContent>
+              </Card>
+              <Card className="bg-primary/5 border-primary/20 shadow-sm">
+                <CardContent className="p-4 text-center">
+                  <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider mb-1">Promedio</p>
+                  <div className="text-3xl font-extrabold text-foreground" style={{ color: getRankColor(Math.round(summary.avgRank)) }}>
+                    #{summary.avgRank ? summary.avgRank.toFixed(1) : '-'}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
           </div>
         </motion.div>
 

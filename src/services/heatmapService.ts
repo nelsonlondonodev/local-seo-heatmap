@@ -79,6 +79,29 @@ export const heatmapService = {
     
     return true;
   },
+
+  /**
+   * Retrieves historical ranking data for a specific business and keyword.
+   */
+  async getRankingHistory(placeId: string, keyword: string) {
+    const { data, error } = await supabase
+      .from('heatmaps')
+      .select('created_at, results_summary')
+      .eq('place_id', placeId)
+      .eq('keyword', keyword)
+      .order('created_at', { ascending: true });
+
+    if (error) {
+      console.error('[HEATMAP_SERVICE] Error fetching history:', error.message);
+      throw error;
+    }
+
+    return (data || []).map(row => ({
+      date: row.created_at,
+      avgRank: (row.results_summary as any)?.avgRank || 0,
+      bestRank: (row.results_summary as any)?.bestRank || 0,
+    }));
+  },
 };
 
 /**
