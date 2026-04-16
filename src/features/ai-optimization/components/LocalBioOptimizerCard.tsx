@@ -1,6 +1,9 @@
 import * as React from 'react';
 import { useState } from 'react';
-import { Sparkles, RefreshCw, Wand2, Copy, Check, FileText } from 'lucide-react';
+import { 
+  Sparkles, RefreshCw, 
+  Copy, Check, FileText 
+} from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';

@@ -1,6 +1,10 @@
 import { useLocation, useNavigate, Navigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { MapPin, Search, Calendar, Grid3X3, ArrowLeft, Plus, Printer, Target, Mail, Megaphone, CheckCircle2, AlertCircle, Trophy, Users, BarChart3, TrendingUp, Sparkles, MessageSquare, FileText } from 'lucide-react';
+import { 
+  MapPin, Search, Calendar, Grid3X3, ArrowLeft, Plus, 
+  Printer, Target, Mail, Megaphone, CheckCircle2, 
+  AlertCircle, Trophy, Sparkles, MessageSquare, FileText 
+} from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
@@ -10,7 +14,7 @@ import { StatRow } from '@/features/heatmap/components/ui/StatRow';
 import { CompetitorsTable } from '@/features/heatmap/components/ui/CompetitorsTable';
 import { PostGeneratorCard, ReviewReplyCard, LocalBioOptimizerCard } from '@/features/ai-optimization';
 import { getRankColor } from '@/config/constants';
-import { isAdvertiser, isBusinessMatch } from '@/features/heatmap/utils/textUtils';
+import { isAdvertiser, isBusinessMatch } from '../features/heatmap/utils/textUtils';
 import type { Database } from '@/types/database';
 import type { GridPoint, ResultsSummary, CompetitorStat } from '@/types';
 
