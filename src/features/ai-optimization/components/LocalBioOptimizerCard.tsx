@@ -45,21 +45,49 @@ function BioHeader() {
  * Sub-component for the bio input form.
  */
 function BioForm({ 
-  currentDescription, setCurrentDescription, tone, setTone, isGenerating, onGenerate 
+  currentDescription, setCurrentDescription, 
+  businessName, setBusinessName,
+  category, setCategory,
+  tone, setTone, isGenerating, onGenerate 
 }: any) {
   return (
     <div className="space-y-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="space-y-2">
+          <label className="text-xs font-black uppercase text-muted-foreground/70 ml-1 tracking-widest">
+            Nombre del Negocio
+          </label>
+          <input 
+            type="text"
+            className="flex h-12 w-full rounded-xl border border-primary/10 bg-background/50 px-3 py-2 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20 font-bold"
+            value={businessName}
+            onChange={(e) => setBusinessName(e.target.value)}
+          />
+        </div>
+        <div className="space-y-2">
+          <label className="text-xs font-black uppercase text-muted-foreground/70 ml-1 tracking-widest">
+            Categoría
+          </label>
+          <input 
+            type="text"
+            placeholder="Ej: Peluquería, Restaurante..."
+            className="flex h-12 w-full rounded-xl border border-primary/10 bg-background/50 px-3 py-2 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20 font-bold"
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+          />
+        </div>
+      </div>
+
       <div className="space-y-2">
         <label className="text-xs font-black uppercase text-muted-foreground/70 ml-1 tracking-widest">
-          Descripción Actual (Opcional)
+          Descripción Actual o Instrucciones
         </label>
         <Textarea 
-          placeholder="Pega aquí tu descripción actual para que la IA la optimice..." 
-          className="min-h-[150px] bg-background/50 border-primary/10 rounded-xl resize-none focus:ring-2 focus:ring-primary/20 transition-all font-medium"
+          placeholder="Pega aquí tu descripción o escribe algo como: 'Somos una peluquería en Madrid especializada en barbas'..." 
+          className="min-h-[120px] bg-background/50 border-primary/10 rounded-xl resize-none focus:ring-2 focus:ring-primary/20 transition-all font-medium"
           value={currentDescription}
           onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setCurrentDescription(e.target.value)}
         />
-        <p className="text-[10px] text-muted-foreground px-1">Máximo recomendado: 750 caracteres para Google Business Profile.</p>
       </div>
 
       <div className="space-y-2">
@@ -80,7 +108,7 @@ function BioForm({
       <Button 
         onClick={onGenerate} 
         disabled={isGenerating}
-        className="w-full h-12 px-8 gap-3 font-bold rounded-xl shadow-lg shadow-primary/10 hover:shadow-primary/20 transition-all active:scale-[0.98]"
+        className="w-full h-12 px-8 gap-3 font-bold rounded-xl shadow-lg shadow-emerald-500/10 hover:shadow-emerald-500/20 transition-all active:scale-[0.98] bg-emerald-600 hover:bg-emerald-700 text-white border-none"
       >
         {isGenerating ? (
           <>
@@ -151,6 +179,7 @@ function BioResult({ content, usedKeywords, tone, copied, onCopy, onReset }: any
  */
 export function LocalBioOptimizerCard(props: LocalBioOptimizerCardProps) {
   const {
+    businessName, setBusinessName, category, setCategory,
     tone, setTone, currentDescription, setCurrentDescription,
     isGenerating, generatedBio, generate, reset
   } = useLocalBioOptimization(props);
@@ -177,7 +206,12 @@ export function LocalBioOptimizerCard(props: LocalBioOptimizerCardProps) {
       <CardContent className="space-y-6">
         {!generatedBio ? (
           <BioForm 
-            {...{ currentDescription, setCurrentDescription, tone, setTone, isGenerating }}
+            {...{ 
+              currentDescription, setCurrentDescription, 
+              businessName, setBusinessName,
+              category, setCategory,
+              tone, setTone, isGenerating 
+            }}
             onGenerate={generate}
           />
         ) : (

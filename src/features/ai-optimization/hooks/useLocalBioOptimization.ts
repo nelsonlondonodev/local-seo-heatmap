@@ -12,7 +12,9 @@ interface UseLocalBioOptimizationProps {
 /**
  * Hook to manage local bio optimization logic.
  */
-export function useLocalBioOptimization({ businessName, category = '', keyword = '' }: UseLocalBioOptimizationProps) {
+export function useLocalBioOptimization({ businessName: initialName, category: initialCategory = '', keyword = '' }: UseLocalBioOptimizationProps) {
+  const [businessName, setBusinessName] = useState(initialName);
+  const [category, setCategory] = useState(initialCategory);
   const [tone, setTone] = useState<AITone>('professional');
   const [currentDescription, setCurrentDescription] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
@@ -47,6 +49,10 @@ export function useLocalBioOptimization({ businessName, category = '', keyword =
   };
 
   return {
+    businessName,
+    setBusinessName,
+    category,
+    setCategory,
     tone,
     setTone,
     currentDescription,
