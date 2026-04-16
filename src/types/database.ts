@@ -138,6 +138,42 @@ export interface Database {
         };
         Relationships: [];
       };
+      ai_generated_content: {
+        Row: {
+          id: string;
+          user_id: string;
+          heatmap_id: string | null;
+          business_name: string;
+          keyword: string;
+          content: string;
+          hashtags: string[] | null;
+          optimized_filename: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          heatmap_id?: string | null;
+          business_name: string;
+          keyword: string;
+          content: string;
+          hashtags?: string[] | null;
+          optimized_filename?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          heatmap_id?: string | null;
+          business_name?: string;
+          keyword?: string;
+          content?: string;
+          hashtags?: string[] | null;
+          optimized_filename?: string | null;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: Record<string, never>;
