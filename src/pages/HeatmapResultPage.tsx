@@ -14,7 +14,7 @@ import { StatRow } from '@/features/heatmap/components/ui/StatRow';
 import { CompetitorsTable } from '@/features/heatmap/components/ui/CompetitorsTable';
 import { PostGeneratorCard, ReviewReplyCard, LocalBioOptimizerCard } from '@/features/ai-optimization';
 import { getRankColor } from '@/config/constants';
-import { isAdvertiser, isBusinessMatch } from '../features/heatmap/utils/textUtils';
+import { isAdvertiser } from '../features/heatmap/utils/textUtils';
 import type { Database } from '@/types/database';
 import type { GridPoint, ResultsSummary, CompetitorStat } from '@/types';
 
