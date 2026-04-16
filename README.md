@@ -26,16 +26,16 @@
 
 ---
 
-## 🚀 Estado Actual del Proyecto (v0.6.5 - Sales Intelligence Edition)
+## 🚀 Estado Actual del Proyecto (v0.8.0 - Audit & Robustness Edition)
 
-Hemos transformado la herramienta en una plataforma de ventas profesional (Sales-Ready) con inteligencia competitiva avanzada:
+Hemos finalizado una auditoría técnica profunda para elevar el proyecto a estándares de "Marca Blanca" profesional:
 
-1.  **🏗️ Arquitectura de Vistas Desacoplada**: Separación total entre Dashboard, Prospección y Resultados.
-2.  **📢 Inteligencia de Google Ads**: Motor híbrido que detecta anunciantes activos en tiempo real para identificar leads con presupuesto.
-3.  **🏆 Análisis de Competencia (Market Share)**: Cálculo automático de "Share of Local Pack" y ranking promedio de los Top 10 competidores.
-4.  **📄 Generación de Informes PDF Premium**: Reportes optimizados para impresión con plan de acción estratégico e identidad de agencia.
-5.  **🧪 TypeScript Strict Mode**: Código 100% blindado contra errores en tiempo de ejecución, eliminando todo rastro de `any`.
-6.  **📊 Persistencia de Prospección**: Guardado automático de leads (nombres/emails) y datos de competencia en Supabase.
+1.  **🧪 Infraestructura de Testing**: Implementación de Vitest + React Testing Library para garantizar la integridad de la lógica comercial.
+2.  **🛡️ TypeScript Strict Engine**: Tipado 100% estricto en servicios de IA y Heatmaps, eliminando riesgos de tiempo de ejecución.
+3.  **🏳️‍🌈 Arquitectura White-Label**: Soporte para personalización dinámica de país (`gl`), centro de mapa y branding de agencia mediante variables de entorno.
+4.  **🛑 Módulo de Confirmación de Gasto**: Nuevo modal de pre-vuelo que valida datos y muestra costos en créditos antes de ejecutar análisis.
+5.  **📜 Logging Centralizado**: Sistema de monitoreo que silencia la consola en producción y ofrece trazabilidad detallada en desarrollo.
+6.  **📦 Optimización SPA (Vercel)**: Configuración nativa de redirecciones para despliegues estables en Vercel.
 
 ---
 
@@ -50,6 +50,13 @@ Asegúrate de tener configuradas las siguientes variables para que la conexión 
 ```env
 VITE_SUPABASE_URL=tu_url_de_supabase
 VITE_SUPABASE_ANON_KEY=tu_clave_anon_de_supabase
+VITE_SERPER_API_KEY=tu_api_key_de_serper
+VITE_OPENAI_API_KEY=tu_api_key_de_openai
+
+# Configuración White-Label
+VITE_DEFAULT_COUNTRY=es      # Código de país (gl) por defecto (es, us, co, etc.)
+VITE_DEFAULT_LAT=40.4168    # Latitud por defecto (ej: Madrid)
+VITE_DEFAULT_LNG=-3.7038    # Longitud por defecto
 ```
 
 ### Diagnóstico de Autenticación
@@ -88,6 +95,8 @@ Si encuentras problemas durante el refresco del navegador, hemos inyectado senso
 | **React Router** | 7.x | Enrutamiento SPA |
 | **Lucide React** | 1.x | Iconos |
 | **Sonner** | 2.x | Notificaciones toast |
+| **Vitest** | 4.x | Marco de pruebas unitarias |
+| **Testing Library** | 16.x | Testing de componentes React |
 | **Geist Font** | Variable | Tipografía principal |
 
 ---
@@ -201,6 +210,8 @@ VITE_SUPABASE_ANON_KEY=tu_anon_key_de_supabase
 | **build** | `npm run build` | Compilación TypeScript + build de producción |
 | **lint** | `npm run lint` | Linting con ESLint |
 | **preview** | `npm run preview` | Preview del build de producción |
+| **test** | `npm test` | Ejecución de pruebas unitarias con Vitest |
+| **test:ui** | `npm run test:ui` | Interfaz gráfica de Vitest |
 
 ---
 
