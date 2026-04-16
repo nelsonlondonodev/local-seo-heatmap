@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useHeatmap } from '../../hooks/useHeatmap';
 import { SearchForm } from './SearchForm';
+import { ScanConfirmationModal } from '../ui/ScanConfirmationModal';
 
 interface ProspectingTabProps {
   heatmap: ReturnType<typeof useHeatmap>;
@@ -68,7 +69,7 @@ export function ProspectingTab({ heatmap }: ProspectingTabProps) {
         <Button 
           className="w-full gap-2 h-11 text-base font-bold bg-primary hover:bg-primary/90 shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-all hover:-translate-y-0.5" 
           disabled={!heatmap.isFormValid || heatmap.isLoading}
-          onClick={heatmap.runAnalysis}
+          onClick={() => heatmap.setIsConfirmModalOpen(true)}
         >
           {heatmap.isLoading ? (
             <>
@@ -82,6 +83,23 @@ export function ProspectingTab({ heatmap }: ProspectingTabProps) {
             </>
           )}
         </Button>
+
+        <ScanConfirmationModal 
+          isOpen={heatmap.isConfirmModalOpen}
+          onOpenChange={heatmap.setIsConfirmModalOpen}
+          onConfirm={heatmap.runAnalysis}
+          config={{
+            keyword: heatmap.keyword,
+            businessName: heatmap.businessName,
+            placeId: heatmap.placeId,
+            gridSize: heatmap.gridSize,
+            radiusKm: heatmap.radiusKm,
+            centerLat: heatmap.center[0],
+            centerLng: heatmap.center[1]
+          }}
+          estimatedCost={heatmap.estimatedCost}
+          pointsCount={heatmap.points.length}
+        />
       </CardContent>
     </Card>
   );

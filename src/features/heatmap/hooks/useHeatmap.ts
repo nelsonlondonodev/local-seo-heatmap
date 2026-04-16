@@ -35,6 +35,7 @@ export function useHeatmap() {
   const [scanProgress, setScanProgress] = useState<{ current: number; total: number } | null>(null);
   const [prospectName, setProspectName] = useState('');
   const [prospectEmail, setProspectEmail] = useState('');
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
 
   // 4. Derived State (Computed values)
   const isFormValid = useMemo(() => {
@@ -159,6 +160,8 @@ export function useHeatmap() {
     handleMapClick,
     handleResetCenter,
     runAnalysis,
+    isConfirmModalOpen, 
+    setIsConfirmModalOpen,
     prospectName, setProspectName: updateProspectName,
     prospectEmail, setProspectEmail: updateProspectEmail,
   };
