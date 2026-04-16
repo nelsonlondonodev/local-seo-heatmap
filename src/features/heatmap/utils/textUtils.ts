@@ -53,7 +53,7 @@ export function isAdvertiser(
 export function cleanBusinessName(name: string): string {
   if (!name) return '';
   
-  // Split by common separators and take the first part
+  // 1. Split by common separators and take the first part
   const separators = [' | ', ' - ', ' – ', ' l ', ' : '];
   let cleaned = name;
   
@@ -61,6 +61,17 @@ export function cleanBusinessName(name: string): string {
     if (cleaned.includes(sep)) {
       cleaned = cleaned.split(sep)[0];
     }
+  }
+
+  // 2. Remove city/airport suffixes often used in SEO (e.g., .mde, .bog, .mad)
+  // Logic: a dot followed by 3 letters at the end of a word
+  cleaned = cleaned.replace(/\.[a-z]{3}\b/gi, '');
+  
+  // 3. Remove trailing location indicators if they stand alone after cleaning
+  const locations = ['poblado', 'medellin', 'bogota', 'madrid', 'barcelona'];
+  for (const loc of locations) {
+    const regex = new RegExp(`\\s${loc}$`, 'gi');
+    cleaned = cleaned.replace(regex, '');
   }
   
   return cleaned.trim();
