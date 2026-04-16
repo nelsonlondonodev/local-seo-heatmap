@@ -1,13 +1,14 @@
 import { useLocation, useNavigate, Navigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { MapPin, Search, Calendar, Grid3X3, ArrowLeft, Plus, Printer, Target, Mail, Megaphone, CheckCircle2, AlertCircle, Trophy, Users, BarChart3, TrendingUp, Sparkles } from 'lucide-react';
+import { MapPin, Search, Calendar, Grid3X3, ArrowLeft, Plus, Printer, Target, Mail, Megaphone, CheckCircle2, AlertCircle, Trophy, Users, BarChart3, TrendingUp, Sparkles, MessageSquare } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { HeatmapMap, HeatmapLegend } from '@/features/heatmap';
 import { StatRow } from '@/features/heatmap/components/ui/StatRow';
 import { CompetitorsTable } from '@/features/heatmap/components/ui/CompetitorsTable';
-import { PostGeneratorCard } from '@/features/ai-optimization';
+import { PostGeneratorCard, ReviewReplyCard } from '@/features/ai-optimization';
 import { getRankColor } from '@/config/constants';
 import { isAdvertiser, isBusinessMatch } from '@/features/heatmap/utils/textUtils';
 import type { Database } from '@/types/database';
@@ -250,14 +251,42 @@ export function HeatmapResultPage() {
         />
       </motion.div>
 
-      {/* AI Post Generation Section */}
-      <motion.div variants={itemVariants} className="print:hidden">
-        <PostGeneratorCard 
-          businessName={heatmap.business_name}
-          keyword={heatmap.keyword}
-          location="tu zona local"
-          heatmapId={heatmap.id}
-        />
+      {/* AI Local SEO Toolkit Section */}
+      <motion.div variants={itemVariants} className="print:hidden space-y-4">
+        <div className="flex items-center gap-2 mb-2">
+          <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center">
+            <Sparkles className="h-5 w-5 text-primary" />
+          </div>
+          <h2 className="text-xl font-bold tracking-tight">AI Sales & SEO Toolkit</h2>
+        </div>
+
+        <Tabs defaultValue="posts" className="w-full">
+          <TabsList className="grid w-full grid-cols-2 lg:w-[400px] mb-4">
+            <TabsTrigger value="posts" className="gap-2">
+              <Megaphone className="h-4 w-4" />
+              Publicaciones GBP
+            </TabsTrigger>
+            <TabsTrigger value="reviews" className="gap-2">
+              <MessageSquare className="h-4 w-4" />
+              Respuesta a Reseñas
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="posts" className="mt-0">
+            <PostGeneratorCard 
+              businessName={heatmap.business_name}
+              keyword={heatmap.keyword}
+              location="tu zona local"
+              heatmapId={heatmap.id}
+            />
+          </TabsContent>
+
+          <TabsContent value="reviews" className="mt-0">
+            <ReviewReplyCard 
+              businessName={heatmap.business_name}
+            />
+          </TabsContent>
+        </Tabs>
       </motion.div>
 
       {/* Print-only conversion footer */}

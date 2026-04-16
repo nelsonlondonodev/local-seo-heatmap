@@ -8,6 +8,77 @@ const OPENAI_API_KEY = import.meta.env.VITE_OPENAI_API_KEY;
  */
 export const aiService = {
   /**
+   * Generates a professional reply to a customer review.
+   */
+  async generateReviewReply(prompt: ReviewReplyPrompt): Promise<AIResponse<GeneratedReviewReply>> {
+    if (!OPENAI_API_KEY) {
+      return { error: '⚠️ Por favor, configura VITE_OPENAI_API_KEY en tu archivo .env para usar esta función.' };
+    }
+    try {
+      const messages: any[] = [
+        {
+          role: 'system',
+          content: `Eres un experto en atención al cliente y reputación online para negocios locales. 
+          Tu objetivo es redactar respuestas a reseñas de clientes que mejoren la imagen del negocio "${prompt.businessName}".
+          
+          Reglas según la puntuación (${prompt.rating} estrellas):
+          - 4-5 estrellas: Agradece sinceramente, muestra entusiasmo y refuerza positivamente la experiencia.
+          - 3 estrellas: Sé neutral, agradece el feedback y pregunta sutilmente cómo mejorar.
+          - 1-2 estrellas: Sé extremadamente empático y profesional. Nunca seas defensivo. Pide disculpas sinceramente y propón seguir la conversación de forma privada para solucionar el problema.
+          
+          Reglas generales:
+          - Tono: ${prompt.tone}.
+          - Mantén la respuesta breve y concisa.
+          - Formato de respuesta: Devuelve solo un objeto JSON con el campo: "content" (texto de la respuesta).`
+        },
+        {
+          role: 'user',
+          content: `Reseña del cliente (${prompt.rating} estrellas): "${prompt.reviewText}"`
+        }
+      ];
+
+      const response = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${OPENAI_API_KEY}`
+        },
+        body: JSON.stringify({
+          model: 'gpt-4o-mini',
+          messages,
+          response_format: { type: "json_object" }
+        })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error?.message || 'Error en la API de OpenAI');
+      }
+
+      const rawData = await response.json();
+      const aiContent = JSON.parse(rawData.choices[0].message.content);
+
+      const reply: GeneratedReviewReply = {
+        id: crypto.randomUUID(),
+        content: aiContent.content,
+        createdAt: new Date().toISOString(),
+        metadata: {
+          rating: prompt.rating,
+          tone: prompt.tone
+        }
+      };
+
+      return { 
+        data: reply,
+        usage: { totalTokens: rawData.usage?.total_tokens || 0 }
+      };
+    } catch (error: any) {
+      console.error('[AI_REPLY_ERROR]:', error);
+      return { error: error.message || 'No se pudo generar la respuesta a la reseña.' };
+    }
+  },
+
+  /**
    * Generates a Google Business Profile post based on provided business context.
    */
   async generateGBPPost(prompt: PostPromptContent): Promise<AIResponse<GeneratedGBPPost>> {

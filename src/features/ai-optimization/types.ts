@@ -22,6 +22,23 @@ export interface GeneratedGBPPost {
   };
 }
 
+export interface ReviewReplyPrompt {
+  businessName: string;
+  reviewText: string;
+  rating: number;
+  tone: AITone;
+}
+
+export interface GeneratedReviewReply {
+  id: string;
+  content: string;
+  createdAt: string;
+  metadata: {
+    rating: number;
+    tone: AITone;
+  };
+}
+
 export interface AIResponse<T> {
   data?: T;
   error?: string;
