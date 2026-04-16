@@ -67,11 +67,18 @@ export function cleanBusinessName(name: string): string {
   // Logic: a dot followed by 3 letters at the end of a word
   cleaned = cleaned.replace(/\.[a-z]{3}\b/gi, '');
   
-  // 3. Remove trailing location indicators if they stand alone after cleaning
+  // 3. Remove trailing location indicators (accent-insensitive)
   const locations = ['poblado', 'medellin', 'bogota', 'madrid', 'barcelona'];
   for (const loc of locations) {
-    const regex = new RegExp(`\\s${loc}$`, 'gi');
-    cleaned = cleaned.replace(regex, '');
+    // We normalize the end of the string to check for the location without accents
+    const parts = cleaned.split(' ');
+    if (parts.length > 1) {
+      const lastPart = parts[parts.length - 1];
+      if (normalizeText(lastPart) === loc) {
+        parts.pop();
+        cleaned = parts.join(' ');
+      }
+    }
   }
   
   return cleaned.trim();
