@@ -4,7 +4,7 @@ import { MessageSquare, RefreshCw, Wand2, Star, Copy, Check } from 'lucide-react
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Textarea } from '../../../components/ui/textarea';
+import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useReviewReplyGeneration } from '../hooks/useReviewReplyGeneration';
 import { toast } from 'sonner';
@@ -12,6 +12,26 @@ import type { AITone } from '../types';
 
 interface ReviewReplyCardProps {
   businessName: string;
+}
+
+interface ReviewReplyFormProps {
+  reviewText: string;
+  setReviewText: (val: string) => void;
+  rating: number;
+  setRating: (val: number) => void;
+  tone: AITone;
+  setTone: (val: AITone) => void;
+  isGenerating: boolean;
+  onGenerate: () => void;
+}
+
+interface ReviewReplyResultProps {
+  content: string;
+  rating: number;
+  tone: AITone;
+  copied: boolean;
+  onCopy: () => void;
+  onReset: () => void;
 }
 
 /**
@@ -41,7 +61,7 @@ function ReviewReplyHeader() {
  */
 function ReviewReplyForm({ 
   reviewText, setReviewText, rating, setRating, tone, setTone, isGenerating, onGenerate 
-}: any) {
+}: ReviewReplyFormProps) {
   return (
     <div className="space-y-6">
       <div className="space-y-2">
@@ -114,7 +134,7 @@ function ReviewReplyForm({
 /**
  * Sub-component for the generated result view.
  */
-function ReviewReplyResult({ content, rating, tone, copied, onCopy, onReset }: any) {
+function ReviewReplyResult({ content, rating, tone, copied, onCopy, onReset }: ReviewReplyResultProps) {
   return (
     <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-500">
       <div className="rounded-xl border-2 border-primary/10 bg-background/80 p-5 relative group">

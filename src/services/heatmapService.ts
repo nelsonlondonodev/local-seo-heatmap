@@ -1,6 +1,8 @@
 import { supabase } from '@/lib/supabase';
-import type { HeatmapResult, GridPoint } from '@/types';
+import type { HeatmapResult, GridPoint, ResultsSummary } from '@/types';
 import type { Database } from '@/types/database';
+
+type Json = Database['public']['Tables']['heatmaps']['Row']['results_summary'];
 
 /**
  * Service to handle persistence of heatmap data in Supabase Cloud.
@@ -96,11 +98,14 @@ export const heatmapService = {
       throw error;
     }
 
-    return (data || []).map(row => ({
-      date: row.created_at,
-      avgRank: (row.results_summary as any)?.avgRank || 0,
-      bestRank: (row.results_summary as any)?.bestRank || 0,
-    }));
+    return (data || []).map(row => {
+      const summary = row.results_summary as unknown as ResultsSummary | null;
+      return {
+        date: row.created_at,
+        avgRank: summary?.avgRank || 0,
+        bestRank: summary?.bestRank || 0,
+      };
+    });
   },
 };
 

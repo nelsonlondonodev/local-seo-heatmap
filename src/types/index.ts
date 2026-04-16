@@ -49,16 +49,6 @@ export interface RankColor {
   label: string;
 }
 
-/** User profile in the application */
-export interface UserProfile {
-  id: string;
-  email: string;
-  fullName: string | null;
-  avatarUrl: string | null;
-  plan: 'free' | 'pro' | 'enterprise';
-  createdAt: string;
-}
-
 /** Summary of heatmap results stored in DB */
 export interface ResultsSummary {
   avgRank: number;

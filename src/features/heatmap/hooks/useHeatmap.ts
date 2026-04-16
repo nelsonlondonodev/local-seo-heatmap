@@ -6,7 +6,6 @@ import { generateGridPoints } from '../utils/grid';
 import { useHeatmaps } from '@/hooks';
 import { searchService } from '../services/searchService';
 import type { GridSize, HeatmapConfig, GridPoint } from '@/types';
-import type { Database } from '@/types/database';
 
 /**
  * Custom hook to manage the heatmap state and logic.

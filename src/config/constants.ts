@@ -15,7 +15,7 @@ export const DEFAULT_BRANDING = {
  */
 export const APP_CONFIG = {
   ...DEFAULT_BRANDING,
-  version: '0.1.1',
+  version: '0.8.0',
 } as const;
 
 /** Grid size options and their numeric dimensions */

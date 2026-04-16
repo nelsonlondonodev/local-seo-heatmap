@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { staggerList, fadeInUp } from '@/config/animations';
 import { useNavigate } from 'react-router-dom';
 import { History, Search, Calendar, Grid3X3, MapPin, Trash2, ExternalLink, AlertTriangle, Loader2, Target, Mail, Megaphone } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
@@ -20,15 +21,7 @@ import type { Database } from '@/types/database';
 
 type HeatmapRecord = Database['public']['Tables']['heatmaps']['Row'];
 
-const containerVariants = { 
-  hidden: { opacity: 0 }, 
-  visible: { opacity: 1, transition: { staggerChildren: 0.08 } } 
-};
 
-const itemVariants = { 
-  hidden: { opacity: 0, y: 12 }, 
-  visible: { opacity: 1, y: 0 } 
-};
 
 function getRankVariant(rank: number | null): 'default' | 'secondary' | 'destructive' {
   if (rank === null) return 'secondary';
@@ -65,8 +58,8 @@ export function HistoryPage() {
   };
 
   return (
-    <motion.div variants={containerVariants} initial="hidden" animate="visible" className="space-y-6">
-      <motion.div variants={itemVariants} className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+    <motion.div variants={staggerList} initial="hidden" animate="visible" className="space-y-6">
+      <motion.div variants={fadeInUp} className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Historial de Búsquedas</h1>
           <p className="text-muted-foreground">Revisa y compara tus análisis guardados en la nube</p>
@@ -84,7 +77,7 @@ export function HistoryPage() {
           ))}
         </div>
       ) : history.length === 0 ? (
-        <motion.div variants={itemVariants} className="flex flex-col items-center justify-center rounded-xl border border-dashed p-12 text-center">
+        <motion.div variants={fadeInUp} className="flex flex-col items-center justify-center rounded-xl border border-dashed p-12 text-center">
           <History className="mb-4 h-12 w-12 text-muted-foreground/30" />
           <h3 className="text-lg font-semibold">No hay búsquedas aún</h3>
           <p className="mb-6 text-sm text-muted-foreground">Realiza tu primer análisis desde el panel principal.</p>
@@ -98,7 +91,7 @@ export function HistoryPage() {
             const summary = (entry.results_summary as unknown as ResultsSummary) || { avgRank: 0, bestRank: null, foundCount: 0, totalCount: 0 };
             
             return (
-              <motion.div key={entry.id} variants={itemVariants}>
+              <motion.div key={entry.id} variants={fadeInUp}>
                 <Card className="transition-all hover:border-primary/30 hover:shadow-md">
                   <CardContent className="p-5">
                     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">

@@ -9,7 +9,7 @@ export interface UserProfile {
   avatar_url: string | null;
   role: UserRole;
   agency_id: string | null;
-  plan: string;
+  plan: 'free' | 'pro' | 'enterprise';
 }
 
 export interface AuthContextType {

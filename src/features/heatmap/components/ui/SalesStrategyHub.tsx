@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+import { motion, type Variants } from 'framer-motion';
 import { Trophy, Sparkles, Megaphone, MessageSquare, FileText } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -13,7 +13,7 @@ type HeatmapRecord = Database['public']['Tables']['heatmaps']['Row'];
 interface SalesStrategyHubProps {
   heatmap: HeatmapRecord;
   competitors: CompetitorStat[];
-  itemVariants: any;
+  itemVariants: Variants;
 }
 
 /**

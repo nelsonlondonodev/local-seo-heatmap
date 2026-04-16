@@ -1,36 +1,26 @@
 import { motion } from 'framer-motion';
 import { Map as MapIcon, Target, TrendingUp } from 'lucide-react';
+import { staggerContainer, fadeInUp } from '@/config/animations';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { HeatmapMap, useHeatmap, ScanProgress, HeatmapLegend } from '@/features/heatmap';
 import { AnalysisTab } from '@/features/heatmap/components/forms/AnalysisTab';
 import { ProspectingTab } from '@/features/heatmap/components/forms/ProspectingTab';
 
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { staggerChildren: 0.1 },
-  },
-};
 
-const itemVariants = {
-  hidden: { opacity: 0, y: 12 },
-  visible: { opacity: 1, y: 0 },
-};
 
 export function DashboardPage() {
   const heatmap = useHeatmap();
 
   return (
     <motion.div
-      variants={containerVariants}
+      variants={staggerContainer}
       initial="hidden"
       animate="visible"
       className="space-y-6"
     >
       {/* Header */}
-      <motion.div variants={itemVariants} className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+      <motion.div variants={fadeInUp} className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
             Panel de Control
@@ -55,7 +45,7 @@ export function DashboardPage() {
 
         <div className="mt-6 grid gap-6 lg:grid-cols-3">
           {/* Configuration Forms */}
-          <motion.div variants={itemVariants} className="lg:col-span-1">
+          <motion.div variants={fadeInUp} className="lg:col-span-1">
             <TabsContent value="analysis" className="mt-0">
               <AnalysisTab heatmap={heatmap} />
             </TabsContent>
@@ -66,7 +56,7 @@ export function DashboardPage() {
           </motion.div>
 
           {/* Map Preview (Common for both tabs) */}
-          <motion.div variants={itemVariants} className="lg:col-span-2">
+          <motion.div variants={fadeInUp} className="lg:col-span-2">
             <Card className="flex h-full min-h-[600px] flex-col overflow-hidden">
               <CardHeader className="pb-3">
                 <CardTitle className="flex items-center gap-2 text-lg">

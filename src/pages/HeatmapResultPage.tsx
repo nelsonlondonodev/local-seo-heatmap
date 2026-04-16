@@ -1,5 +1,6 @@
 import { useLocation, useNavigate, Navigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { staggerContainer, fadeInUp } from '@/config/animations';
 import { 
   MapPin, Search, Calendar, Grid3X3, ArrowLeft, Plus, 
   Printer, Target, Mail, Megaphone, CheckCircle2, 
@@ -19,18 +20,7 @@ import type { GridPoint, ResultsSummary, CompetitorStat } from '@/types';
 
 type HeatmapRecord = Database['public']['Tables']['heatmaps']['Row'];
 
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { staggerChildren: 0.1 },
-  },
-};
 
-const itemVariants = {
-  hidden: { opacity: 0, y: 12 },
-  visible: { opacity: 1, y: 0 },
-};
 
 export function HeatmapResultPage() {
   const location = useLocation();
@@ -57,7 +47,7 @@ export function HeatmapResultPage() {
   };
 
   return (
-    <motion.div variants={containerVariants} initial="hidden" animate="visible" className="space-y-6">
+    <motion.div variants={staggerContainer} initial="hidden" animate="visible" className="space-y-6">
       {/* Print-only Header */}
       <div className="print-only mb-10 border-b-4 border-primary pb-8">
         <div className="flex justify-between items-start">
@@ -73,7 +63,7 @@ export function HeatmapResultPage() {
       </div>
 
       {/* Header UI */}
-      <motion.div variants={itemVariants} className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <motion.div variants={fadeInUp} className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <div className="flex items-center gap-2 mb-1">
             <Button variant="ghost" size="icon" onClick={() => navigate(-1)} className="h-8 w-8 -ml-2 rounded-full">
@@ -97,31 +87,34 @@ export function HeatmapResultPage() {
           <Button variant="outline" onClick={() => navigate('/history')}>
             Volver
           </Button>
-          <Button 
-            variant="outline" 
-            className="border-dashed border-primary/40 text-primary"
-            onClick={async () => {
-              const { supabase } = await import('@/lib/supabase');
-              const mock = {
-                ...heatmap,
-                id: crypto.randomUUID(),
-                created_at: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
-                results_summary: {
-                  ...(heatmap.results_summary as any || {}),
-                  avgRank: ((heatmap.results_summary as any)?.avgRank || 10) + 5,
-                  bestRank: ((heatmap.results_summary as any)?.bestRank || 5) + 2
+          {import.meta.env.DEV && (
+            <Button 
+              variant="outline" 
+              className="border-dashed border-primary/40 text-primary"
+              onClick={async () => {
+                const { supabase } = await import('@/lib/supabase');
+                const currentSummary = summary;
+                const mock = {
+                  ...heatmap,
+                  id: crypto.randomUUID(),
+                  created_at: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
+                  results_summary: {
+                    ...currentSummary,
+                    avgRank: (currentSummary.avgRank || 10) + 5,
+                    bestRank: (currentSummary.bestRank || 5) + 2
+                  }
+                };
+                const { error } = await supabase.from('heatmaps').insert(mock);
+                if (error) alert('Error: ' + error.message);
+                else {
+                  alert('¡Dato histórico creado! Recarga la página.');
+                  window.location.reload();
                 }
-              };
-              const { error } = await supabase.from('heatmaps').insert(mock);
-              if (error) alert('Error: ' + error.message);
-              else {
-                alert('¡Dato histórico creado! Recarga la página.');
-                window.location.reload();
-              }
-            }}
-          >
-            🧪 Simular Historial
-          </Button>
+              }}
+            >
+              🧪 Simular Historial
+            </Button>
+          )}
           <Button variant="secondary" onClick={() => window.print()} className="gap-2 font-semibold">
             <Printer className="h-4 w-4" />
             Imprimir Reporte
@@ -135,7 +128,7 @@ export function HeatmapResultPage() {
 
       <div className="grid gap-6 lg:grid-cols-3">
         {/* Info Sidebar */}
-        <motion.div variants={itemVariants} className="lg:col-span-1 space-y-6">
+        <motion.div variants={fadeInUp} className="lg:col-span-1 space-y-6">
           <Card>
             <CardHeader className="pb-4 border-b border-border/50">
               <CardTitle className="text-lg">Resumen de Búsqueda</CardTitle>
@@ -258,7 +251,7 @@ export function HeatmapResultPage() {
         </motion.div>
 
         {/* Map Preview */}
-        <motion.div variants={itemVariants} className="lg:col-span-2">
+        <motion.div variants={fadeInUp} className="lg:col-span-2">
           <Card className="flex h-full min-h-[600px] flex-col overflow-hidden">
             <CardContent className="relative flex-1 p-0">
               <HeatmapMap
@@ -279,7 +272,7 @@ export function HeatmapResultPage() {
       <SalesStrategyHub 
         heatmap={heatmap}
         competitors={competitors}
-        itemVariants={itemVariants}
+        itemVariants={fadeInUp}
       />
 
       {/* Print-only conversion footer */}

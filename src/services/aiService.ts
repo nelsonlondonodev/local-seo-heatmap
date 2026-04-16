@@ -1,12 +1,14 @@
 import { supabase } from '@/lib/supabase';
+import { getErrorMessage } from '@/lib/errors';
 import type { AIResponse, GeneratedGBPPost, PostPromptContent, StoredAIContent, ReviewReplyPrompt, GeneratedReviewReply, BioOptimizerPrompt, GeneratedBio } from '@/features/ai-optimization/types';
+import type { ChatMessage, ContentPart, ChatCompletionResponse } from '@/types/openai';
 
 const OPENAI_API_KEY = import.meta.env.VITE_OPENAI_API_KEY;
 
 /**
  * Internal helper to call OpenAI API.
  */
-async function callOpenAI(messages: any[], responseFormat: "json_object" | "text" = "json_object") {
+async function callOpenAI(messages: ChatMessage[], responseFormat: "json_object" | "text" = "json_object"): Promise<ChatCompletionResponse> {
   if (!OPENAI_API_KEY) {
     throw new Error('⚠️ Por favor, configura VITE_OPENAI_API_KEY en tu archivo .env.');
   }
@@ -25,11 +27,11 @@ async function callOpenAI(messages: any[], responseFormat: "json_object" | "text
   });
 
   if (!response.ok) {
-    const errorData = await response.json();
+    const errorData = await response.json() as { error?: { message?: string } };
     throw new Error(errorData.error?.message || 'Error en la API de OpenAI');
   }
 
-  return response.json();
+  return response.json() as Promise<ChatCompletionResponse>;
 }
 
 /**
@@ -76,9 +78,9 @@ export const aiService = {
         },
         usage: { totalTokens: rawData.usage?.total_tokens || 0 }
       };
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('[AI_REPLY_ERROR]:', error);
-      return { error: error.message || 'No se pudo generar la respuesta a la reseña.' };
+      return { error: getErrorMessage(error) || 'No se pudo generar la respuesta a la reseña.' };
     }
   },
 
@@ -120,9 +122,9 @@ export const aiService = {
         },
         usage: { totalTokens: rawData.usage?.total_tokens || 0 }
       };
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('[AI_BIO_ERROR]:', error);
-      return { error: error.message || 'No se pudo generar la descripción optimizada.' };
+      return { error: getErrorMessage(error) || 'No se pudo generar la descripción optimizada.' };
     }
   },
 
@@ -131,7 +133,7 @@ export const aiService = {
    */
   async generateGBPPost(prompt: PostPromptContent): Promise<AIResponse<GeneratedGBPPost>> {
     try {
-      const userContent: any[] = [
+      const userContent: ContentPart[] = [
         {
           type: "text",
           text: `Genera una publicación para el negocio "${prompt.businessName}" ubicado en "${prompt.location}". 
@@ -179,9 +181,9 @@ export const aiService = {
         },
         usage: { totalTokens: rawData.usage?.total_tokens || 0 }
       };
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('[AI_POST_ERROR]:', error);
-      return { error: error.message || 'Error al generar el post.' };
+      return { error: getErrorMessage(error) || 'Error al generar el post.' };
     }
   },
 
@@ -212,7 +214,7 @@ export const aiService = {
 
       if (error) throw error;
       return {};
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('[SAVE_AI_CONTENT_ERROR]:', error);
       return { error: 'No se pudo guardar el contenido en el historial.' };
     }
@@ -231,7 +233,7 @@ export const aiService = {
 
       if (error) throw error;
       return { data: data as StoredAIContent[] };
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('[GET_AI_HISTORY_ERROR]:', error);
       return { error: 'No se pudo cargar el historial de contenidos.' };
     }

@@ -19,6 +19,28 @@ interface LocalBioOptimizerCardProps {
   keyword?: string;
 }
 
+interface BioFormProps {
+  currentDescription: string;
+  setCurrentDescription: (val: string) => void;
+  businessName: string;
+  setBusinessName: (val: string) => void;
+  category: string;
+  setCategory: (val: string) => void;
+  tone: AITone;
+  setTone: (val: AITone) => void;
+  isGenerating: boolean;
+  onGenerate: () => void;
+}
+
+interface BioResultProps {
+  content: string;
+  usedKeywords: string[];
+  tone: AITone;
+  copied: boolean;
+  onCopy: () => void;
+  onReset: () => void;
+}
+
 /**
  * Sub-component for the card header.
  */
@@ -49,7 +71,7 @@ function BioForm({
   businessName, setBusinessName,
   category, setCategory,
   tone, setTone, isGenerating, onGenerate 
-}: any) {
+}: BioFormProps) {
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -129,7 +151,7 @@ function BioForm({
 /**
  * Sub-component for the generated result view.
  */
-function BioResult({ content, usedKeywords, tone, copied, onCopy, onReset }: any) {
+function BioResult({ content, usedKeywords, tone, copied, onCopy, onReset }: BioResultProps) {
   return (
     <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-500">
       <div className="rounded-xl border-2 border-primary/10 bg-background/80 p-5 relative">
