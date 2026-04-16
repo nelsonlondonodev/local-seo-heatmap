@@ -14,7 +14,7 @@ import { StatRow } from '@/features/heatmap/components/ui/StatRow';
 import { CompetitorsTable } from '@/features/heatmap/components/ui/CompetitorsTable';
 import { PostGeneratorCard, ReviewReplyCard, LocalBioOptimizerCard } from '@/features/ai-optimization';
 import { getRankColor } from '@/config/constants';
-import { isAdvertiser } from '../features/heatmap/utils/textUtils';
+import { isAdvertiser, cleanBusinessName } from '../features/heatmap/utils/textUtils';
 import type { Database } from '@/types/database';
 import type { GridPoint, ResultsSummary, CompetitorStat } from '@/types';
 
@@ -282,7 +282,7 @@ export function HeatmapResultPage() {
 
           <TabsContent value="posts" className="mt-0">
             <PostGeneratorCard 
-              businessName={heatmap.business_name}
+              businessName={cleanBusinessName(heatmap.business_name)}
               keyword={heatmap.keyword}
               location="tu zona local"
               heatmapId={heatmap.id}
@@ -291,13 +291,13 @@ export function HeatmapResultPage() {
 
           <TabsContent value="reviews" className="mt-0">
             <ReviewReplyCard 
-              businessName={heatmap.business_name}
+              businessName={cleanBusinessName(heatmap.business_name)}
             />
           </TabsContent>
 
           <TabsContent value="bio" className="mt-0">
             <LocalBioOptimizerCard 
-              businessName={heatmap.business_name}
+              businessName={cleanBusinessName(heatmap.business_name)}
               keyword={heatmap.keyword}
             />
           </TabsContent>

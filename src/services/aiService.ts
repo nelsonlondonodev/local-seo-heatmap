@@ -54,6 +54,7 @@ export const aiService = {
           
           Reglas generales:
           - Tono: ${prompt.tone}.
+          - IMPORTANTE: Usa un lenguaje natural, cálido y humano. Evita sonar como un bot (ej: usa "Agradecemos tu paciencia" en lugar de "Apreciaremos").
           - Mantén la respuesta breve y concisa.
           - Formato de respuesta: Devuelve solo un objeto JSON con el campo: "content" (texto de la respuesta).`
         },
