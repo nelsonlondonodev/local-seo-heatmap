@@ -1,4 +1,5 @@
 import type { HeatmapConfig, HeatmapResult, GridPoint, CompetitorStat } from '@/types';
+import { logger } from '@/lib/logger';
 import { delay, chunkArray } from '@/lib/utils';
 import { isBusinessMatch } from '../utils/textUtils';
 import type { SerperMapsResponse, SerperPlace, SerperSearchResponse } from '../types/serper';
@@ -10,7 +11,7 @@ const CONFIG = {
   BATCH_SIZE: 5,
   BATCH_DELAY_MS: 400,
   SERPER_URL: 'https://google.serper.dev/maps',
-  DEFAULT_GL: 'co', // Colombia
+  DEFAULT_GL: import.meta.env.VITE_DEFAULT_COUNTRY || 'us', 
   DEFAULT_HL: 'es', // Spanish
   ZOOM_LEVEL: '15z'
 } as const;
@@ -55,10 +56,10 @@ async function scanSinglePoint(
     const topCompetitors = placesResults.slice(0, 10).map((p: SerperPlace) => p.title);
 
     if (rank) {
-      console.log(`[SCAN] ✅ "${businessName}" → pos #${rank}`);
+      logger.info(`[SCAN] ✅ "${businessName}" → pos #${rank}`);
     } else {
       const top3 = topCompetitors.slice(0, 3).join(', ');
-      console.warn(`[SCAN] ❌ "${businessName}" no encontrado. Top 3: [${top3}]`);
+      logger.warn(`[SCAN] ❌ "${businessName}" no encontrado. Top 3: [${top3}]`);
     }
 
     return { 
@@ -68,7 +69,7 @@ async function scanSinglePoint(
       topCompetitors 
     };
   } catch (err) {
-    console.error(`[SCAN] Error at (${point.lat}, ${point.lng}):`, err);
+    logger.error(`[SCAN] Error at (${point.lat}, ${point.lng}):`, err);
     return { ...point, rank: null, totalResults: 0 };
   }
 }
@@ -137,12 +138,12 @@ async function getAdvertisers(keyword: string): Promise<string[]> {
     const advertiserTitles = (data.ads || []).map(ad => ad.title);
     
     if (advertiserTitles.length > 0) {
-      console.log(`[ADS] Detectados ${advertiserTitles.length} anunciantes para "${keyword}"`);
+      logger.info(`[ADS] Detectados ${advertiserTitles.length} anunciantes para "${keyword}"`);
     }
     
     return advertiserTitles;
   } catch (err) {
-    console.error('[ADS] Error detecting advertisers:', err);
+    logger.error('[ADS] Error detecting advertisers:', err);
     return [];
   }
 }
@@ -184,7 +185,7 @@ export const searchService = {
       const batches = chunkArray(points, CONFIG.BATCH_SIZE);
       const results: GridPoint[] = [];
 
-      console.log(`[SCAN] Iniciando análisis: ${points.length} puntos en ${batches.length} lotes`);
+      logger.info(`[SCAN] Iniciando análisis: ${points.length} puntos en ${batches.length} lotes`);
 
       for (let i = 0; i < batches.length; i++) {
         const batch = batches[i];
@@ -213,7 +214,7 @@ export const searchService = {
         createdAt: new Date().toISOString(),
       };
     } catch (error) {
-      console.error('SEARCH_SERVICE_ERROR:', error);
+      logger.error('SEARCH_SERVICE_ERROR:', error);
       throw error;
     }
   },

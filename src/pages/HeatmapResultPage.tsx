@@ -15,6 +15,8 @@ import { SalesStrategyHub } from '@/features/heatmap/components/ui/SalesStrategy
 import { LocalVisibilityGraph } from '@/features/heatmap/components/ui/LocalVisibilityGraph';
 import { getRankColor } from '@/config/constants';
 import { isAdvertiser } from '../features/heatmap/utils/textUtils';
+import { useBranding } from '@/features/branding';
+import { APP_CONFIG } from '@/config/constants';
 import type { Database } from '@/types/database';
 import type { GridPoint, ResultsSummary, CompetitorStat } from '@/types';
 
@@ -25,6 +27,7 @@ type HeatmapRecord = Database['public']['Tables']['heatmaps']['Row'];
 export function HeatmapResultPage() {
   const location = useLocation();
   const navigate = useNavigate();
+  const { config: branding } = useBranding();
 
   const state = location.state as { heatmap?: HeatmapRecord } | null;
   const heatmap = state?.heatmap;
@@ -53,7 +56,9 @@ export function HeatmapResultPage() {
         <div className="flex justify-between items-start">
           <div className="space-y-2">
             <h1 className="text-4xl font-black text-primary tracking-tighter">ESTUDIO DE VISIBILIDAD LOCAL</h1>
-            <Badge variant="outline" className="text-primary border-primary/30 font-bold px-3">MAPRANKER PRO v0.6.3</Badge>
+            <Badge variant="outline" className="text-primary border-primary/30 font-bold px-3">
+              {branding.name} v{APP_CONFIG.version}
+            </Badge>
           </div>
           <div className="text-right space-y-1">
             <p className="text-sm font-black uppercase tracking-widest text-muted-foreground">Informe Confidencial</p>
@@ -287,19 +292,21 @@ export function HeatmapResultPage() {
           </p>
           <div className="pt-4 flex gap-8">
             <div className="text-left">
-              <p className="text-[10px] font-bold uppercase tracking-widest text-primary">Consultor SEO</p>
-              <p className="text-lg font-bold">Nelson Londoño</p>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-primary">Consultor / Agencia</p>
+              <p className="text-lg font-bold">{branding.name}</p>
             </div>
-            <div className="text-left">
-              <p className="text-[10px] font-bold uppercase tracking-widest text-primary">Contacto</p>
-              <p className="text-lg font-bold">nelson@agencia.com</p>
-            </div>
+            {branding.logoUrl && (
+              <div className="text-left">
+                <p className="text-[10px] font-bold uppercase tracking-widest text-primary">Contacto</p>
+                <p className="text-lg font-bold">Iniciado por el Consultor</p>
+              </div>
+            )}
           </div>
         </div>
       </div>
 
       <div className="print-footer">
-        MapRanker Pro — Reporte de Inteligencia Local generado el {formatDate(heatmap.created_at)}
+        {branding.name} — Reporte de Inteligencia Local generado el {formatDate(heatmap.created_at)}
       </div>
     </motion.div>
   );

@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback, useMemo, useRef, type ReactNode } from 'react';
 import type { Session, User } from '@supabase/supabase-js';
 import { supabase } from '@/lib/supabase';
+import { logger } from '@/lib/logger';
 import { AuthContext } from './hooks/useAuth';
 import { profileService, type UserProfile } from '@/services/profileService';
 
@@ -30,7 +31,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const timer = setTimeout(() => {
       setAuthState(prev => {
         if (prev.isLoading) {
-          console.warn('[AUTH_PANIC] Safety timeout triggered. UI unblocked!');
+          logger.warn('[AUTH_PANIC] Safety timeout triggered. UI unblocked!');
           return { ...prev, isLoading: false };
         }
         return prev;
@@ -50,9 +51,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     let mounted = true;
 
-    const handleSession = async (session: Session | null, _event: string) => {
+    const handleSession = async (session: Session | null, event: string) => {
       if (!mounted) return;
-      
+      logger.debug(`[AUTH_EVENT] ${event}`, { userId: session?.user?.id });      
       const currentUser = stateRef.current.user;
       const currentProfile = stateRef.current.profile;
 
@@ -89,7 +90,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           }
         }
       } catch (err) {
-        console.error('[AUTH] Critical session handler failure:', err);
+        logger.error('[AUTH] Critical session handler failure:', err);
         if (mounted) setAuthState(prev => ({ ...prev, isLoading: false }));
       }
     };

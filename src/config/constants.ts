@@ -50,10 +50,10 @@ export function getRankColor(rank: number | null): string {
   return colorEntry?.color ?? '#450a0a';
 }
 
-/** Map default center (Chía, Colombia) */
+/** Map default center - uses env vars or fallback to NYC for global neutrality */
 export const MAP_DEFAULT_CENTER = {
-  lat: 4.8634,
-  lng: -74.0339,
+  lat: Number(import.meta.env.VITE_DEFAULT_LAT) || 40.7128,
+  lng: Number(import.meta.env.VITE_DEFAULT_LNG) || -74.0060,
   zoom: 13,
 } as const;
 
