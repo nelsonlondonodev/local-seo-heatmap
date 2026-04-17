@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react';
-import { Info, Search as SearchIcon, MapPin, Briefcase } from 'lucide-react';
+import { Info, Search as SearchIcon } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Card, CardContent } from '@/components/ui/card';
-import { ProjectSelector } from './ProjectSelector';
-import { LocationSelector } from './LocationSelector';
+import { KeywordConfigPanel } from './KeywordConfigPanel';
 import { DiscoverySearchForm } from './DiscoverySearchForm';
 import { DiscoveryResultsTable } from './DiscoveryResultsTable';
 import { useKeywordDiscovery } from '../hooks/useKeywordDiscovery';
@@ -17,8 +16,14 @@ interface KeywordDiscoveryProps {
   setSelectedProjectId: (id: string) => void;
 }
 
+interface Location {
+  location_code: number;
+  location_name: string;
+  country_iso_code?: string;
+}
+
 export function KeywordDiscovery({ selectedProjectId, setSelectedProjectId }: KeywordDiscoveryProps) {
-  const [selectedLocation, setSelectedLocation] = useState<any>(null);
+  const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
   
   const { projects } = useProjects();
   
@@ -58,39 +63,12 @@ export function KeywordDiscovery({ selectedProjectId, setSelectedProjectId }: Ke
       <Card className="border-none shadow-2xl bg-card/50 backdrop-blur-md rounded-3xl overflow-hidden">
         <CardContent className="p-8 space-y-8">
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-2">
-            {/* Filter Section: Project */}
-            <div className="space-y-3">
-              <div className="flex items-center gap-2 text-brand-primary">
-                <Briefcase className="h-4 w-4" />
-                <span className="text-sm font-bold uppercase tracking-widest">Contexto de Proyecto</span>
-              </div>
-              <div className="w-full lg:w-auto">
-                <ProjectSelector 
-                  onProjectSelect={setSelectedProjectId} 
-                  selectedProjectId={selectedProjectId} 
-                  currentLocationCode={selectedLocation?.location_code}
-                  currentLocationName={selectedLocation?.location_name}
-                  currentCountryCode={selectedLocation?.country_iso_code}
-                />
-              </div>
-              <p className="text-[10px] text-muted-foreground italic">Las keywords se guardarán en este proyecto.</p>
-            </div>
-
-            {/* Filter Section: Location */}
-            <div className="space-y-3">
-              <div className="flex items-center gap-2 text-brand-primary">
-                <MapPin className="h-4 w-4" />
-                <span className="text-sm font-bold uppercase tracking-widest">Ubicación de Google</span>
-              </div>
-              <LocationSelector 
-                onLocationSelect={setSelectedLocation}
-                selectedLocation={selectedLocation}
-                initialCountryCode={selectedLocation?.country_iso_code}
-              />
-              <p className="text-[10px] text-muted-foreground italic">Influye en el volumen y dificultad de búsqueda.</p>
-            </div>
-          </div>
+          <KeywordConfigPanel 
+            selectedProjectId={selectedProjectId}
+            setSelectedProjectId={setSelectedProjectId}
+            selectedLocation={selectedLocation}
+            setSelectedLocation={setSelectedLocation}
+          />
 
           <div className="border-t border-border/50 pt-8">
             <div className="flex items-center gap-2 text-brand-primary mb-4">
