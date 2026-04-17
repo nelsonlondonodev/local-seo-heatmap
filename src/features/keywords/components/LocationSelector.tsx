@@ -14,6 +14,7 @@ interface Location {
 interface LocationSelectorProps {
   onLocationSelect: (loc: Location) => void;
   selectedLocation?: Location;
+  initialCountryCode?: string;
 }
 
 const COMMON_COUNTRIES = [
@@ -27,13 +28,20 @@ const COMMON_COUNTRIES = [
   { name: 'Ecuador', code: 'ec' },
 ];
 
-export function LocationSelector({ onLocationSelect, selectedLocation }: LocationSelectorProps) {
-  const [selectedCountry, setSelectedCountry] = useState('co'); // Default to Colombia for your test
+export function LocationSelector({ onLocationSelect, selectedLocation, initialCountryCode }: LocationSelectorProps) {
+  const [selectedCountry, setSelectedCountry] = useState(initialCountryCode || 'co'); 
   const [cityQuery, setCityQuery] = useState('');
   const [allLocations, setAllLocations] = useState<Location[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  // Update selected country if initialCountryCode changes (e.g., when switching projects)
+  useEffect(() => {
+    if (initialCountryCode) {
+      setSelectedCountry(initialCountryCode);
+    }
+  }, [initialCountryCode]);
 
   // Fetch all locations for the selected country once
   useEffect(() => {

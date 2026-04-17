@@ -35,7 +35,8 @@ export function KeywordDiscovery() {
       if (project?.location_code && project?.location_name) {
         setSelectedLocation({
           location_code: project.location_code,
-          location_name: project.location_name
+          location_name: project.location_name,
+          country_iso_code: project.country_code
         });
       }
     }
@@ -66,6 +67,7 @@ export function KeywordDiscovery() {
                   selectedProjectId={selectedProjectId} 
                   currentLocationCode={selectedLocation?.location_code}
                   currentLocationName={selectedLocation?.location_name}
+                  currentCountryCode={selectedLocation?.country_iso_code}
                 />
               </div>
               <p className="text-[10px] text-muted-foreground italic">Las keywords se guardarán en este proyecto.</p>
@@ -80,6 +82,7 @@ export function KeywordDiscovery() {
               <LocationSelector 
                 onLocationSelect={setSelectedLocation}
                 selectedLocation={selectedLocation}
+                initialCountryCode={selectedLocation?.country_iso_code}
               />
               <p className="text-[10px] text-muted-foreground italic">Influye en el volumen y dificultad de búsqueda.</p>
             </div>

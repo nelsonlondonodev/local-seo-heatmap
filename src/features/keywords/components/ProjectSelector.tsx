@@ -10,16 +10,17 @@ interface ProjectSelectorProps {
   selectedProjectId?: string;
   currentLocationCode?: number;
   currentLocationName?: string;
+  currentCountryCode?: string;
 }
 
-export function ProjectSelector({ onProjectSelect, selectedProjectId, currentLocationCode, currentLocationName }: ProjectSelectorProps) {
+export function ProjectSelector({ onProjectSelect, selectedProjectId, currentLocationCode, currentLocationName, currentCountryCode }: ProjectSelectorProps) {
   const [isCreating, setIsCreating] = useState(false);
   const [newProjectName, setNewProjectName] = useState('');
   
   const { projects, isLoading, createProject } = useProjects(onProjectSelect);
 
   const handleCreate = async () => {
-    const project = await createProject(newProjectName, currentLocationCode, currentLocationName);
+    const project = await createProject(newProjectName, currentLocationCode, currentLocationName, currentCountryCode);
     if (project) {
       setNewProjectName('');
       setIsCreating(false);

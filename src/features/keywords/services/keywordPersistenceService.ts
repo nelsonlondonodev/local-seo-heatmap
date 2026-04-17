@@ -15,6 +15,7 @@ export const keywordPersistenceService = {
     targetUrl?: string, 
     locationCode?: number, 
     locationName?: string,
+    countryCode?: string,
     agencyId?: string | null
   ) {
     const { data, error } = await supabase
@@ -26,6 +27,7 @@ export const keywordPersistenceService = {
         target_url: targetUrl || null,
         location_code: locationCode || null,
         location_name: locationName || null,
+        country_code: countryCode || null,
       })
       .select()
       .single();
