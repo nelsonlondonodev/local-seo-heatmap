@@ -129,5 +129,40 @@ export const dataForSeoService = {
       { keyword: `mejor ${seed}`, search_volume: 2100, competition_level: 'HIGH', cpc: 4.1 },
       { keyword: `${seed} cerca de mi`, search_volume: 5400, competition_level: 'MEDIUM', cpc: 1.5 },
     ];
+  },
+
+  /**
+   * Fetches real-time SERP results for a keyword and location.
+   */
+  async getSerpResults(keyword: string, locationCode: number, languageCode = 'es') {
+    if (!AUTH_USER || !AUTH_PASS) return [];
+
+    try {
+      const response = await fetch(`${BASE_URL}/serp/google/organic/live/advanced`, {
+        method: 'POST',
+        headers: {
+          'Authorization': getAuthHeader(),
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify([{
+          keyword,
+          location_code: locationCode,
+          language_code: languageCode,
+          device: 'desktop',
+          os: 'windows',
+          depth: 100 // Search up to top 100
+        }])
+      });
+
+      if (!response.ok) {
+        throw new Error(`DataForSEO SERP error (HTTP ${response.status})`);
+      }
+
+      const data = await response.json();
+      return data.tasks?.[0]?.result?.[0]?.items || [];
+    } catch (error) {
+      logger.error('[DATAFORSEO] Error fetching SERP:', error);
+      return [];
+    }
   }
 };

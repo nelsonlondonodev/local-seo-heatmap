@@ -12,8 +12,12 @@ import { useProjects } from '../hooks/useProjects';
 /**
  * KeywordDiscovery Component (Redesigned Flow)
  */
-export function KeywordDiscovery() {
-  const [selectedProjectId, setSelectedProjectId] = useState<string>('');
+interface KeywordDiscoveryProps {
+  selectedProjectId: string;
+  setSelectedProjectId: (id: string) => void;
+}
+
+export function KeywordDiscovery({ selectedProjectId, setSelectedProjectId }: KeywordDiscoveryProps) {
   const [selectedLocation, setSelectedLocation] = useState<any>(null);
   
   const { projects } = useProjects();
