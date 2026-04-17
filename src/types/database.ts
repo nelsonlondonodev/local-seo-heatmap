@@ -174,6 +174,96 @@ export interface Database {
         };
         Relationships: [];
       };
+      keyword_projects: {
+        Row: {
+          id: string;
+          user_id: string;
+          agency_id: string | null;
+          name: string;
+          target_url: string | null;
+          location_code: number | null;
+          language_code: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          agency_id?: string | null;
+          name: string;
+          target_url?: string | null;
+          location_code?: number | null;
+          language_code?: string;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          agency_id?: string | null;
+          name?: string;
+          target_url?: string | null;
+          location_code?: number | null;
+          language_code?: string;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
+      tracked_keywords: {
+        Row: {
+          id: string;
+          project_id: string;
+          keyword: string;
+          search_engine: string;
+          status: 'active' | 'paused';
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          project_id: string;
+          keyword: string;
+          search_engine?: string;
+          status?: 'active' | 'paused';
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          project_id?: string;
+          keyword?: string;
+          search_engine?: string;
+          status?: 'active' | 'paused';
+          created_at?: string;
+        };
+        Relationships: [];
+      };
+      keyword_history: {
+        Row: {
+          id: string;
+          keyword_id: string;
+          rank: number | null;
+          rank_change: number;
+          search_volume: number | null;
+          results_json: Json | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          keyword_id: string;
+          rank?: number | null;
+          rank_change?: number;
+          search_volume?: number | null;
+          results_json?: Json | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          keyword_id?: string;
+          rank?: number | null;
+          rank_change?: number;
+          search_volume?: number | null;
+          results_json?: Json | null;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: Record<string, never>;
