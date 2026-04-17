@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Info, Search as SearchIcon, MapPin, Briefcase } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Card, CardContent } from '@/components/ui/card';
@@ -7,6 +7,7 @@ import { LocationSelector } from './LocationSelector';
 import { DiscoverySearchForm } from './DiscoverySearchForm';
 import { DiscoveryResultsTable } from './DiscoveryResultsTable';
 import { useKeywordDiscovery } from '../hooks/useKeywordDiscovery';
+import { useProjects } from '../hooks/useProjects';
 
 /**
  * KeywordDiscovery Component (Redesigned Flow)
@@ -14,6 +15,8 @@ import { useKeywordDiscovery } from '../hooks/useKeywordDiscovery';
 export function KeywordDiscovery() {
   const [selectedProjectId, setSelectedProjectId] = useState<string>('');
   const [selectedLocation, setSelectedLocation] = useState<any>(null);
+  
+  const { projects } = useProjects();
   
   const { 
     query, 
@@ -24,6 +27,19 @@ export function KeywordDiscovery() {
     searchKeywords, 
     saveKeyword 
   } = useKeywordDiscovery(selectedProjectId);
+
+  // Effect to load project location when project changes
+  useEffect(() => {
+    if (selectedProjectId && projects.length > 0) {
+      const project = projects.find(p => p.id === selectedProjectId);
+      if (project?.location_code && project?.location_name) {
+        setSelectedLocation({
+          location_code: project.location_code,
+          location_name: project.location_name
+        });
+      }
+    }
+  }, [selectedProjectId, projects]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -44,10 +60,14 @@ export function KeywordDiscovery() {
                 <Briefcase className="h-4 w-4" />
                 <span className="text-sm font-bold uppercase tracking-widest">Contexto de Proyecto</span>
               </div>
-              <ProjectSelector 
-                onProjectSelect={setSelectedProjectId} 
-                selectedProjectId={selectedProjectId} 
-              />
+              <div className="w-full lg:w-auto">
+                <ProjectSelector 
+                  onProjectSelect={setSelectedProjectId} 
+                  selectedProjectId={selectedProjectId} 
+                  currentLocationCode={selectedLocation?.location_code}
+                  currentLocationName={selectedLocation?.location_name}
+                />
+              </div>
               <p className="text-[10px] text-muted-foreground italic">Las keywords se guardarán en este proyecto.</p>
             </div>
 

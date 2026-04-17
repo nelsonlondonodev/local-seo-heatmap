@@ -14,7 +14,7 @@ export function useProjects(onProjectSelect?: (id: string) => void) {
     try {
       const { data } = await supabase
         .from('keyword_projects')
-        .select('id, name')
+        .select('id, name, location_code, location_name')
         .eq('user_id', user.id)
         .order('created_at', { ascending: false });
       
@@ -33,11 +33,11 @@ export function useProjects(onProjectSelect?: (id: string) => void) {
     fetchProjects();
   }, [fetchProjects]);
 
-  const createProject = async (name: string) => {
+  const createProject = async (name: string, locationCode?: number, locationName?: string) => {
     if (!name.trim() || !user) return null;
     setIsLoading(true);
     try {
-      const project = await keywordPersistenceService.createProject(user.id, name);
+      const project = await keywordPersistenceService.createProject(user.id, name, undefined, locationCode, locationName);
       toast.success('Proyecto creado correctamente');
       await fetchProjects();
       return project;

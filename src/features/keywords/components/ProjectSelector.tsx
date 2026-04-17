@@ -8,16 +8,18 @@ import { useProjects } from '../hooks/useProjects';
 interface ProjectSelectorProps {
   onProjectSelect: (id: string) => void;
   selectedProjectId?: string;
+  currentLocationCode?: number;
+  currentLocationName?: string;
 }
 
-export function ProjectSelector({ onProjectSelect, selectedProjectId }: ProjectSelectorProps) {
+export function ProjectSelector({ onProjectSelect, selectedProjectId, currentLocationCode, currentLocationName }: ProjectSelectorProps) {
   const [isCreating, setIsCreating] = useState(false);
   const [newProjectName, setNewProjectName] = useState('');
   
   const { projects, isLoading, createProject } = useProjects(onProjectSelect);
 
   const handleCreate = async () => {
-    const project = await createProject(newProjectName);
+    const project = await createProject(newProjectName, currentLocationCode, currentLocationName);
     if (project) {
       setNewProjectName('');
       setIsCreating(false);
