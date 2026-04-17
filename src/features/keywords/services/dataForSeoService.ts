@@ -92,13 +92,13 @@ export const dataForSeoService = {
   },
 
   /**
-   * Searches for location codes (countries, cities, etc.)
+   * Fetches locations for a specific country code (e.g., 'co', 'es').
    */
-  async getLocations(query: string) {
+  async getLocationsByCountry(countryIsoCode: string) {
     if (!AUTH_USER || !AUTH_PASS) return [];
 
     try {
-      const response = await fetch(`${BASE_URL}/keywords_data/google/locations/${query}`, {
+      const response = await fetch(`${BASE_URL}/keywords_data/google/locations/${countryIsoCode}`, {
         method: 'GET',
         headers: {
           'Authorization': getAuthHeader(),
