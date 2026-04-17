@@ -92,6 +92,33 @@ export const dataForSeoService = {
   },
 
   /**
+   * Searches for location codes (countries, cities, etc.)
+   */
+  async getLocations(query: string) {
+    if (!AUTH_USER || !AUTH_PASS) return [];
+
+    try {
+      const response = await fetch(`${BASE_URL}/keywords_data/google/locations/${query}`, {
+        method: 'GET',
+        headers: {
+          'Authorization': getAuthHeader(),
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error(`DataForSEO locations error (HTTP ${response.status})`);
+      }
+
+      const data = await response.json();
+      return data.tasks?.[0]?.result || [];
+    } catch (error) {
+      logger.error('[DATAFORSEO] Error fetching locations:', error);
+      return [];
+    }
+  },
+
+  /**
    * Mock data for development when API keys are missing.
    */
   _getMockSuggestions(seed: string) {

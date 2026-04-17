@@ -10,13 +10,13 @@ export function useKeywordDiscovery(selectedProjectId: string) {
   const [results, setResults] = useState<KeywordSuggestion[]>([]);
   const [savedKeywords, setSavedKeywords] = useState<Set<string>>(new Set());
 
-  const searchKeywords = async () => {
+  const searchKeywords = async (locationCode?: number) => {
     if (!query.trim()) return;
 
     setIsLoading(true);
     setResults([]);
     try {
-      const data = await dataForSeoService.getKeywordSuggestions(query);
+      const data = await dataForSeoService.getKeywordSuggestions(query, locationCode);
       setResults(data);
       if (data.length === 0) {
         toast.info('No se encontraron sugerencias.');
