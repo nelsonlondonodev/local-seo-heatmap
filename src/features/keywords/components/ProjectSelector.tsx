@@ -1,12 +1,9 @@
-import { useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabase';
-import { useAuth } from '@/features/auth';
-import { Plus, Briefcase, Loader2, Check } from 'lucide-react';
+import { useState } from 'react';
+import { Plus as PlusIcon, Briefcase as ProjectIcon, Loader2 as Spinner, Check as CheckIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { keywordPersistenceService } from '../services/keywordPersistenceService';
-import { toast } from 'sonner';
+import { useProjects } from '../hooks/useProjects';
 
 interface ProjectSelectorProps {
   onProjectSelect: (id: string) => void;
@@ -14,51 +11,22 @@ interface ProjectSelectorProps {
 }
 
 export function ProjectSelector({ onProjectSelect, selectedProjectId }: ProjectSelectorProps) {
-  const { user } = useAuth();
-  const [projects, setProjects] = useState<{ id: string, name: string }[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [isCreating, setIsCreating] = useState(false);
   const [newProjectName, setNewProjectName] = useState('');
+  
+  const { projects, isLoading, createProject } = useProjects(onProjectSelect);
 
-  useEffect(() => {
-    fetchProjects();
-  }, [user]);
-
-  const fetchProjects = async () => {
-    if (!user) return;
-    try {
-      const { data } = await supabase
-        .from('keyword_projects')
-        .select('id, name')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false });
-      
-      setProjects(data || []);
-      if (data && data.length > 0 && !selectedProjectId) {
-        onProjectSelect(data[0].id);
-      }
-    } catch (error) {
-      console.error('Error fetching projects:', error);
-    } finally {
-      setIsLoading(false);
+  const handleCreate = async () => {
+    const project = await createProject(newProjectName);
+    if (project) {
+      setNewProjectName('');
+      setIsCreating(false);
+      onProjectSelect(project.id);
     }
   };
 
-  const handleCreateProject = async () => {
-    if (!newProjectName.trim() || !user) return;
-    setIsLoading(true);
-    try {
-      const project = await keywordPersistenceService.createProject(user.id, newProjectName);
-      toast.success('Proyecto creado correctamente');
-      setNewProjectName('');
-      setIsCreating(false);
-      await fetchProjects();
-      onProjectSelect(project.id);
-    } catch (error) {
-      toast.error('No se pudo crear el proyecto');
-    } finally {
-      setIsLoading(false);
-    }
+  const handleProjectLink = (val: string) => {
+    onProjectSelect(val);
   };
 
   return (
@@ -76,28 +44,35 @@ export function ProjectSelector({ onProjectSelect, selectedProjectId }: ProjectS
               className="h-10 rounded-xl"
               autoFocus
             />
-            <Button size="icon" onClick={handleCreateProject} disabled={isLoading} className="rounded-xl shrink-0">
-              {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Check className="h-4 w-4" />}
+            <Button size="icon" onClick={handleCreate} disabled={isLoading} className="rounded-xl shrink-0">
+              {isLoading ? <Spinner className="h-4 w-4 animate-spin" /> : <CheckIcon className="h-4 w-4" />}
             </Button>
             <Button size="icon" variant="ghost" onClick={() => setIsCreating(false)} className="rounded-xl shrink-0">
-              <Plus className="h-4 w-4 rotate-45" />
+              <PlusIcon className="h-4 w-4 rotate-45" />
             </Button>
           </div>
         ) : (
           <>
-            <Select value={selectedProjectId} onValueChange={onProjectSelect}>
+            <Select 
+              value={selectedProjectId || ""} 
+              onValueChange={handleProjectLink}
+            >
               <SelectTrigger className="h-10 rounded-xl bg-card border-2 transition-all hover:border-brand-primary/50">
                 <div className="flex items-center gap-2">
-                  <Briefcase className="h-4 w-4 text-brand-primary" />
+                  <ProjectIcon className="h-4 w-4 text-brand-primary" />
                   <SelectValue placeholder="Selecciona un proyecto" />
                 </div>
               </SelectTrigger>
               <SelectContent className="rounded-xl">
-                {projects.map(p => (
-                  <SelectItem key={p.id} value={p.id} className="rounded-lg">{p.name}</SelectItem>
+                {projects.map((p) => (
+                  <SelectItem key={p.id} value={p.id} className="rounded-lg">
+                    {p.name}
+                  </SelectItem>
                 ))}
-                {projects.length === 0 && (
-                  <div className="p-2 text-xs text-center text-muted-foreground">No hay proyectos</div>
+                {!isLoading && projects.length === 0 && (
+                  <div className="p-2 text-xs text-center text-muted-foreground">
+                    No hay proyectos
+                  </div>
                 )}
               </SelectContent>
             </Select>
@@ -107,7 +82,7 @@ export function ProjectSelector({ onProjectSelect, selectedProjectId }: ProjectS
               onClick={() => setIsCreating(true)}
               className="rounded-xl border-2 hover:bg-brand-primary hover:text-primary-foreground transition-all shrink-0"
             >
-              <Plus className="h-4 w-4" />
+              <PlusIcon className="h-4 w-4" />
             </Button>
           </>
         )}
