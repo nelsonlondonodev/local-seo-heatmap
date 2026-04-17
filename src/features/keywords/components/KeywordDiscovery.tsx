@@ -1,12 +1,16 @@
 import { useState } from 'react';
-import { Info } from 'lucide-react';
+import { Info, Search as SearchIcon, MapPin, Briefcase } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Card, CardContent } from '@/components/ui/card';
 import { ProjectSelector } from './ProjectSelector';
 import { LocationSelector } from './LocationSelector';
 import { DiscoverySearchForm } from './DiscoverySearchForm';
 import { DiscoveryResultsTable } from './DiscoveryResultsTable';
 import { useKeywordDiscovery } from '../hooks/useKeywordDiscovery';
 
+/**
+ * KeywordDiscovery Component (Redesigned Flow)
+ */
 export function KeywordDiscovery() {
   const [selectedProjectId, setSelectedProjectId] = useState<string>('');
   const [selectedLocation, setSelectedLocation] = useState<any>(null);
@@ -29,49 +33,68 @@ export function KeywordDiscovery() {
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       
-      {/* Search and Project Selection Header */}
-      <div className="flex flex-col gap-6 bg-muted/20 p-6 rounded-3xl border border-border/50">
-        <div className="flex flex-col lg:flex-row gap-6 items-end justify-between">
-          <DiscoverySearchForm 
-            query={query}
-            setQuery={setQuery}
-            isLoading={isLoading}
-            onSearch={handleSearch}
-          />
+      {/* Search Configuration Panel */}
+      <Card className="border-none shadow-2xl bg-card/50 backdrop-blur-md rounded-3xl overflow-hidden">
+        <CardContent className="p-8 space-y-8">
           
-          <div className="w-full lg:w-auto">
-            <ProjectSelector 
-              onProjectSelect={setSelectedProjectId} 
-              selectedProjectId={selectedProjectId} 
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-2">
+            {/* Filter Section: Project */}
+            <div className="space-y-3">
+              <div className="flex items-center gap-2 text-brand-primary">
+                <Briefcase className="h-4 w-4" />
+                <span className="text-sm font-bold uppercase tracking-widest">Contexto de Proyecto</span>
+              </div>
+              <ProjectSelector 
+                onProjectSelect={setSelectedProjectId} 
+                selectedProjectId={selectedProjectId} 
+              />
+              <p className="text-[10px] text-muted-foreground italic">Las keywords se guardarán en este proyecto.</p>
+            </div>
+
+            {/* Filter Section: Location */}
+            <div className="space-y-3">
+              <div className="flex items-center gap-2 text-brand-primary">
+                <MapPin className="h-4 w-4" />
+                <span className="text-sm font-bold uppercase tracking-widest">Ubicación de Google</span>
+              </div>
+              <LocationSelector 
+                onLocationSelect={setSelectedLocation}
+                selectedLocation={selectedLocation}
+              />
+              <p className="text-[10px] text-muted-foreground italic">Influye en el volumen y dificultad de búsqueda.</p>
+            </div>
+          </div>
+
+          <div className="border-t border-border/50 pt-8">
+            <div className="flex items-center gap-2 text-brand-primary mb-4">
+              <SearchIcon className="h-4 w-4" />
+              <span className="text-sm font-bold uppercase tracking-widest">Términos de Búsqueda</span>
+            </div>
+            <DiscoverySearchForm 
+              query={query}
+              setQuery={setQuery}
+              isLoading={isLoading}
+              onSearch={handleSearch}
             />
           </div>
-        </div>
+        </CardContent>
+      </Card>
 
-        <div className="flex flex-col lg:flex-row gap-6 items-end border-t border-border/50 pt-6">
-          <LocationSelector 
-            onLocationSelect={setSelectedLocation}
-            selectedLocation={selectedLocation}
-          />
-          
-          <p className="text-xs text-muted-foreground mb-3 italic">
-            * Si no seleccionas ubicación, la búsqueda se hará a nivel global por defecto.
-          </p>
-        </div>
-      </div>
-
-      {/* Content Section */}
+      {/* Results Section */}
       {isLoading ? (
         <div className="space-y-4">
           {[1, 2, 3, 4, 5].map((i) => (
-            <Skeleton key={i} className="h-16 w-full rounded-2xl" />
+            <Skeleton key={i} className="h-16 w-full rounded-3xl" />
           ))}
         </div>
       ) : results.length > 0 ? (
-        <DiscoveryResultsTable 
-          results={results}
-          savedKeywords={savedKeywords}
-          onAddKeyword={saveKeyword}
-        />
+        <div className="animate-in fade-in slide-in-from-bottom-6 duration-700">
+          <DiscoveryResultsTable 
+            results={results}
+            savedKeywords={savedKeywords}
+            onAddKeyword={saveKeyword}
+          />
+        </div>
       ) : !isLoading && query && (
         <div className="flex flex-col items-center justify-center py-20 text-center space-y-4">
           <div className="p-6 rounded-full bg-muted/20">
@@ -79,7 +102,7 @@ export function KeywordDiscovery() {
           </div>
           <div>
             <h3 className="text-xl font-bold">Sin resultados</h3>
-            <p className="text-muted-foreground">Intenta con otra búsqueda o parámetros.</p>
+            <p className="text-muted-foreground">Intenta ajustando la ubicación o el término de búsqueda.</p>
           </div>
         </div>
       )}
