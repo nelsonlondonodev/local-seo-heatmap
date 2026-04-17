@@ -1,10 +1,6 @@
 import { supabase } from '@/lib/supabase';
 import { logger } from '@/lib/logger';
-import type { Database } from '@/types/database';
-
-type KeywordProject = Database['public']['Tables']['keyword_projects']['Row'];
-type TrackedKeyword = Database['public']['Tables']['tracked_keywords']['Row'];
-type KeywordHistory = Database['public']['Tables']['keyword_history']['Row'];
+import type { Database, Json } from '@/types/database';
 
 /**
  * Service to handle Supabase persistence for Keyword Intelligence module.
@@ -67,7 +63,7 @@ export const keywordPersistenceService = {
     keywordId: string, 
     rank: number | null, 
     searchVolume?: number, 
-    resultsJson?: any
+    resultsJson?: Json
   ) {
     // 1. Get previous rank to calculate change
     const { data: previousEntries } = await supabase
@@ -129,9 +125,11 @@ export const keywordPersistenceService = {
     // Process to get only the latest history entry for each keyword
     return (data || []).map(kw => ({
       ...kw,
-      latest_history: kw.keyword_history?.sort((a: any, b: any) => 
-        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-      )[0] || null
+      latest_history: Array.isArray(kw.keyword_history) 
+        ? kw.keyword_history.sort((a, b) => 
+            new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+          )[0] || null
+        : null
     }));
   }
 };
