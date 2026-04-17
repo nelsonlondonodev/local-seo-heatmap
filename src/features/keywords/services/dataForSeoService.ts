@@ -26,7 +26,7 @@ export const dataForSeoService = {
     }
 
     try {
-      const response = await fetch(`${BASE_URL}/keywords_data/google/keyword_ideas/live`, {
+      const response = await fetch(`${BASE_URL}/keywords_data/google_ads/keywords_for_keywords/live`, {
         method: 'POST',
         headers: {
           'Authorization': getAuthHeader(),

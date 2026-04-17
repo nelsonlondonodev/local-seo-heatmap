@@ -46,8 +46,8 @@ export function DiscoveryResultsTable({ results, savedKeywords, onAddKeyword }: 
                   </div>
                 </td>
                 <td className="px-6 py-5">
-                  <Badge variant="outline" className={`rounded-lg px-2 py-1 font-bold border-2 ${getDifficultyColor(item.keyword_difficulty)}`}>
-                    {item.keyword_difficulty ?? 'N/A'}
+                  <Badge variant="outline" className={`rounded-lg px-2 py-1 font-bold border-2 ${getDifficultyColor(item.keyword_difficulty ?? item.competition_index ?? null)}`}>
+                    {item.keyword_difficulty ?? item.competition_index ?? 'N/A'}
                   </Badge>
                 </td>
                 <td className="px-6 py-5">

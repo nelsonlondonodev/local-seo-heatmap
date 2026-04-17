@@ -7,6 +7,7 @@ export interface KeywordSuggestion {
   competition_level: 'HIGH' | 'MEDIUM' | 'LOW' | null;
   cpc: number | null;
   keyword_difficulty: number | null;
+  competition_index?: number | null;
 }
 
 /**
