@@ -336,12 +336,23 @@ Inspirado en el análisis de herramientas líderes como **DinoRank**, hemos traz
 
 ---
 
-## Estado Actual del Proyecto
+## 🚀 Keyword Intelligence Hub (v0.9.0 - SEO Discovery & Tracking)
 
-> **Versión:** 0.8.0 — Sales Strategy Hub & AI Engagement Kit.
+Hemos implementado un ecosistema completo para el descubrimiento y monitoreo de palabras clave locales:
+
+1.  **🔍 Descubrimiento Predictivo Geografiado**: Nuevo flujo de búsqueda País -> Ciudad -> Pueblo con autocompletado en tiempo real para una precisión geográfica total.
+2.  **📊 Métricas de Google Ads Real-Time**: Integración con DataForSEO para obtener volúmenes de búsqueda, dificultad y CPC específicos para la localidad seleccionada.
+3.  **🎯 Rank Tracking Live**: Capacidad de rastrear la posición orgánica actual de un dominio en el Top 100 de Google para cualquier palabra clave guardada.
+4.  **💾 Persistencia Geográfica de Proyectos**: Los proyectos ahora guardan su propio contexto (País y Ubicación), permitiendo una carga automática de datos al cambiar de cliente.
+5.  **📈 Historial & Evolución de Ranking**: Sistema de guardado histórico cada vez que se actualiza una posición, preparando el terreno para gráficas de evolución.
+6.  **💉 Master Refactor**: Modularización de la UI en componentes atómicos (`KeywordConfigPanel`, `KeywordRankRow`) y estandarización del servicio de API para un mantenimiento simplificado.
+
+---
+
+## 🚀 Estado Actual del Proyecto (v0.9.0 - Keyword Discovery & Monitoring)
 
 Próximas tareas:
-1. **📉 Local Visibility Graph (UI Polish)**: Ajuste fino de renderizado de `recharts`.
-2. **🔍 Analysis de Brechas (Category Gap)**: Siguiente módulo de inteligencia competitiva.
+1. **📉 Visualización Histórica**: Implementación de gráficas de línea para mostrar la subida de posiciones en el tiempo.
+2. **🔍 Analysis de Brechas (Category Gap)**: Siguiente módulo de inteligencia competitiva para comparar categorías de GBP frente al Top 3.
 3. **Google API Real**: Sustituir el simulador por llamadas reales a Google Places API / Edge Functions.
 4. **Sistema de suscripción**: Implementar pasarela de pago para planes Pro y Enterprise.
