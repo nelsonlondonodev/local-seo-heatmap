@@ -1,6 +1,6 @@
 import { supabase } from '@/lib/supabase';
 import { logger } from '@/lib/logger';
-import type { Database, Json } from '@/types/database';
+import type { Json } from '@/types/database';
 import type { KeywordProject, TrackedKeyword, KeywordHistoryEntry } from '../types/keywords';
 
 /**
@@ -33,11 +33,11 @@ export const keywordPersistenceService = {
       .select()
       .single();
 
-    if (error) {
-      logger.error('[KW_PERSISTENCE] Error creating project:', error.message);
-      throw error;
+    if (error || !data) {
+      logger.error('[KW_PERSISTENCE] Error creating project:', error?.message);
+      throw error || new Error('No se pudo crear el proyecto');
     }
-    return data as KeywordProject;
+    return data as unknown as KeywordProject;
   },
 
   /**
@@ -53,11 +53,11 @@ export const keywordPersistenceService = {
       .select()
       .single();
 
-    if (error) {
-      logger.error('[KW_PERSISTENCE] Error adding keyword:', error.message);
-      throw error;
+    if (error || !data) {
+      logger.error('[KW_PERSISTENCE] Error adding keyword:', error?.message);
+      throw error || new Error('No se pudo añadir la palabra clave');
     }
-    return data as TrackedKeyword;
+    return data as unknown as TrackedKeyword;
   },
 
   /**
@@ -98,11 +98,11 @@ export const keywordPersistenceService = {
       .select()
       .single();
 
-    if (error) {
-      logger.error('[KW_PERSISTENCE] Error saving rank entry:', error.message);
-      throw error;
+    if (error || !data) {
+      logger.error('[KW_PERSISTENCE] Error saving rank entry:', error?.message);
+      throw error || new Error('No se pudo guardar la posición');
     }
-    return data as KeywordHistoryEntry;
+    return data as unknown as KeywordHistoryEntry;
   },
 
   /**
@@ -128,13 +128,14 @@ export const keywordPersistenceService = {
     }
 
     // Process to get only the latest history entry for each keyword
-    return (data || []).map(kw => ({
+    // Using internal typing for the Supabase join result
+    return (data || []).map((kw: any) => ({
       ...kw,
       latest_history: Array.isArray(kw.keyword_history) 
-        ? (kw.keyword_history as KeywordHistoryEntry[]).sort((a, b) => 
+        ? [...kw.keyword_history].sort((a: any, b: any) => 
             new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
           )[0] || null
         : null
-    })) as TrackedKeyword[];
+    })) as unknown as TrackedKeyword[];
   }
 };
