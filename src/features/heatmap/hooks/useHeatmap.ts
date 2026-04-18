@@ -74,19 +74,31 @@ export function useHeatmap() {
   }, [center, gridSize, radiusKm]);
 
   // 6. Action Handlers (Explicit Unlockers)
+  
+  /**
+   * Helper to invalidate the history lock and update state.
+   * This ensures that any manual change to parameters allows the grid to re-sync.
+   */
+  const withInvalidation = useCallback(<T>(setter: React.Dispatch<React.SetStateAction<T>>) => {
+    return (value: T) => {
+      hasLoadedHistory.current = false;
+      setter(value);
+    };
+  }, []);
+
   const handleMapClick = useCallback((lat: number, lng: number) => {
-    hasLoadedHistory.current = false; // Manually break the lock
+    hasLoadedHistory.current = false;
     setCenter([lat, lng]);
   }, []);
 
   const handleResetCenter = useCallback(() => {
-    hasLoadedHistory.current = false; // Manually break the lock
+    hasLoadedHistory.current = false;
     setCenter([MAP_DEFAULT_CENTER.lat, MAP_DEFAULT_CENTER.lng]);
   }, []);
 
   const runAnalysis = useCallback(async () => {
     if (!isFormValid) return;
-    hasLoadedHistory.current = false; // Manually break the lock
+    hasLoadedHistory.current = false;
 
     try {
       setIsLoading(true);
@@ -111,39 +123,16 @@ export function useHeatmap() {
     }
   }, [isFormValid, currentConfig, points, saveHeatmap]);
 
-  // Handlers for manual parameter changes to break history lock
-  const updateGridSize = useCallback((size: GridSize) => {
-    hasLoadedHistory.current = false;
-    setGridSize(size);
-  }, []);
-
-  const updateRadius = useCallback((radius: number) => {
-    hasLoadedHistory.current = false;
-    setRadiusKm(radius);
-  }, []);
-
-  const updateKeyword = useCallback((val: string) => {
-    hasLoadedHistory.current = false;
-    setKeyword(val);
-  }, []);
-
-  const updateBusinessName = useCallback((val: string) => {
-    hasLoadedHistory.current = false;
-    setBusinessName(val);
-  }, []);
-
-  const updatePlaceId = useCallback((val: string) => {
-    hasLoadedHistory.current = false;
-    setPlaceId(val);
-  }, []);
-
-  const updateProspectName = useCallback((val: string) => {
-    setProspectName(val);
-  }, []);
-
-  const updateProspectEmail = useCallback((val: string) => {
-    setProspectEmail(val);
-  }, []);
+  // Parameter update handlers with auto-invalidation
+  const updateGridSize = useCallback(withInvalidation(setGridSize), [withInvalidation]);
+  const updateRadius = useCallback(withInvalidation(setRadiusKm), [withInvalidation]);
+  const updateKeyword = useCallback(withInvalidation(setKeyword), [withInvalidation]);
+  const updateBusinessName = useCallback(withInvalidation(setBusinessName), [withInvalidation]);
+  const updatePlaceId = useCallback(withInvalidation(setPlaceId), [withInvalidation]);
+  
+  // Prospect info doesn't need history invalidation
+  const updateProspectName = useCallback((val: string) => setProspectName(val), []);
+  const updateProspectEmail = useCallback((val: string) => setProspectEmail(val), []);
 
   return {
     keyword, setKeyword: updateKeyword,
