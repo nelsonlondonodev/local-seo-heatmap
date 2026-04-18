@@ -45,15 +45,7 @@ export function AnalysisTab({ heatmap }: AnalysisTabProps) {
           isOpen={heatmap.isConfirmModalOpen}
           onOpenChange={heatmap.setIsConfirmModalOpen}
           onConfirm={heatmap.runAnalysis}
-          config={{
-            keyword: heatmap.keyword,
-            businessName: heatmap.businessName,
-            placeId: heatmap.placeId,
-            gridSize: heatmap.gridSize,
-            radiusKm: heatmap.radiusKm,
-            centerLat: heatmap.center[0],
-            centerLng: heatmap.center[1]
-          }}
+          config={heatmap.currentConfig}
           estimatedCost={heatmap.estimatedCost}
           pointsCount={heatmap.points.length}
         />

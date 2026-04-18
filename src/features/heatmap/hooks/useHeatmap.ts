@@ -151,6 +151,7 @@ export function useHeatmap() {
     runAnalysis,
     isConfirmModalOpen, 
     setIsConfirmModalOpen,
+    currentConfig,
     prospectName, setProspectName: updateProspectName,
     prospectEmail, setProspectEmail: updateProspectEmail,
   };
