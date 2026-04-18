@@ -1,3 +1,5 @@
+import type { Json } from '@/types/database';
+
 /**
  * Types for the Keyword Intelligence persistence layer
  */
@@ -29,5 +31,5 @@ export interface KeywordHistoryEntry {
   rank_change: number;
   search_volume: number | null;
   created_at: string;
-  results_json?: any; // Keeping any for complex JSON if not fully defined
+  results_json?: Json;
 }
