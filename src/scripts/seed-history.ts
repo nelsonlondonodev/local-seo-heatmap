@@ -17,6 +17,12 @@ if (!supabaseUrl || !supabaseKey) {
 
 const supabase = createClient(supabaseUrl, supabaseKey);
 
+interface HeatmapSummary {
+  avgRank: number;
+  bestRank: number;
+  [key: string]: any; // Permite otros campos opcionales del summary sin romper el tipo
+}
+
 async function seedHistory() {
   console.log('🔍 Buscando el último análisis para duplicar...');
   
@@ -36,10 +42,11 @@ async function seedHistory() {
   console.log(`✅ Base encontrada: ${lastHeatmap.business_name} - ${lastHeatmap.keyword}`);
 
   // 2. Crear una versión "hace 7 días" con peor ranking
-  const oldSummary = lastHeatmap.results_summary ? { ...lastHeatmap.results_summary } : { avgRank: 10, bestRank: 5 };
+  const oldSummary = (lastHeatmap.results_summary ? { ...lastHeatmap.results_summary } : { avgRank: 10, bestRank: 5 }) as HeatmapSummary;
+  
   // Empeoramos el ranking para que se vea una mejoría en el gráfico
-  (oldSummary as any).avgRank = (oldSummary as any).avgRank + 3.5;
-  (oldSummary as any).bestRank = (oldSummary as any).bestRank + 2;
+  oldSummary.avgRank = oldSummary.avgRank + 3.5;
+  oldSummary.bestRank = oldSummary.bestRank + 2;
 
   const mockHeatmap = {
     ...lastHeatmap,
