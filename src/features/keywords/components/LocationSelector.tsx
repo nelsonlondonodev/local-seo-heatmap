@@ -4,16 +4,11 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { dataForSeoService } from '../services/dataForSeoService';
 
-interface Location {
-  location_code: number;
-  location_name: string;
-  location_type: string;
-  country_iso_code: string;
-}
+import type { DataForSeoLocation } from '../types/dataForSeo';
 
 interface LocationSelectorProps {
-  onLocationSelect: (loc: Location) => void;
-  selectedLocation?: Location;
+  onLocationSelect: (loc: DataForSeoLocation | null) => void;
+  selectedLocation?: DataForSeoLocation | null;
   initialCountryCode?: string;
 }
 
@@ -31,7 +26,7 @@ const COMMON_COUNTRIES = [
 export function LocationSelector({ onLocationSelect, selectedLocation, initialCountryCode }: LocationSelectorProps) {
   const [selectedCountry, setSelectedCountry] = useState(initialCountryCode || 'co'); 
   const [cityQuery, setCityQuery] = useState('');
-  const [allLocations, setAllLocations] = useState<Location[]>([]);
+  const [allLocations, setAllLocations] = useState<DataForSeoLocation[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -116,7 +111,7 @@ export function LocationSelector({ onLocationSelect, selectedLocation, initialCo
               value={selectedLocation ? selectedLocation.location_name : cityQuery}
               disabled={isLoading}
               onChange={(e) => {
-                if (selectedLocation) onLocationSelect(undefined as any);
+                if (selectedLocation) onLocationSelect(null);
                 setCityQuery(e.target.value);
                 setShowDropdown(true);
               }}
@@ -130,7 +125,7 @@ export function LocationSelector({ onLocationSelect, selectedLocation, initialCo
               <button 
                 onClick={() => {
                   setCityQuery('');
-                  onLocationSelect(undefined as any);
+                  onLocationSelect(null);
                 }}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
               >

@@ -2,11 +2,13 @@ import { Briefcase, MapPin } from 'lucide-react';
 import { ProjectSelector } from './ProjectSelector';
 import { LocationSelector } from './LocationSelector';
 
+import type { DataForSeoLocation } from '../types/dataForSeo';
+
 interface KeywordConfigPanelProps {
   selectedProjectId: string;
   setSelectedProjectId: (id: string) => void;
-  selectedLocation: any;
-  setSelectedLocation: (loc: any) => void;
+  selectedLocation: DataForSeoLocation | null;
+  setSelectedLocation: (loc: DataForSeoLocation | null) => void;
 }
 
 export function KeywordConfigPanel({ 

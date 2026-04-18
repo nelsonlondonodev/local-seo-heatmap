@@ -2,8 +2,10 @@ import { RefreshCcw, TrendingUp, TrendingDown, Minus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 
+import type { TrackedKeyword } from '../types/keywords';
+
 interface KeywordRankRowProps {
-  kw: any;
+  kw: TrackedKeyword;
   isUpdating: boolean;
   onUpdate: (id: string, keyword: string) => void;
 }
