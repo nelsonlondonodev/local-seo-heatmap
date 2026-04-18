@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
-import { MapPin, Loader2, X, ChevronDown, Flag } from 'lucide-react';
+import { MapPin, Loader2, X, Flag } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { dataForSeoService } from '../services/dataForSeoService';
@@ -24,14 +24,14 @@ const COMMON_COUNTRIES = [
 ];
 
 export function LocationSelector({ onLocationSelect, selectedLocation, initialCountryCode }: LocationSelectorProps) {
-  const [selectedCountry, setSelectedCountry] = useState(initialCountryCode || 'co'); 
+  const [selectedCountry, setSelectedCountry] = useState<string>(initialCountryCode || 'co'); 
   const [cityQuery, setCityQuery] = useState('');
   const [allLocations, setAllLocations] = useState<DataForSeoLocation[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Update selected country if initialCountryCode changes (e.g., when switching projects)
+  // Update selected country if initialCountryCode changes
   useEffect(() => {
     if (initialCountryCode) {
       setSelectedCountry(initialCountryCode);
@@ -44,7 +44,7 @@ export function LocationSelector({ onLocationSelect, selectedLocation, initialCo
       setIsLoading(true);
       try {
         const data = await dataForSeoService.getLocationsByCountry(selectedCountry);
-        setAllLocations(data);
+        setAllLocations(data || []);
       } catch (error) {
         console.error('Error loading locations:', error);
       } finally {
@@ -54,13 +54,13 @@ export function LocationSelector({ onLocationSelect, selectedLocation, initialCo
     loadLocations();
   }, [selectedCountry]);
 
-  // Filter locations client-side for ultra-fast response
+  // Filter locations client-side
   const filteredLocations = useMemo(() => {
     if (!cityQuery || cityQuery.length < 2) return [];
     const lowerQuery = cityQuery.toLowerCase();
     return allLocations
       .filter(loc => loc.location_name.toLowerCase().includes(lowerQuery))
-      .slice(0, 50); // Show up to 50 matches
+      .slice(0, 50);
   }, [cityQuery, allLocations]);
 
   // Close when clicking outside
@@ -74,16 +74,25 @@ export function LocationSelector({ onLocationSelect, selectedLocation, initialCo
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  // Sync cityQuery if a location is selected but not matching current query
+  const displayValue = selectedLocation ? selectedLocation.location_name : cityQuery;
+
   return (
     <div className="flex flex-col gap-4 w-full" ref={containerRef}>
       <div className="flex flex-col lg:flex-row gap-4">
         {/* Country Selector */}
         <div className="flex flex-col gap-2 w-full lg:w-40 shrink-0">
-          <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground ml-1">
+          <label 
+            htmlFor="country-selector"
+            className="text-xs font-bold uppercase tracking-wider text-muted-foreground ml-1"
+          >
             País
           </label>
-          <Select value={selectedCountry} onValueChange={setSelectedCountry}>
-            <SelectTrigger className="h-10 rounded-xl bg-card border-2 transition-all hover:border-brand-primary/50">
+          <Select value={selectedCountry} onValueChange={(v) => setSelectedCountry(v as string)}>
+            <SelectTrigger 
+              id="country-selector"
+              className="h-10 rounded-xl bg-card border-2 transition-all hover:border-brand-primary/50"
+            >
               <div className="flex items-center gap-2">
                 <Flag className="h-4 w-4 text-brand-primary" />
                 <SelectValue placeholder="País" />
@@ -108,14 +117,22 @@ export function LocationSelector({ onLocationSelect, selectedLocation, initialCo
             <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-brand-primary group-focus-within:scale-110 transition-transform" />
             <Input 
               placeholder={isLoading ? "Cargando ciudades..." : "Escribe ciudad... (ej: Chía)"}
-              value={selectedLocation ? selectedLocation.location_name : cityQuery}
+              value={displayValue}
               disabled={isLoading}
               onChange={(e) => {
-                if (selectedLocation) onLocationSelect(null);
-                setCityQuery(e.target.value);
+                const val = e.target.value;
+                setCityQuery(val);
+                if (selectedLocation) {
+                  onLocationSelect(null);
+                }
                 setShowDropdown(true);
               }}
-              onFocus={() => setShowDropdown(true)}
+              onFocus={() => {
+                if (selectedLocation) {
+                  setCityQuery(selectedLocation.location_name);
+                }
+                setShowDropdown(true);
+              }}
               className="pl-10 h-10 rounded-xl bg-card border-2 transition-all hover:border-brand-primary/50"
             />
             {isLoading && (
@@ -123,11 +140,12 @@ export function LocationSelector({ onLocationSelect, selectedLocation, initialCo
             )}
             {(cityQuery || selectedLocation) && (
               <button 
+                type="button"
                 onClick={() => {
                   setCityQuery('');
                   onLocationSelect(null);
                 }}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground p-1 rounded-full hover:bg-muted transition-colors"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -136,7 +154,7 @@ export function LocationSelector({ onLocationSelect, selectedLocation, initialCo
 
           {/* Autocomplete Results */}
           {showDropdown && filteredLocations.length > 0 && (
-            <div className="absolute top-20 left-0 w-full bg-card border-2 rounded-2xl shadow-2xl z-50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+            <div className="absolute top-full mt-2 left-0 w-full bg-card border-2 rounded-2xl shadow-2xl z-50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
               <ul className="max-h-60 overflow-y-auto divide-y divide-border/50">
                 {filteredLocations.map((loc) => (
                   <li 
