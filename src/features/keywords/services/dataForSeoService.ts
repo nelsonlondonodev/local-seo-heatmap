@@ -1,5 +1,11 @@
 import { logger } from '@/lib/logger';
-import type { KeywordSuggestion } from '../types/dataForSeo';
+import type { 
+  KeywordSuggestion, 
+  DataForSeoResponse, 
+  SerpResult, 
+  SerpItem,
+  DataForSeoLocation 
+} from '../types/dataForSeo';
 
 const AUTH_USER = import.meta.env.VITE_DATAFORSEO_LOGIN;
 const AUTH_PASS = import.meta.env.VITE_DATAFORSEO_PASSWORD;
@@ -36,7 +42,7 @@ async function fetchDataForSeo<T>(endpoint: string, options: RequestInit = {}): 
       throw new Error(`DataForSEO API error (${endpoint}): ${response.status}`);
     }
 
-    return await response.json();
+    return await response.json() as T;
   } catch (error) {
     logger.error(`[DATAFORSEO] Request failed (${endpoint}):`, error);
     return null;
@@ -48,14 +54,14 @@ async function fetchDataForSeo<T>(endpoint: string, options: RequestInit = {}): 
  */
 export const dataForSeoService = {
   /**
-   * Fetches keyword suggestions based on a seed keyword.
-   */
+    * Fetches keyword suggestions based on a seed keyword.
+    */
   async getKeywordSuggestions(
     keyword: string, 
     locationCode = 2840, 
     languageCode = 'es'
   ): Promise<KeywordSuggestion[]> {
-    const data = await fetchDataForSeo<any>('/keywords_data/google_ads/keywords_for_keywords/live', {
+    const response = await fetchDataForSeo<DataForSeoResponse<KeywordSuggestion>>('/keywords_data/google_ads/keywords_for_keywords/live', {
       method: 'POST',
       body: JSON.stringify([{
         keywords: [keyword],
@@ -66,18 +72,18 @@ export const dataForSeoService = {
       }])
     });
 
-    return data?.tasks?.[0]?.result || [];
+    return response?.tasks?.[0]?.result || [];
   },
 
   /**
-   * Fetches real-time SERP results (Advanced) for a keyword and location.
-   */
+    * Fetches real-time SERP results (Advanced) for a keyword and location.
+    */
   async getSerpResults(
     keyword: string, 
     locationCode: number, 
     languageCode = 'es'
-  ): Promise<any[]> {
-    const data = await fetchDataForSeo<any>('/serp/google/organic/live/advanced', {
+  ): Promise<SerpItem[]> {
+    const response = await fetchDataForSeo<DataForSeoResponse<SerpResult>>('/serp/google/organic/live/advanced', {
       method: 'POST',
       body: JSON.stringify([{
         keyword,
@@ -89,14 +95,14 @@ export const dataForSeoService = {
       }])
     });
 
-    return data?.tasks?.[0]?.result?.[0]?.items || [];
+    return response?.tasks?.[0]?.result?.[0]?.items || [];
   },
 
   /**
-   * Fetches locations supported by Google for a specific country code.
-   */
-  async getLocationsByCountry(countryIsoCode: string): Promise<any[]> {
-    const data = await fetchDataForSeo<any>(`/keywords_data/google/locations/${countryIsoCode}`);
-    return data?.tasks?.[0]?.result || [];
+    * Fetches locations supported by Google for a specific country code.
+    */
+  async getLocationsByCountry(countryIsoCode: string): Promise<DataForSeoLocation[]> {
+    const response = await fetchDataForSeo<DataForSeoResponse<DataForSeoLocation>>(`/keywords_data/google/locations/${countryIsoCode}`);
+    return response?.tasks?.[0]?.result || [];
   }
 };
