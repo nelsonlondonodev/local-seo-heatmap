@@ -113,7 +113,7 @@ export function SearchForm({ heatmap }: SearchFormProps) {
         </div>
       </div>
 
-      <CostIndicator pointsCount={heatmap.estimatedCost} />
+      <CostIndicator estimatedCost={heatmap.estimatedCost} />
     </div>
   );
 }
