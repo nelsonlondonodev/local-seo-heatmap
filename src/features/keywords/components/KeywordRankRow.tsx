@@ -11,7 +11,7 @@ interface KeywordRankRowProps {
 }
 
 export function KeywordRankRow({ kw, isUpdating, onUpdate }: KeywordRankRowProps) {
-  const getRankChange = (change: number | null) => {
+  const getRankChange = (change: number | null | undefined) => {
     if (!change || change === 0) return <Minus className="h-3 w-3 text-muted-foreground" />;
     if (change > 0) return (
       <div className="flex items-center gap-1 text-emerald-500 font-bold">
