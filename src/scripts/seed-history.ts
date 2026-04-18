@@ -2,6 +2,7 @@ import { createClient } from '@supabase/supabase-js';
 import * as dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import type { Json } from '@/types/database';
 
 // Setup environment variables
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -20,7 +21,7 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 interface HeatmapSummary {
   avgRank: number;
   bestRank: number;
-  [key: string]: any; // Permite otros campos opcionales del summary sin romper el tipo
+  [key: string]: Json | undefined;
 }
 
 async function seedHistory() {
