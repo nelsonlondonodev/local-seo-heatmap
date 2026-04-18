@@ -1,6 +1,7 @@
 import { supabase } from '@/lib/supabase';
 import { logger } from '@/lib/logger';
 import type { Database, Json } from '@/types/database';
+import type { KeywordProject, TrackedKeyword, KeywordHistoryEntry } from '../types/keywords';
 
 /**
  * Service to handle Supabase persistence for Keyword Intelligence module.
@@ -17,7 +18,7 @@ export const keywordPersistenceService = {
     locationName?: string,
     countryCode?: string,
     agencyId?: string | null
-  ) {
+  ): Promise<KeywordProject> {
     const { data, error } = await supabase
       .from('keyword_projects')
       .insert({
@@ -36,13 +37,13 @@ export const keywordPersistenceService = {
       logger.error('[KW_PERSISTENCE] Error creating project:', error.message);
       throw error;
     }
-    return data;
+    return data as KeywordProject;
   },
 
   /**
    * Adds a keyword to a project for tracking.
    */
-  async addKeyword(projectId: string, keyword: string) {
+  async addKeyword(projectId: string, keyword: string): Promise<TrackedKeyword> {
     const { data, error } = await supabase
       .from('tracked_keywords')
       .insert({
@@ -56,7 +57,7 @@ export const keywordPersistenceService = {
       logger.error('[KW_PERSISTENCE] Error adding keyword:', error.message);
       throw error;
     }
-    return data;
+    return data as TrackedKeyword;
   },
 
   /**
@@ -68,7 +69,7 @@ export const keywordPersistenceService = {
     rank: number | null, 
     searchVolume?: number, 
     resultsJson?: Json
-  ) {
+  ): Promise<KeywordHistoryEntry> {
     // 1. Get previous rank to calculate change
     const { data: previousEntries } = await supabase
       .from('keyword_history')
@@ -101,13 +102,13 @@ export const keywordPersistenceService = {
       logger.error('[KW_PERSISTENCE] Error saving rank entry:', error.message);
       throw error;
     }
-    return data;
+    return data as KeywordHistoryEntry;
   },
 
   /**
    * Gets all keywords for a project with their latest ranking.
    */
-  async getProjectKeywords(projectId: string) {
+  async getProjectKeywords(projectId: string): Promise<TrackedKeyword[]> {
     const { data, error } = await supabase
       .from('tracked_keywords')
       .select(`
@@ -130,10 +131,10 @@ export const keywordPersistenceService = {
     return (data || []).map(kw => ({
       ...kw,
       latest_history: Array.isArray(kw.keyword_history) 
-        ? kw.keyword_history.sort((a, b) => 
+        ? (kw.keyword_history as KeywordHistoryEntry[]).sort((a, b) => 
             new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
           )[0] || null
         : null
-    }));
+    })) as TrackedKeyword[];
   }
 };

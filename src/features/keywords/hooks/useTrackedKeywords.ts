@@ -1,12 +1,13 @@
 import { useState, useCallback } from 'react';
-import { supabase } from '@/lib/supabase';
 import { logger } from '@/lib/logger';
 import { keywordPersistenceService } from '../services/keywordPersistenceService';
 import { dataForSeoService } from '../services/dataForSeoService';
 import { toast } from 'sonner';
+import type { TrackedKeyword } from '../types/keywords';
+import type { SerpItem } from '../types/dataForSeo';
 
 export function useTrackedKeywords(projectId: string) {
-  const [keywords, setKeywords] = useState<any[]>([]);
+  const [keywords, setKeywords] = useState<TrackedKeyword[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isUpdating, setIsUpdating] = useState<string | null>(null);
 
@@ -37,7 +38,7 @@ export function useTrackedKeywords(projectId: string) {
       // 2. Find target URL in results
       // Simple match logic: check if targetUrl is contained in result URL
       const cleanTarget = targetUrl.toLowerCase().replace('https://', '').replace('http://', '').replace('www.', '');
-      const match = serpItems.find((item: any) => 
+      const match = serpItems.find((item: SerpItem) => 
         item.url?.toLowerCase().includes(cleanTarget) || 
         item.domain?.toLowerCase().includes(cleanTarget)
       );
