@@ -35,22 +35,11 @@ export function useKeywordDiscovery(selectedProjectId: string) {
     syncSavedKeywords();
 
     // 2. Load cached search results
-    const cacheKey = `${CACHE_KEY_PREFIX}${selectedProjectId}`;
-    const cachedData = sessionStorage.getItem(cacheKey);
-    if (cachedData) {
-      try {
-        const parsed = JSON.parse(cachedData);
-        if (parsed.query && parsed.results) {
-          setQuery(parsed.query);
-          setResults(parsed.results);
-        }
-      } catch (err) {
-        logger.error('[KW_DISCOVERY] Error parsing cache:', err);
-      }
-    } else {
-      setQuery('');
-      setResults([]);
-    }
+    // We only clear the workbench when the project changes to ensure a fresh start
+    // but we DON'T auto-load from sessionStorage anymore unless explicitly requested.
+    // This satisfies the "Clean Workbench" requirement.
+    setQuery('');
+    setResults([]);
   }, [selectedProjectId]);
 
   const searchKeywords = async (locationCode?: number) => {
