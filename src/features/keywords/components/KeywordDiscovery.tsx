@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, type FormEvent } from 'react';
 import { Info, Search as SearchIcon } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Card, CardContent } from '@/components/ui/card';
@@ -7,6 +7,7 @@ import { DiscoverySearchForm } from './DiscoverySearchForm';
 import { DiscoveryResultsTable } from './DiscoveryResultsTable';
 import { useKeywordDiscovery } from '../hooks/useKeywordDiscovery';
 import { useProjects } from '../hooks/useProjects';
+import type { DataForSeoLocation } from '../types/dataForSeo';
 
 /**
  * KeywordDiscovery Component (Redesigned Flow)
@@ -14,16 +15,11 @@ import { useProjects } from '../hooks/useProjects';
 interface KeywordDiscoveryProps {
   selectedProjectId: string;
   setSelectedProjectId: (id: string) => void;
+  onSwitchToMonitoring?: () => void;
 }
 
-interface Location {
-  location_code: number;
-  location_name: string;
-  country_iso_code?: string;
-}
-
-export function KeywordDiscovery({ selectedProjectId, setSelectedProjectId }: KeywordDiscoveryProps) {
-  const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
+export function KeywordDiscovery({ selectedProjectId, setSelectedProjectId, onSwitchToMonitoring }: KeywordDiscoveryProps) {
+  const [selectedLocation, setSelectedLocation] = useState<DataForSeoLocation | null>(null);
   
   const { projects } = useProjects();
   
@@ -41,17 +37,25 @@ export function KeywordDiscovery({ selectedProjectId, setSelectedProjectId }: Ke
   useEffect(() => {
     if (selectedProjectId && projects.length > 0) {
       const project = projects.find(p => p.id === selectedProjectId);
-      if (project?.location_code && project?.location_name) {
+      
+      // Robust Type Narrowing: Extract to constants to satisfy TS
+      const code = project?.location_code;
+      const name = project?.location_name;
+      const country = project?.country_code;
+
+      if (code && name) {
         setSelectedLocation({
-          location_code: project.location_code,
-          location_name: project.location_name,
-          country_iso_code: project.country_code
+          location_code: code,
+          location_name: name,
+          country_iso_code: country || '',
+          location_type: 'Unknown',
+          location_code_parent: null
         });
       }
     }
   }, [selectedProjectId, projects]);
 
-  const handleSearch = (e: React.FormEvent) => {
+  const handleSearch = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     searchKeywords(selectedLocation?.location_code);
   };
@@ -98,6 +102,7 @@ export function KeywordDiscovery({ selectedProjectId, setSelectedProjectId }: Ke
             results={results}
             savedKeywords={savedKeywords}
             onAddKeyword={saveKeyword}
+            onViewMonitoring={onSwitchToMonitoring}
           />
         </div>
       ) : !isLoading && query && (

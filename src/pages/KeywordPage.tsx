@@ -6,6 +6,7 @@ import { MonitoringView } from '@/features/keywords/components/MonitoringView';
 
 export function KeywordPage() {
   const [selectedProjectId, setSelectedProjectId] = useState<string>('');
+  const [activeTab, setActiveTab] = useState<string>('discovery');
 
   return (
     <div className="space-y-6">
@@ -16,7 +17,7 @@ export function KeywordPage() {
         </p>
       </div>
 
-      <Tabs defaultValue="discovery" className="space-y-6">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
         <TabsList className="bg-card border p-1 rounded-2xl h-auto w-full lg:w-auto shadow-sm">
           <TabsTrigger 
             value="discovery" 
@@ -38,6 +39,7 @@ export function KeywordPage() {
           <KeywordDiscovery 
             selectedProjectId={selectedProjectId} 
             setSelectedProjectId={setSelectedProjectId} 
+            onSwitchToMonitoring={() => setActiveTab('monitoring')}
           />
         </TabsContent>
 

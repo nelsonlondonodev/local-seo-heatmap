@@ -1,3 +1,4 @@
+import { type FormEvent } from 'react';
 import { Search, Loader2 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -6,7 +7,7 @@ interface DiscoverySearchFormProps {
   query: string;
   setQuery: (val: string) => void;
   isLoading: boolean;
-  onSearch: (e: React.FormEvent) => void;
+  onSearch: (e: FormEvent<HTMLFormElement>) => void;
 }
 
 export function DiscoverySearchForm({ query, setQuery, isLoading, onSearch }: DiscoverySearchFormProps) {

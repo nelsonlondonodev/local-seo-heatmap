@@ -7,9 +7,10 @@ interface DiscoveryResultsTableProps {
   results: KeywordSuggestion[];
   savedKeywords: Set<string>;
   onAddKeyword: (keyword: string) => void;
+  onViewMonitoring?: () => void;
 }
 
-export function DiscoveryResultsTable({ results, savedKeywords, onAddKeyword }: DiscoveryResultsTableProps) {
+export function DiscoveryResultsTable({ results, savedKeywords, onAddKeyword, onViewMonitoring }: DiscoveryResultsTableProps) {
   const getDifficultyColor = (difficulty: number | null) => {
     if (difficulty === null) return 'bg-slate-500/10 text-slate-500';
     if (difficulty < 30) return 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20';
@@ -58,9 +59,19 @@ export function DiscoveryResultsTable({ results, savedKeywords, onAddKeyword }: 
                 </td>
                 <td className="px-6 py-5 text-right">
                   {savedKeywords.has(item.keyword.toLowerCase()) ? (
-                    <div className="flex items-center justify-end text-emerald-500 gap-2 pr-4 font-semibold animate-in zoom-in-50 duration-300">
-                      <CheckCircle2 className="h-5 w-5" />
-                      <span className="text-sm">Guardada</span>
+                    <div className="flex items-center justify-end gap-3 pr-2 animate-in zoom-in-50 duration-300">
+                      <div className="flex items-center text-emerald-500 gap-2 font-semibold">
+                        <CheckCircle2 className="h-5 w-5" />
+                        <span className="text-sm">Guardada</span>
+                      </div>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={onViewMonitoring}
+                        className="text-xs h-8 rounded-lg border border-border/50 hover:bg-brand-primary/10 hover:text-brand-primary"
+                      >
+                        Ver seguimiento
+                      </Button>
                     </div>
                   ) : (
                     <Button 

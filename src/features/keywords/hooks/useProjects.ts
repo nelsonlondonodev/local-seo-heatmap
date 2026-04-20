@@ -3,10 +3,11 @@ import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/features/auth';
 import { keywordPersistenceService } from '../services/keywordPersistenceService';
 import { toast } from 'sonner';
+import type { KeywordProject } from '../types/keywords';
 
 export function useProjects(onProjectSelect?: (id: string) => void) {
   const { user } = useAuth();
-  const [projects, setProjects] = useState<{ id: string, name: string }[]>([]);
+  const [projects, setProjects] = useState<KeywordProject[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   const fetchProjects = useCallback(async () => {
