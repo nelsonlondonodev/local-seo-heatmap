@@ -15,13 +15,14 @@ export function useProjects(onProjectSelect?: (id: string) => void) {
     try {
       const { data } = await supabase
         .from('keyword_projects')
-        .select('id, name, location_code, location_name, country_code')
+        .select('*')
         .eq('user_id', user.id)
         .order('created_at', { ascending: false });
       
-      setProjects(data || []);
-      if (data && data.length > 0 && onProjectSelect) {
-        onProjectSelect(data[0].id);
+      const typedData = data as KeywordProject[] | null;
+      setProjects(typedData || []);
+      if (typedData && typedData.length > 0 && onProjectSelect) {
+        onProjectSelect(typedData[0].id);
       }
     } catch (error) {
       console.error('Error fetching projects:', error);
