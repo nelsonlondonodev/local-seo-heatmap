@@ -8,9 +8,18 @@ interface DiscoverySearchFormProps {
   setQuery: (val: string) => void;
   isLoading: boolean;
   onSearch: (e: FormEvent<HTMLFormElement>) => void;
+  onClear: () => void;
+  hasResults: boolean;
 }
 
-export function DiscoverySearchForm({ query, setQuery, isLoading, onSearch }: DiscoverySearchFormProps) {
+export function DiscoverySearchForm({ 
+  query, 
+  setQuery, 
+  isLoading, 
+  onSearch, 
+  onClear,
+  hasResults 
+}: DiscoverySearchFormProps) {
   return (
     <div className="w-full lg:max-w-xl">
       <form onSubmit={onSearch} className="relative group">
@@ -25,13 +34,25 @@ export function DiscoverySearchForm({ query, setQuery, isLoading, onSearch }: Di
               className="pl-12 h-12 rounded-2xl border-2 bg-card/80 backdrop-blur-sm focus-visible:ring-brand-primary/20"
             />
           </div>
-          <Button 
-            type="submit" 
-            disabled={isLoading}
-            className="h-12 px-6 rounded-2xl bg-brand-primary hover:bg-brand-primary/90 text-primary-foreground font-bold transition-all active:scale-95 shrink-0"
-          >
-            {isLoading ? <Loader2 className="h-5 w-5 animate-spin" /> : 'Analizar'}
-          </Button>
+          <div className="flex gap-2">
+            {(hasResults || query) && !isLoading && (
+              <Button 
+                type="button" 
+                variant="ghost"
+                onClick={onClear}
+                className="h-12 px-4 rounded-xl text-muted-foreground hover:text-destructive transition-all font-medium border-2 border-transparent hover:border-destructive/10"
+              >
+                Limpiar
+              </Button>
+            )}
+            <Button 
+              type="submit" 
+              disabled={isLoading || !query.trim()}
+              className="h-12 px-6 rounded-xl bg-brand-primary hover:bg-brand-primary/90 text-primary-foreground font-bold transition-all active:scale-95 shadow-lg shadow-brand-primary/20 shrink-0"
+            >
+              {isLoading ? <Loader2 className="h-5 w-5 animate-spin" /> : (hasResults ? 'Actualizar' : 'Analizar')}
+            </Button>
+          </div>
         </div>
       </form>
     </div>

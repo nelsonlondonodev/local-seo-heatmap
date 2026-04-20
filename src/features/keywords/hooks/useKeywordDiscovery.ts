@@ -104,6 +104,13 @@ export function useKeywordDiscovery(selectedProjectId: string) {
     }
   };
 
+  const clearResults = () => {
+    setResults([]);
+    setQuery('');
+    const cacheKey = `${CACHE_KEY_PREFIX}${selectedProjectId}`;
+    sessionStorage.removeItem(cacheKey);
+  };
+
   return {
     query,
     setQuery,
@@ -111,6 +118,7 @@ export function useKeywordDiscovery(selectedProjectId: string) {
     isLoading,
     savedKeywords,
     searchKeywords,
-    saveKeyword
+    saveKeyword,
+    clearResults
   };
 }

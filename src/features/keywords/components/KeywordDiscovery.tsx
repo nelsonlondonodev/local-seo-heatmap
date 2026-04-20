@@ -59,6 +59,7 @@ export function KeywordDiscovery({ selectedProjectId, setSelectedProjectId, onSw
 
   const handleSearch = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    console.log('SEARCH DEBUG: Enviando al API -> Ciudad:', selectedLocation?.location_name, '| Código:', selectedLocation?.location_code);
     searchKeywords(selectedLocation?.location_code);
   };
 
@@ -86,6 +87,8 @@ export function KeywordDiscovery({ selectedProjectId, setSelectedProjectId, onSw
               setQuery={setQuery}
               isLoading={isLoading}
               onSearch={handleSearch}
+              onClear={clearResults}
+              hasResults={results.length > 0}
             />
           </div>
         </CardContent>
