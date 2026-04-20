@@ -31,7 +31,8 @@ export function KeywordDiscovery({ selectedProjectId, setSelectedProjectId, onSw
     isLoading, 
     savedKeywords, 
     searchKeywords, 
-    saveKeyword 
+    saveKeyword,
+    clearResults
   } = useKeywordDiscovery(selectedProjectId);
 
   // Effect to load project location when project changes
