@@ -57,7 +57,7 @@ export function DiscoveryResultsTable({ results, savedKeywords, onAddKeyword }: 
                   </div>
                 </td>
                 <td className="px-6 py-5 text-right">
-                  {savedKeywords.has(item.keyword) ? (
+                  {savedKeywords.has(item.keyword.toLowerCase()) ? (
                     <div className="flex items-center justify-end text-emerald-500 gap-2 pr-4 font-semibold animate-in zoom-in-50 duration-300">
                       <CheckCircle2 className="h-5 w-5" />
                       <span className="text-sm">Guardada</span>
