@@ -56,10 +56,7 @@ export function ProjectSelector({ onProjectSelect, selectedProjectId, currentLoc
             <Button 
               type="button"
               size="icon" 
-              onClick={() => {
-                console.log('DEBUG: Clic directo en botón de crear');
-                handleCreate();
-              }} 
+              onClick={() => handleCreate()} 
               disabled={isLoading} 
               className="rounded-xl shrink-0"
             >
@@ -87,7 +84,7 @@ export function ProjectSelector({ onProjectSelect, selectedProjectId, currentLoc
                   <span className="truncate">
                     {selectedProjectId 
                       ? (projects.find(p => p.id === selectedProjectId)?.name || 'Cargando...') 
-                      : 'Selecula un proyecto'
+                      : 'Selecciona un proyecto'
                     }
                   </span>
                 </div>
