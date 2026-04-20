@@ -23,6 +23,7 @@ export function KeywordDiscovery({ selectedProjectId, setSelectedProjectId, onSw
   
   const { projects } = useProjects();
   
+
   const { 
     query, 
     setQuery, 

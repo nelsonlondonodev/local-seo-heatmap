@@ -44,13 +44,34 @@ export function ProjectSelector({ onProjectSelect, selectedProjectId, currentLoc
               placeholder="Nombre del proyecto..." 
               value={newProjectName}
               onChange={(e) => setNewProjectName(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  handleCreate();
+                }
+              }}
               className="h-10 rounded-xl"
               autoFocus
             />
-            <Button size="icon" onClick={handleCreate} disabled={isLoading} className="rounded-xl shrink-0">
+            <Button 
+              type="button"
+              size="icon" 
+              onClick={() => {
+                console.log('DEBUG: Clic directo en botón de crear');
+                handleCreate();
+              }} 
+              disabled={isLoading} 
+              className="rounded-xl shrink-0"
+            >
               {isLoading ? <Spinner className="h-4 w-4 animate-spin" /> : <CheckIcon className="h-4 w-4" />}
             </Button>
-            <Button size="icon" variant="ghost" onClick={() => setIsCreating(false)} className="rounded-xl shrink-0">
+            <Button 
+              type="button" 
+              size="icon" 
+              variant="ghost" 
+              onClick={() => setIsCreating(false)} 
+              className="rounded-xl shrink-0"
+            >
               <PlusIcon className="h-4 w-4 rotate-45" />
             </Button>
           </div>
@@ -61,9 +82,14 @@ export function ProjectSelector({ onProjectSelect, selectedProjectId, currentLoc
               onValueChange={handleProjectLink}
             >
               <SelectTrigger className="h-10 rounded-xl bg-card border-2 transition-all hover:border-brand-primary/50">
-                <div className="flex items-center gap-2">
-                  <ProjectIcon className="h-4 w-4 text-brand-primary" />
-                  <SelectValue placeholder="Selecciona un proyecto" />
+                <div className="flex items-center gap-2 overflow-hidden">
+                  <ProjectIcon className="h-4 w-4 text-brand-primary shrink-0" />
+                  <span className="truncate">
+                    {selectedProjectId 
+                      ? (projects.find(p => p.id === selectedProjectId)?.name || 'Cargando...') 
+                      : 'Selecula un proyecto'
+                    }
+                  </span>
                 </div>
               </SelectTrigger>
               <SelectContent className="rounded-xl">
@@ -81,11 +107,11 @@ export function ProjectSelector({ onProjectSelect, selectedProjectId, currentLoc
             </Select>
             <Button 
               variant="outline" 
-              size="icon" 
               onClick={() => setIsCreating(true)}
-              className="rounded-xl border-2 hover:bg-brand-primary hover:text-primary-foreground transition-all shrink-0"
+              className="rounded-xl border-2 hover:bg-brand-primary hover:text-primary-foreground transition-all px-4 flex gap-2 h-10"
             >
               <PlusIcon className="h-4 w-4" />
+              <span>Nuevo</span>
             </Button>
           </>
         )}

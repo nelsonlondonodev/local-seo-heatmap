@@ -59,14 +59,27 @@ export function useKeywordDiscovery(selectedProjectId: string) {
     setIsLoading(true);
     setResults([]);
     try {
-      const data = await dataForSeoService.getKeywordSuggestions(query, locationCode);
+      const data = await dataForSeoService.getKeywordSuggestions(
+        query, 
+        locationCode || 2840 // Default to US if no location
+      );
       setResults(data);
       if (data.length === 0) {
         toast.info('No se encontraron sugerencias.');
       } else if (selectedProjectId) {
-        // Save to cache
+        // 1. Save results to cache
         const cacheKey = `${CACHE_KEY_PREFIX}${selectedProjectId}`;
         sessionStorage.setItem(cacheKey, JSON.stringify({ query, results: data }));
+
+        // 2. AUTO-SAVE: Persistent seed keyword for the project
+        // This ensures the main search term is added to tracked_keywords automatically
+        try {
+          await keywordPersistenceService.addKeyword(selectedProjectId, query);
+          setSavedKeywords(prev => new Set(prev).add(query.toLowerCase()));
+          logger.info('[KW_DISCOVERY] Seed keyword auto-saved');
+        } catch (err) {
+          // If already exists, we just ignore the error
+        }
       }
     } catch (error) {
       logger.error('[KW_DISCOVERY] Error searching:', error);

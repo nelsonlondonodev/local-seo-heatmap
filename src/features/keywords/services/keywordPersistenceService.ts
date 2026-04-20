@@ -19,6 +19,7 @@ export const keywordPersistenceService = {
     countryCode?: string,
     agencyId?: string | null
   ): Promise<KeywordProject> {
+
     const { data, error } = await supabase
       .from('keyword_projects')
       .insert({
