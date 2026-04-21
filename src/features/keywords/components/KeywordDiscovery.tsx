@@ -1,4 +1,5 @@
 import { useState, useEffect, type FormEvent } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Info, Search as SearchIcon } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Card, CardContent } from '@/components/ui/card';
@@ -19,6 +20,7 @@ interface KeywordDiscoveryProps {
 }
 
 export function KeywordDiscovery({ selectedProjectId, setSelectedProjectId, onSwitchToMonitoring }: KeywordDiscoveryProps) {
+  const navigate = useNavigate();
   const [selectedLocation, setSelectedLocation] = useState<DataForSeoLocation | null>(null);
   
   const { projects } = useProjects();
@@ -106,7 +108,7 @@ export function KeywordDiscovery({ selectedProjectId, setSelectedProjectId, onSw
             results={results}
             savedKeywords={savedKeywords}
             onAddKeyword={saveKeyword}
-            onViewMonitoring={onSwitchToMonitoring}
+            onViewMonitoring={() => navigate('/rank-tracker')}
           />
         </div>
       ) : !isLoading && query && (
