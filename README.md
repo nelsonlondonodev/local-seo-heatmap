@@ -385,10 +385,21 @@ Sesión dedicada a la eliminación de deuda técnica y fortalecimiento del núcl
 
 ---
 
-## 🚀 Estado Actual del Proyecto (v0.9.5 - Final Stability Check)
+## 🚀 Modular Intelligence & Site Management (v1.2.0 - Core Scaling Edition)
 
-Próximas tareas:
-1. **📉 Visualización Histórica**: Implementación de gráficas de línea para mostrar la subida de posiciones en el tiempo.
-2. **🔍 Analysis de Brechas (Category Gap)**: Siguiente módulo de inteligencia competitiva para comparar categorías de GBP frente al Top 3.
-3. **Google API Real**: Sustituir el simulador por llamadas reales a Google Places API / Edge Functions.
-4. **Sistema de suscripción**: Implementar pasarela de pago para planes Pro y Enterprise.
+Hito alcanzado en la especialización de la plataforma:
+
+1.  **🏗️ Arquitectura Dual de Keywords**: Separación de **Analizador de Mercado** y **Rastreador de Posiciones**.
+2.  **🌐 Site Manager (Asset Tracking)**: Nuevo panel `SiteSettingsCard` para vincular URLs (ej: `narbossalon.com`).
+3.  **🤖 Smart Auto-Monitoring**: Rastreo automático cada 3 días para keywords obsoletas.
+4.  **🎯 Local SoLV Metrics**: Cuota de visibilidad en el heatmap.
+5.  **🔗 Nav-Reconnection**: Navegación fluida entre secciones mediante React Router.
+
+---
+
+## 🚀 Estado Actual del Proyecto (v1.2.0 - Final Session Summary)
+
+Tareas pendientes:
+1.  **🔄 Sincronización de Proyectos**: Validar refresco de estado entre vistas.
+2.  **📉 Gráficos de Evolución**: Visualizar historial de ranking.
+3.  **🧪 Debug Final**: Validar rastreo de `narbossalon.com` en Chía.
