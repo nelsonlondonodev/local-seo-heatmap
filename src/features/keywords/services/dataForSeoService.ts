@@ -52,6 +52,13 @@ async function fetchDataForSeo<T>(endpoint: string, options: RequestInit = {}): 
   }
 }
 
+interface KeywordVolumeResult {
+  keyword: string;
+  search_info?: {
+    search_volume: number | null;
+  };
+}
+
 /**
  * Internal helper to fetch precise search volumes for a list of keywords.
  */
@@ -60,7 +67,7 @@ async function fetchPreciseVolumes(
   locationCode: number, 
   languageCode: string
 ): Promise<Record<string, number | null>> {
-  const response = await fetchDataForSeo<DataForSeoResponse<any>>('/keywords_data/google_ads/search_volume/live', {
+  const response = await fetchDataForSeo<DataForSeoResponse<KeywordVolumeResult>>('/keywords_data/google_ads/search_volume/live', {
     method: 'POST',
     body: JSON.stringify([{
       keywords,
@@ -73,12 +80,13 @@ async function fetchPreciseVolumes(
   const result: Record<string, number | null> = {};
   const volumes = response?.tasks?.[0]?.result || [];
   
-  volumes.forEach((item: any) => {
+  volumes.forEach((item) => {
     result[item.keyword] = item.search_info?.search_volume ?? null;
   });
 
   return result;
 }
+
 
 /**
  * Service to interact with DataForSEO APIs.
