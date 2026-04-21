@@ -4,6 +4,15 @@ import type { Json } from '@/types/database';
 import type { KeywordProject, TrackedKeyword, KeywordHistoryEntry } from '../types/keywords';
 
 /**
+ * Calculates the change in rank between the current and previous entry.
+ * Positive value indicates improvement (e.g., moving from 10 to 8 = +2).
+ */
+const calculateRankChange = (currentRank: number | null, previousRank: number | null): number => {
+  if (currentRank === null || previousRank === null) return 0;
+  return previousRank - currentRank;
+};
+
+/**
  * Service to handle Supabase persistence for Keyword Intelligence module.
  */
 export const keywordPersistenceService = {
@@ -38,7 +47,7 @@ export const keywordPersistenceService = {
       logger.error('[KW_PERSISTENCE] Error creating project:', error?.message);
       throw error || new Error('No se pudo crear el proyecto');
     }
-    return data as unknown as KeywordProject;
+    return data as KeywordProject;
   },
 
   /**
@@ -58,12 +67,11 @@ export const keywordPersistenceService = {
       logger.error('[KW_PERSISTENCE] Error adding keyword:', error?.message);
       throw error || new Error('No se pudo añadir la palabra clave');
     }
-    return data as unknown as TrackedKeyword;
+    return data as TrackedKeyword;
   },
 
   /**
    * Records a new rank entry for a keyword. 
-   * Includes logic to compare with previous rank.
    */
   async saveRankEntry(
     keywordId: string, 
@@ -80,11 +88,7 @@ export const keywordPersistenceService = {
       .limit(1);
 
     const lastRank = previousEntries?.[0]?.rank || null;
-    let rankChange = 0;
-
-    if (rank !== null && lastRank !== null) {
-      rankChange = lastRank - rank; // Positive means improved (e.g., from 10 to 8 = +2)
-    }
+    const rankChange = calculateRankChange(rank, lastRank);
 
     // 2. Insert new entry
     const { data, error } = await supabase
@@ -103,7 +107,7 @@ export const keywordPersistenceService = {
       logger.error('[KW_PERSISTENCE] Error saving rank entry:', error?.message);
       throw error || new Error('No se pudo guardar la posición');
     }
-    return data as unknown as KeywordHistoryEntry;
+    return data as KeywordHistoryEntry;
   },
 
   /**
@@ -128,15 +132,16 @@ export const keywordPersistenceService = {
       throw error;
     }
 
-    // Process to get only the latest history entry for each keyword
-    // Using internal typing for the Supabase join result
-    return (data || []).map((kw: any) => ({
-      ...kw,
-      latest_history: Array.isArray(kw.keyword_history) 
-        ? [...kw.keyword_history].sort((a: any, b: any) => 
-            new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-          )[0] || null
-        : null
-    })) as unknown as TrackedKeyword[];
+    return (data || []).map(kw => {
+      // History is already ordered descending by created_at from the subquery logic or explicit order
+      const history = (kw.keyword_history as any[]) || [];
+      const latest_history = history.length > 0 ? history[0] : null;
+      
+      return {
+        ...kw,
+        latest_history
+      };
+    }) as TrackedKeyword[];
   }
 };
+
