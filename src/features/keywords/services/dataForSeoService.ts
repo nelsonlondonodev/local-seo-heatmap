@@ -11,6 +11,9 @@ const AUTH_USER = import.meta.env.VITE_DATAFORSEO_LOGIN;
 const AUTH_PASS = import.meta.env.VITE_DATAFORSEO_PASSWORD;
 const BASE_URL = 'https://api.dataforseo.com/v3';
 
+// Threshold for location codes that usually represent specific cities/narrow areas
+const CITY_LOCATION_THRESHOLD = 3000;
+
 /**
  * Encodes credentials for Basic Auth.
  */
@@ -50,6 +53,34 @@ async function fetchDataForSeo<T>(endpoint: string, options: RequestInit = {}): 
 }
 
 /**
+ * Internal helper to fetch precise search volumes for a list of keywords.
+ */
+async function fetchPreciseVolumes(
+  keywords: string[], 
+  locationCode: number, 
+  languageCode: string
+): Promise<Record<string, number | null>> {
+  const response = await fetchDataForSeo<DataForSeoResponse<any>>('/keywords_data/google_ads/search_volume/live', {
+    method: 'POST',
+    body: JSON.stringify([{
+      keywords,
+      location_code: locationCode,
+      language_code: languageCode,
+      include_unlimited_suggestions: false
+    }])
+  });
+
+  const result: Record<string, number | null> = {};
+  const volumes = response?.tasks?.[0]?.result || [];
+  
+  volumes.forEach((item: any) => {
+    result[item.keyword] = item.search_info?.search_volume ?? null;
+  });
+
+  return result;
+}
+
+/**
  * Service to interact with DataForSEO APIs.
  */
 export const dataForSeoService = {
@@ -72,40 +103,24 @@ export const dataForSeoService = {
       }])
     });
 
-    const rawSuggestions = response?.tasks?.[0]?.result || [];
+    const suggestions = response?.tasks?.[0]?.result || [];
 
-    // Si es una ubicación específica (ciudad) obtenemos el volumen LOCAL preciso
-    if (rawSuggestions.length > 0 && locationCode > 3000) {
+    // If it's a specific city location, we fetch HIGHER precision local volumes
+    if (suggestions.length > 0 && locationCode > CITY_LOCATION_THRESHOLD) {
       try {
-        const keywordList = rawSuggestions.map((s: any) => s.keyword);
-        const preciseData = await fetchDataForSeo<DataForSeoResponse<any>>('/keywords_data/google_ads/search_volume/live', {
-          method: 'POST',
-          body: JSON.stringify([{
-            keywords: keywordList,
-            location_code: locationCode,
-            language_code: languageCode,
-            include_unlimited_suggestions: false
-          }])
-        });
-
-        const volumes = preciseData?.tasks?.[0]?.result || [];
+        const keywordList = suggestions.map(s => s.keyword);
+        const preciseVolumes = await fetchPreciseVolumes(keywordList, locationCode, languageCode);
         
-        return rawSuggestions.map((s: any) => {
-          const match = volumes.find((v: any) => v.keyword === s.keyword);
-          const localVolume = match?.search_info?.search_volume ?? s.search_info?.search_volume ?? s.search_volume;
-          
-          return {
-            ...s,
-            search_volume: localVolume,
-            search_info: s.search_info ? { ...s.search_info, search_volume: localVolume } : undefined
-          };
-        }) as KeywordSuggestion[];
+        return suggestions.map(suggestion => ({
+          ...suggestion,
+          search_volume: preciseVolumes[suggestion.keyword] ?? suggestion.search_volume
+        }));
       } catch (err) {
-        logger.warn('[DATAFORSEO] Error al obtener volúmenes precisos:', err);
+        logger.warn('[DATAFORSEO] Error al obtener volúmenes precisos, usando base:', err);
       }
     }
 
-    return rawSuggestions as KeywordSuggestion[];
+    return suggestions;
   },
 
   /**
@@ -139,3 +154,4 @@ export const dataForSeoService = {
     return response?.tasks?.[0]?.result || [];
   }
 };
+
