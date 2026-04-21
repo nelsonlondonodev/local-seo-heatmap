@@ -1,7 +1,12 @@
 import { supabase } from '@/lib/supabase';
 import { logger } from '@/lib/logger';
-import type { Json } from '@/types/database';
+import type { Database, Json } from '@/types/database';
 import type { KeywordProject, TrackedKeyword, KeywordHistoryEntry } from '../types/keywords';
+
+// Exact type definitions derived from Database schema
+type DBProject = Database['public']['Tables']['keyword_projects']['Row'];
+type DBTrackedKeyword = Database['public']['Tables']['tracked_keywords']['Row'];
+type DBHistoryEntry = Database['public']['Tables']['keyword_history']['Row'];
 
 /**
  * Calculates the change in rank between the current and previous entry.
@@ -47,7 +52,19 @@ export const keywordPersistenceService = {
       logger.error('[KW_PERSISTENCE] Error creating project:', error?.message);
       throw error || new Error('No se pudo crear el proyecto');
     }
-    return data as KeywordProject;
+    
+    // Explicit return to match KeywordProject interface
+    return {
+      id: data.id,
+      name: data.name,
+      target_url: data.target_url,
+      location_code: data.location_code,
+      location_name: data.location_name,
+      country_code: data.country_code,
+      user_id: data.user_id,
+      agency_id: data.agency_id,
+      created_at: data.created_at
+    };
   },
 
   /**
@@ -67,7 +84,13 @@ export const keywordPersistenceService = {
       logger.error('[KW_PERSISTENCE] Error adding keyword:', error?.message);
       throw error || new Error('No se pudo añadir la palabra clave');
     }
-    return data as TrackedKeyword;
+    
+    return {
+      id: data.id,
+      project_id: data.project_id,
+      keyword: data.keyword,
+      created_at: data.created_at
+    };
   },
 
   /**
@@ -79,7 +102,6 @@ export const keywordPersistenceService = {
     searchVolume?: number, 
     resultsJson?: Json
   ): Promise<KeywordHistoryEntry> {
-    // 1. Get previous rank to calculate change
     const { data: previousEntries } = await supabase
       .from('keyword_history')
       .select('rank')
@@ -90,7 +112,6 @@ export const keywordPersistenceService = {
     const lastRank = previousEntries?.[0]?.rank || null;
     const rankChange = calculateRankChange(rank, lastRank);
 
-    // 2. Insert new entry
     const { data, error } = await supabase
       .from('keyword_history')
       .insert({
@@ -107,7 +128,16 @@ export const keywordPersistenceService = {
       logger.error('[KW_PERSISTENCE] Error saving rank entry:', error?.message);
       throw error || new Error('No se pudo guardar la posición');
     }
-    return data as KeywordHistoryEntry;
+
+    return {
+      id: data.id,
+      keyword_id: data.keyword_id,
+      rank: data.rank,
+      rank_change: data.rank_change,
+      search_volume: data.search_volume,
+      created_at: data.created_at,
+      results_json: data.results_json ?? undefined
+    };
   },
 
   /**
@@ -119,8 +149,12 @@ export const keywordPersistenceService = {
       .select(`
         *,
         keyword_history (
+          id,
+          keyword_id,
           rank,
           rank_change,
+          search_volume,
+          results_json,
           created_at
         )
       `)
@@ -132,17 +166,28 @@ export const keywordPersistenceService = {
       throw error;
     }
 
-    return (data || []).map(kw => {
-      // History is already ordered descending by created_at from the subquery logic or explicit order
-      const history = (kw.keyword_history as unknown as KeywordHistoryEntry[]) || [];
-      const latest_history = history.length > 0 ? history[0] : null;
-      
+    // Explicit transformation to ensure TrackedKeyword[] compliance
+    return (data as any[] || []).map(row => {
+      const historyArr = (row.keyword_history as DBHistoryEntry[]) || [];
+      const latest = historyArr.length > 0 ? historyArr[0] : null;
+
+      const latest_history: KeywordHistoryEntry | null = latest ? {
+        id: latest.id,
+        keyword_id: latest.keyword_id,
+        rank: latest.rank,
+        rank_change: latest.rank_change,
+        search_volume: latest.search_volume,
+        created_at: latest.created_at,
+        results_json: latest.results_json ?? undefined
+      } : null;
+
       return {
-        ...kw,
+        id: row.id,
+        project_id: row.project_id,
+        keyword: row.keyword,
+        created_at: row.created_at,
         latest_history
       };
-    }) as TrackedKeyword[];
+    });
   }
 };
-
-

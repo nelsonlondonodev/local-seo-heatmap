@@ -182,6 +182,8 @@ export interface Database {
           name: string;
           target_url: string | null;
           location_code: number | null;
+          location_name: string | null;
+          country_code: string | null;
           language_code: string;
           created_at: string;
         };
@@ -192,6 +194,8 @@ export interface Database {
           name: string;
           target_url?: string | null;
           location_code?: number | null;
+          location_name?: string | null;
+          country_code?: string | null;
           language_code?: string;
           created_at?: string;
         };
@@ -202,6 +206,8 @@ export interface Database {
           name?: string;
           target_url?: string | null;
           location_code?: number | null;
+          location_name?: string | null;
+          country_code?: string | null;
           language_code?: string;
           created_at?: string;
         };
