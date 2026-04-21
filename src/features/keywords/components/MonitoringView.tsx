@@ -12,16 +12,31 @@ interface MonitoringViewProps {
 }
 
 export function MonitoringView({ projectId }: MonitoringViewProps) {
-  const { keywords, isLoading, isUpdating, fetchKeywords, updateRank } = useTrackedKeywords(projectId);
+  const { 
+    keywords, 
+    isLoading, 
+    isUpdating, 
+    fetchKeywords, 
+    updateRank,
+    autoUpdateIfStale 
+  } = useTrackedKeywords(projectId);
   const { projects } = useProjects();
   
   const currentProject = projects.find(p => p.id === projectId);
 
   useEffect(() => {
     if (projectId) {
-      fetchKeywords();
+      fetchKeywords().then(data => {
+        if (data && currentProject) {
+          autoUpdateIfStale(
+            data, 
+            currentProject.location_code || 0, 
+            currentProject.target_url || ''
+          );
+        }
+      });
     }
-  }, [projectId, fetchKeywords]);
+  }, [projectId, fetchKeywords, autoUpdateIfStale, currentProject]);
 
   if (!projectId) {
     return (

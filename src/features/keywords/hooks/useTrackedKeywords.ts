@@ -17,6 +17,7 @@ export function useTrackedKeywords(projectId: string) {
     try {
       const data = await keywordPersistenceService.getProjectKeywords(projectId);
       setKeywords(data);
+      return data; // Return data for immediate use in auto-update logic
     } catch (error) {
       logger.error('[USE_TRACKED_KEYWORDS] Error fetching:', error);
     } finally {
@@ -24,19 +25,15 @@ export function useTrackedKeywords(projectId: string) {
     }
   }, [projectId]);
 
-  const updateRank = async (keywordId: string, keyword: string, locationCode: number, targetUrl: string) => {
+  const updateRank = useCallback(async (keywordId: string, keyword: string, locationCode: number, targetUrl: string, silent = false) => {
     if (!targetUrl) {
-      toast.warning('El proyecto no tiene una URL configurada para rastrear.');
+      if (!silent) toast.warning('El proyecto no tiene una URL configurada para rastrear.');
       return;
     }
 
     setIsUpdating(keywordId);
     try {
-      // 1. Fetch real-time SERP
       const serpItems = await dataForSeoService.getSerpResults(keyword, locationCode);
-      
-      // 2. Find target URL in results
-      // Simple match logic: check if targetUrl is contained in result URL
       const cleanTarget = targetUrl.toLowerCase().replace('https://', '').replace('http://', '').replace('www.', '');
       const match = serpItems.find((item: SerpItem) => 
         item.url?.toLowerCase().includes(cleanTarget) || 
@@ -44,27 +41,49 @@ export function useTrackedKeywords(projectId: string) {
       );
 
       const rank = match ? match.rank_absolute : null;
-
-      // 3. Save to history
       await keywordPersistenceService.saveRankEntry(keywordId, rank);
       
-      toast.success(`Ranking actualizado para "${keyword}": ${rank || 'No encontrado'}`);
+      if (!silent) toast.success(`Ranking actualizado para "${keyword}": ${rank || 'No encontrado'}`);
       
-      // 4. Refresh list
       await fetchKeywords();
     } catch (error) {
       logger.error('[USE_TRACKED_KEYWORDS] Error updating rank:', error);
-      toast.error('Error al actualizar el ranking.');
+      if (!silent) toast.error('Error al actualizar el ranking.');
     } finally {
       setIsUpdating(null);
     }
-  };
+  }, [fetchKeywords]);
+
+  /**
+   * Automatically updates rankings that are older than 3 days or haven't been tracked yet.
+   */
+  const autoUpdateIfStale = useCallback(async (data: TrackedKeyword[], locationCode: number, targetUrl: string) => {
+    const THREE_DAYS_MS = 3 * 24 * 60 * 60 * 1000;
+    const now = Date.now();
+
+    const staleKeywords = data.filter(kw => {
+      const lastUpdate = kw.latest_history ? new Date(kw.latest_history.created_at).getTime() : 0;
+      return (now - lastUpdate) > THREE_DAYS_MS;
+    });
+
+    if (staleKeywords.length > 0) {
+      toast.info(`Detectadas ${staleKeywords.length} keywords para actualización automática...`);
+      
+      // Update sequentially to manage API load
+      for (const kw of staleKeywords) {
+        await updateRank(kw.id, kw.keyword, locationCode, targetUrl, true);
+      }
+      
+      toast.success('Actualización automática completada.');
+    }
+  }, [updateRank]);
 
   return {
     keywords,
     isLoading,
     isUpdating,
     fetchKeywords,
-    updateRank
+    updateRank,
+    autoUpdateIfStale
   };
 }
