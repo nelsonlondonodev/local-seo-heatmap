@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Card, CardContent } from '@/components/ui/card';
 import { KeywordRankRow } from './KeywordRankRow';
+import { SiteSettingsCard } from './SiteSettingsCard';
 
 interface MonitoringViewProps {
   projectId: string;
@@ -60,16 +61,7 @@ export function MonitoringView({ projectId }: MonitoringViewProps) {
         <div>
           <h2 className="text-2xl font-bold">{currentProject?.name}</h2>
           <p className="text-sm text-muted-foreground flex items-center gap-2">
-            Rastreando en: <span className="text-brand-primary font-medium">{currentProject?.location_name || 'Ubicación no definida'}</span>
-            {currentProject?.target_url && (
-              <>
-                <span className="h-1 w-1 rounded-full bg-muted-foreground/30"></span>
-                <span className="flex items-center gap-1">
-                  {currentProject.target_url}
-                  <ExternalLink className="h-3 w-3" />
-                </span>
-              </>
-            )}
+            Ubicación Base: <span className="text-brand-primary font-medium">{currentProject?.location_name || 'No definida'}</span>
           </p>
         </div>
         <Button 
@@ -79,9 +71,19 @@ export function MonitoringView({ projectId }: MonitoringViewProps) {
           className="rounded-xl border-2 hover:bg-brand-primary/10"
         >
           <RefreshCcw className={`h-4 w-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
-          Refrescar Lista
+          Refrescar Rankings
         </Button>
       </div>
+
+      <SiteSettingsCard 
+        projectId={projectId}
+        projectName={currentProject?.name || ''}
+        initialUrl={currentProject?.target_url}
+        onUpdate={() => {
+          // Re-fetch keywords and project data if needed
+          fetchKeywords();
+        }}
+      />
 
       <Card className="border-none shadow-2xl bg-card/30 backdrop-blur-md rounded-3xl overflow-hidden">
         <CardContent className="p-0">
