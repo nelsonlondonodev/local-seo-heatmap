@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Plus as PlusIcon, Briefcase as ProjectIcon, Loader2 as Spinner, Check as CheckIcon } from 'lucide-react';
+import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -16,15 +17,37 @@ interface ProjectSelectorProps {
 export function ProjectSelector({ onProjectSelect, selectedProjectId, currentLocationCode, currentLocationName, currentCountryCode }: ProjectSelectorProps) {
   const [isCreating, setIsCreating] = useState(false);
   const [newProjectName, setNewProjectName] = useState('');
+  const inputRef = useRef<HTMLInputElement>(null);
   
   const { projects, isLoading, createProject } = useProjects(onProjectSelect);
 
+  // Focus effect for improved UX
+  useEffect(() => {
+    if (isCreating) {
+      // Small timeout to ensure the DOM has rendered the input
+      const timer = setTimeout(() => {
+        inputRef.current?.focus();
+      }, 50);
+      return () => clearTimeout(timer);
+    }
+  }, [isCreating]);
+
   const handleCreate = async () => {
-    const project = await createProject(newProjectName, currentLocationCode, currentLocationName, currentCountryCode);
-    if (project) {
-      setNewProjectName('');
-      setIsCreating(false);
-      onProjectSelect(project.id);
+    if (!newProjectName.trim()) {
+      toast.error('El nombre del proyecto no puede estar vacío.');
+      return;
+    }
+
+    try {
+      const project = await createProject(newProjectName, currentLocationCode, currentLocationName, currentCountryCode);
+      if (project) {
+        setNewProjectName('');
+        setIsCreating(false);
+        onProjectSelect(project.id);
+        toast.success(`Proyecto "${newProjectName}" creado con éxito.`);
+      }
+    } catch (error) {
+      toast.error('Error al crear el proyecto. Inténtalo de nuevo.');
     }
   };
 
@@ -41,6 +64,7 @@ export function ProjectSelector({ onProjectSelect, selectedProjectId, currentLoc
         {isCreating ? (
           <div className="flex gap-2 w-full animate-in slide-in-from-right-2 duration-300">
             <Input 
+              ref={inputRef}
               placeholder="Nombre del proyecto..." 
               value={newProjectName}
               onChange={(e) => setNewProjectName(e.target.value)}
@@ -51,7 +75,6 @@ export function ProjectSelector({ onProjectSelect, selectedProjectId, currentLoc
                 }
               }}
               className="h-10 rounded-xl"
-              autoFocus
             />
             <Button 
               type="button"
