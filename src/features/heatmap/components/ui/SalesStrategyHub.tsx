@@ -71,14 +71,17 @@ export function SalesStrategyHub({ heatmap, competitors, itemVariants }: SalesSt
             <Tabs defaultValue="posts" className="w-full">
               <div className="px-3">
                 <TabsList className="grid w-full grid-cols-3 mb-4 bg-background/50">
-                  <TabsTrigger value="posts" title="Publicaciones">
-                    <Megaphone className="h-4 w-4" />
+                  <TabsTrigger value="posts" className="flex gap-2 items-center rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground transition-all">
+                    <Megaphone className="h-3.5 w-3.5 shrink-0" />
+                    <span className="hidden md:inline text-[10px] font-black uppercase tracking-tighter">Publicaciones</span>
                   </TabsTrigger>
-                  <TabsTrigger value="reviews" title="Reseñas">
-                    <MessageSquare className="h-4 w-4" />
+                  <TabsTrigger value="reviews" className="flex gap-2 items-center rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground transition-all">
+                    <MessageSquare className="h-3.5 w-3.5 shrink-0" />
+                    <span className="hidden md:inline text-[10px] font-black uppercase tracking-tighter">Reseñas</span>
                   </TabsTrigger>
-                  <TabsTrigger value="bio" title="Bio SEO">
-                    <FileText className="h-4 w-4" />
+                  <TabsTrigger value="bio" className="flex gap-2 items-center rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground transition-all">
+                    <FileText className="h-3.5 w-3.5 shrink-0" />
+                    <span className="hidden md:inline text-[10px] font-black uppercase tracking-tighter">Bio SEO</span>
                   </TabsTrigger>
                 </TabsList>
               </div>
