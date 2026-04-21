@@ -134,7 +134,7 @@ export const keywordPersistenceService = {
 
     return (data || []).map(kw => {
       // History is already ordered descending by created_at from the subquery logic or explicit order
-      const history = (kw.keyword_history as any[]) || [];
+      const history = (kw.keyword_history as unknown as KeywordHistoryEntry[]) || [];
       const latest_history = history.length > 0 ? history[0] : null;
       
       return {
@@ -144,4 +144,5 @@ export const keywordPersistenceService = {
     }) as TrackedKeyword[];
   }
 };
+
 
