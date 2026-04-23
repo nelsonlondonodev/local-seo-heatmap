@@ -1,18 +1,19 @@
 import { useEffect } from 'react';
 import { useTrackedKeywords } from '../hooks/useTrackedKeywords';
 import { useProjects } from '../hooks/useProjects';
-import { BarChart, RefreshCcw, ExternalLink } from 'lucide-react';
+import { BarChart, RefreshCcw, ExternalLink, TrendingUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Card, CardContent } from '@/components/ui/card';
 import { KeywordRankRow } from './KeywordRankRow';
-import { SiteSettingsCard } from './SiteSettingsCard';
+import { ProjectSelector } from './ProjectSelector';
 
 interface MonitoringViewProps {
   projectId: string | null;
+  onProjectSelect: (id: string | null) => void;
 }
 
-export function MonitoringView({ projectId }: MonitoringViewProps) {
+export function MonitoringView({ projectId, onProjectSelect }: MonitoringViewProps) {
   const { 
     keywords, 
     isLoading, 
@@ -57,6 +58,23 @@ export function MonitoringView({ projectId }: MonitoringViewProps) {
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <Card className="border-none shadow-2xl bg-card/50 backdrop-blur-md rounded-3xl overflow-hidden">
+        <CardContent className="p-8">
+          <div className="flex items-center gap-4">
+            <div className="p-3 rounded-2xl bg-brand-primary/10">
+              <TrendingUp className="h-6 w-6 text-brand-primary" />
+            </div>
+            <div className="flex-1">
+              <h3 className="text-sm font-bold uppercase tracking-widest text-muted-foreground mb-2">Seleccionar Proyecto para Monitoreo</h3>
+              <ProjectSelector 
+                selectedProjectId={projectId}
+                onProjectSelect={onProjectSelect}
+              />
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold">{currentProject?.name}</h2>

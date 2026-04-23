@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Search, TrendingUp } from 'lucide-react';
 import { KeywordDiscovery } from '@/features/keywords/components/KeywordDiscovery';
@@ -9,7 +9,17 @@ interface KeywordPageProps {
 }
 
 export function KeywordPage({ initialTab = 'discovery' }: KeywordPageProps) {
-  const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const selectedProjectId = searchParams.get('projectId');
+  
+  const setSelectedProjectId = (id: string | null) => {
+    if (id) {
+      searchParams.set('projectId', id);
+    } else {
+      searchParams.delete('projectId');
+    }
+    setSearchParams(searchParams);
+  };
   
   const isMonitoring = initialTab === 'monitoring';
 
@@ -34,7 +44,10 @@ export function KeywordPage({ initialTab = 'discovery' }: KeywordPageProps) {
             setSelectedProjectId={setSelectedProjectId} 
           />
         ) : (
-          <MonitoringView projectId={selectedProjectId} />
+          <MonitoringView 
+            projectId={selectedProjectId} 
+            onProjectSelect={setSelectedProjectId}
+          />
         )}
       </div>
     </div>
