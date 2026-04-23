@@ -6,6 +6,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { KeywordConfigPanel } from './KeywordConfigPanel';
 import { DiscoverySearchForm } from './DiscoverySearchForm';
 import { DiscoveryResultsTable } from './DiscoveryResultsTable';
+import { SaveKeywordModal } from './SaveKeywordModal';
 import { useKeywordDiscovery } from '../hooks/useKeywordDiscovery';
 import { useProjects } from '../hooks/useProjects';
 import type { DataForSeoLocation } from '../types/dataForSeo';
@@ -71,6 +72,8 @@ export function KeywordDiscovery({ selectedProjectId, setSelectedProjectId, onSw
     clearResults
   } = useKeywordDiscovery(selectedProjectId);
 
+  const [saveModalKeyword, setSaveModalKeyword] = useState<string | null>(null);
+
   // Sync location when project changes - using a safer pattern for ESLint
   useEffect(() => {
     if (!selectedProjectId) {
@@ -98,6 +101,20 @@ export function KeywordDiscovery({ selectedProjectId, setSelectedProjectId, onSw
   const handleSearch = (e: FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
     void searchKeywords(selectedLocation?.location_code);
+  };
+
+  const handleAddKeyword = (keyword: string) => {
+    if (selectedProjectId) {
+      void saveKeyword(keyword);
+    } else {
+      setSaveModalKeyword(keyword);
+    }
+  };
+
+  const handleSaveToSpecificProject = async (projectId: string) => {
+    if (saveModalKeyword) {
+      await saveKeyword(saveModalKeyword, projectId);
+    }
   };
 
   return (
@@ -143,13 +160,21 @@ export function KeywordDiscovery({ selectedProjectId, setSelectedProjectId, onSw
           <DiscoveryResultsTable 
             results={results}
             savedKeywords={savedKeywords}
-            onAddKeyword={(kw: string) => { void saveKeyword(kw); }}
+            onAddKeyword={handleAddKeyword}
             onViewMonitoring={onSwitchToMonitoring || (() => navigate('/rank-tracker'))}
           />
         </div>
       ) : !isLoading && query ? (
         <NoResultsView />
       ) : null}
+
+      {/* Modal for saving to a specific project (Research Mode) */}
+      <SaveKeywordModal 
+        isOpen={!!saveModalKeyword}
+        onClose={() => setSaveModalKeyword(null)}
+        keyword={saveModalKeyword || ''}
+        onSave={handleSaveToSpecificProject}
+      />
     </div>
   );
 }
