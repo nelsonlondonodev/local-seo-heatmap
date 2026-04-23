@@ -24,13 +24,6 @@ export function KeywordPage({ initialTab = 'discovery' }: KeywordPageProps) {
     setSearchParams(searchParams);
   };
 
-  // Auto-select first project if none selected and projects are available
-  useEffect(() => {
-    if (!selectedProjectId && projects.length > 0 && !isLoading) {
-      setSelectedProjectId(projects[0].id);
-    }
-  }, [selectedProjectId, projects, isLoading]);
-  
   const isMonitoring = initialTab === 'monitoring';
 
   return (
