@@ -23,7 +23,7 @@ export function MonitoringView({ projectId, onProjectSelect }: MonitoringViewPro
     updateRank,
     autoUpdateIfStale 
   } = useTrackedKeywords(projectId);
-  const { projects } = useProjects();
+  const { projects, refreshProjects } = useProjects();
   
   const currentProject = projects.find(p => p.id === projectId);
 
@@ -94,12 +94,13 @@ export function MonitoringView({ projectId, onProjectSelect }: MonitoringViewPro
       </div>
 
       <SiteSettingsCard 
+        key={projectId}
         projectId={projectId}
         projectName={currentProject?.name || ''}
         initialUrl={currentProject?.target_url}
         onUpdate={() => {
-          // Re-fetch keywords and project data if needed
-          fetchKeywords();
+          void fetchKeywords();
+          void refreshProjects();
         }}
       />
 
