@@ -1,6 +1,7 @@
-import { Plus, BarChart, DollarSign, CheckCircle2 } from 'lucide-react';
+import { Plus, BarChart, DollarSign, CheckCircle2, Download, Copy, FileSpreadsheet } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { exportToCsv, copyToClipboardAsTsv } from '@/util/exportUtils';
 import type { KeywordSuggestion } from '../types/dataForSeo';
 
 interface DiscoveryResultsTableProps {
@@ -18,8 +19,61 @@ export function DiscoveryResultsTable({ results, savedKeywords, onAddKeyword, on
     return 'bg-rose-500/10 text-rose-600 border-rose-500/20';
   };
 
+  const handleExportCsv = () => {
+    const exportData = results.map(item => ({
+      Palabra: item.keyword,
+      Volumen: item.search_volume || 0,
+      Dificultad: item.keyword_difficulty ?? item.competition_index ?? 'N/A',
+      CPC: item.cpc || 0,
+      Fuente: 'DataForSEO'
+    }));
+    exportToCsv(exportData, `investigacion_keywords_${new Date().toISOString().split('T')[0]}`);
+  };
+
+  const handleCopy = () => {
+    const exportData = results.map(item => ({
+      Palabra: item.keyword,
+      Volumen: item.search_volume || 0,
+      Dificultad: item.keyword_difficulty ?? item.competition_index ?? 'N/A',
+      CPC: item.cpc || 0
+    }));
+    void copyToClipboardAsTsv(exportData);
+  };
+
   return (
-    <div className="overflow-hidden rounded-3xl border border-border/50 bg-card/30 backdrop-blur-md shadow-2xl">
+    <div className="space-y-4">
+      {/* Table Actions Header */}
+      <div className="flex items-center justify-between px-4">
+        <div className="flex items-center gap-2">
+          <FileSpreadsheet className="h-5 w-5 text-brand-primary" />
+          <h3 className="font-bold text-lg">Resultados del Análisis</h3>
+          <Badge variant="secondary" className="rounded-full px-2 py-0.5 text-[10px]">
+            {results.length} sugerencias
+          </Badge>
+        </div>
+        <div className="flex items-center gap-2">
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={handleCopy}
+            className="rounded-xl border-2 hover:bg-brand-primary/10 transition-all h-9"
+          >
+            <Copy className="h-4 w-4 mr-2" />
+            Copiar tabla
+          </Button>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={handleExportCsv}
+            className="rounded-xl border-2 hover:bg-brand-primary/10 transition-all h-9"
+          >
+            <Download className="h-4 w-4 mr-2" />
+            Descargar CSV
+          </Button>
+        </div>
+      </div>
+
+      <div className="overflow-hidden rounded-3xl border border-border/50 bg-card/30 backdrop-blur-md shadow-2xl">
       <div className="overflow-x-auto">
         <table className="w-full text-left border-collapse">
           <thead>
@@ -90,5 +144,6 @@ export function DiscoveryResultsTable({ results, savedKeywords, onAddKeyword, on
         </table>
       </div>
     </div>
-  );
+  </div>
+);
 }
