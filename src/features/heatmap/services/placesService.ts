@@ -1,4 +1,4 @@
-const GOOGLE_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+import { invokeEdgeFunction } from '@/lib/edgeFunctions';
 
 /**
  * Service to handle Google Places Autocomplete and Details.
@@ -35,15 +35,31 @@ const MOCK_PLACES: PlaceSuggestion[] = [
   },
 ];
 
+/**
+ * Type for the Google Places API response forwarded by the Edge Function.
+ */
+interface GooglePlaceResult {
+  id: string;
+  displayName?: { text: string };
+  formattedAddress?: string;
+  location?: { latitude: number; longitude: number };
+  rating?: number;
+  userRatingCount?: number;
+}
+
+interface GooglePlacesResponse {
+  places?: GooglePlaceResult[];
+}
+
 export const placesService = {
   /**
-   * Search for businesses using Google Places API (New V1 version) or Mock
+   * Search for businesses using Google Places API (via Edge Function proxy) or Mock.
    */
   async searchPlaces(query: string): Promise<PlaceSuggestion[]> {
     if (!query || query.length < 3) return [];
 
-    // Fallback if no API Key provided
-    if (!GOOGLE_API_KEY || GOOGLE_API_KEY === 'your_google_maps_api_key_here') {
+    // Fallback if demo mode is enabled
+    if (import.meta.env.VITE_DEMO_MODE === 'true') {
       await new Promise((resolve) => setTimeout(resolve, 300));
       const searchLower = query.toLowerCase();
       return MOCK_PLACES.filter(
@@ -52,39 +68,13 @@ export const placesService = {
     }
 
     try {
-      // Using Google Places API (New Search v1)
-      const response = await fetch(
-        `https://places.googleapis.com/v1/places:searchText`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-Goog-Api-Key': GOOGLE_API_KEY,
-            'X-Goog-FieldMask': 'places.id,places.displayName,places.formattedAddress,places.location,places.rating,places.userRatingCount',
-          },
-          body: JSON.stringify({
-            textQuery: query,
-            maxResultCount: 5,
-          }),
-        }
-      );
-
-      if (!response.ok) throw new Error('Error en Google Places API');
-
-      const data = await response.json();
-      
-      // Define a loose but strict-friendly type for the Google API response chunk we care about
-      interface GooglePlaceResult {
-        id: string;
-        displayName?: { text: string };
-        formattedAddress?: string;
-        location?: { latitude: number; longitude: number };
-        rating?: number;
-        userRatingCount?: number;
-      }
+      const data = await invokeEdgeFunction<GooglePlacesResponse>('proxy-places', {
+        textQuery: query,
+        maxResultCount: 5,
+      });
 
       // Transform V1 response to our domain model
-      return (data.places || []).map((place: GooglePlaceResult) => ({
+      return (data.places || []).map((place) => ({
         placeId: place.id,
         name: place.displayName?.text || '',
         address: place.formattedAddress || '',

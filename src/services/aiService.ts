@@ -1,37 +1,17 @@
 import { supabase } from '@/lib/supabase';
 import { getErrorMessage } from '@/lib/errors';
+import { invokeEdgeFunction } from '@/lib/edgeFunctions';
 import type { AIResponse, GeneratedGBPPost, PostPromptContent, StoredAIContent, ReviewReplyPrompt, GeneratedReviewReply, BioOptimizerPrompt, GeneratedBio } from '@/features/ai-optimization/types';
 import type { ChatMessage, ContentPart, ChatCompletionResponse } from '@/types/openai';
 
-const OPENAI_API_KEY = import.meta.env.VITE_OPENAI_API_KEY;
-
 /**
- * Internal helper to call OpenAI API.
+ * Internal helper to call OpenAI API via Supabase Edge Function proxy.
  */
 async function callOpenAI(messages: ChatMessage[], responseFormat: "json_object" | "text" = "json_object"): Promise<ChatCompletionResponse> {
-  if (!OPENAI_API_KEY) {
-    throw new Error('⚠️ Por favor, configura VITE_OPENAI_API_KEY en tu archivo .env.');
-  }
-
-  const response = await fetch('https://api.openai.com/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${OPENAI_API_KEY}`
-    },
-    body: JSON.stringify({
-      model: 'gpt-4o-mini',
-      messages,
-      response_format: { type: responseFormat }
-    })
+  return invokeEdgeFunction<ChatCompletionResponse>('proxy-openai', {
+    messages,
+    response_format: { type: responseFormat },
   });
-
-  if (!response.ok) {
-    const errorData = await response.json() as { error?: { message?: string } };
-    throw new Error(errorData.error?.message || 'Error en la API de OpenAI');
-  }
-
-  return response.json() as Promise<ChatCompletionResponse>;
 }
 
 /**

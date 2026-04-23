@@ -1,4 +1,5 @@
 import { logger } from '@/lib/logger';
+import { invokeEdgeFunction } from '@/lib/edgeFunctions';
 import type { 
   KeywordSuggestion, 
   DataForSeoResponse, 
@@ -7,45 +8,16 @@ import type {
   DataForSeoLocation 
 } from '../types/dataForSeo';
 
-const AUTH_USER = import.meta.env.VITE_DATAFORSEO_LOGIN;
-const AUTH_PASS = import.meta.env.VITE_DATAFORSEO_PASSWORD;
-const BASE_URL = 'https://api.dataforseo.com/v3';
-
-// Threshold for location codes that usually represent specific cities/narrow areas
-const CITY_LOCATION_THRESHOLD = 3000;
-
 /**
- * Encodes credentials for Basic Auth.
+ * Generic helper for DataForSEO API requests via Edge Function proxy.
  */
-const getAuthHeader = () => {
-  if (!AUTH_USER || !AUTH_PASS) return '';
-  return `Basic ${btoa(`${AUTH_USER}:${AUTH_PASS}`)}`;
-};
-
-/**
- * Generic helper for DataForSEO API requests.
- */
-async function fetchDataForSeo<T>(endpoint: string, options: RequestInit = {}): Promise<T | null> {
-  if (!AUTH_USER || !AUTH_PASS) {
-    logger.warn(`[DATAFORSEO] No credentials for ${endpoint}`);
-    return null;
-  }
-
+async function fetchDataForSeo<T>(endpoint: string, payload?: unknown, method?: 'GET' | 'POST'): Promise<T | null> {
   try {
-    const response = await fetch(`${BASE_URL}${endpoint}`, {
-      ...options,
-      headers: {
-        'Authorization': getAuthHeader(),
-        'Content-Type': 'application/json',
-        ...options.headers,
-      }
+    return await invokeEdgeFunction<T>('proxy-dataforseo', {
+      endpoint,
+      payload,
+      method,
     });
-
-    if (!response.ok) {
-      throw new Error(`DataForSEO API error (${endpoint}): ${response.status}`);
-    }
-
-    return await response.json() as T;
   } catch (error) {
     logger.error(`[DATAFORSEO] Request failed (${endpoint}):`, error);
     return null;
@@ -59,6 +31,9 @@ interface KeywordVolumeResult {
   };
 }
 
+// Threshold for location codes that usually represent specific cities/narrow areas
+const CITY_LOCATION_THRESHOLD = 3000;
+
 /**
  * Internal helper to fetch precise search volumes for a list of keywords.
  */
@@ -67,15 +42,16 @@ async function fetchPreciseVolumes(
   locationCode: number, 
   languageCode: string
 ): Promise<Record<string, number | null>> {
-  const response = await fetchDataForSeo<DataForSeoResponse<KeywordVolumeResult>>('/keywords_data/google_ads/search_volume/live', {
-    method: 'POST',
-    body: JSON.stringify([{
+  const response = await fetchDataForSeo<DataForSeoResponse<KeywordVolumeResult>>(
+    '/keywords_data/google_ads/search_volume/live',
+    [{
       keywords,
       location_code: locationCode,
       language_code: languageCode,
       include_unlimited_suggestions: false
-    }])
-  });
+    }],
+    'POST'
+  );
 
   const result: Record<string, number | null> = {};
   const volumes = response?.tasks?.[0]?.result || [];
@@ -100,16 +76,17 @@ export const dataForSeoService = {
     locationCode = 2840, 
     languageCode = 'es'
   ): Promise<KeywordSuggestion[]> {
-    const response = await fetchDataForSeo<DataForSeoResponse<KeywordSuggestion>>('/keywords_data/google_ads/keywords_for_keywords/live', {
-      method: 'POST',
-      body: JSON.stringify([{
+    const response = await fetchDataForSeo<DataForSeoResponse<KeywordSuggestion>>(
+      '/keywords_data/google_ads/keywords_for_keywords/live',
+      [{
         keywords: [keyword],
         location_code: locationCode,
         language_code: languageCode,
         include_seed_keyword: true,
         limit: 20
-      }])
-    });
+      }],
+      'POST'
+    );
 
     const suggestions = response?.tasks?.[0]?.result || [];
 
@@ -139,17 +116,18 @@ export const dataForSeoService = {
     locationCode: number, 
     languageCode = 'es'
   ): Promise<SerpItem[]> {
-    const response = await fetchDataForSeo<DataForSeoResponse<SerpResult>>('/serp/google/organic/live/advanced', {
-      method: 'POST',
-      body: JSON.stringify([{
+    const response = await fetchDataForSeo<DataForSeoResponse<SerpResult>>(
+      '/serp/google/organic/live/advanced',
+      [{
         keyword,
         location_code: locationCode,
         language_code: languageCode,
         device: 'desktop',
         os: 'windows',
         depth: 100
-      }])
-    });
+      }],
+      'POST'
+    );
 
     return response?.tasks?.[0]?.result?.[0]?.items || [];
   },
@@ -158,7 +136,11 @@ export const dataForSeoService = {
     * Fetches locations supported by Google for a specific country code.
     */
   async getLocationsByCountry(countryIsoCode: string): Promise<DataForSeoLocation[]> {
-    const response = await fetchDataForSeo<DataForSeoResponse<DataForSeoLocation>>(`/keywords_data/google/locations/${countryIsoCode}`);
+    const response = await fetchDataForSeo<DataForSeoResponse<DataForSeoLocation>>(
+      `/keywords_data/google/locations/${countryIsoCode}`,
+      undefined,
+      'GET'
+    );
     return response?.tasks?.[0]?.result || [];
   }
 };
