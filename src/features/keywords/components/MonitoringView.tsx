@@ -21,7 +21,7 @@ export function MonitoringView({ projectId }: MonitoringViewProps) {
     updateRank,
     autoUpdateIfStale 
   } = useTrackedKeywords(projectId);
-  const { projects } = useProjects(undefined, projectId);
+  const { projects } = useProjects();
   
   const currentProject = projects.find(p => p.id === projectId);
 

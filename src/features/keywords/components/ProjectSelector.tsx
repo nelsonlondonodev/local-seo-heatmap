@@ -19,7 +19,7 @@ export function ProjectSelector({ onProjectSelect, selectedProjectId, currentLoc
   const [newProjectName, setNewProjectName] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
   
-  const { projects, isLoading, createProject } = useProjects((id: string | null) => onProjectSelect(id), selectedProjectId);
+  const { projects, isLoading, createProject } = useProjects();
 
   // Focus effect for improved UX
   useEffect(() => {
@@ -98,7 +98,7 @@ export function ProjectSelector({ onProjectSelect, selectedProjectId, currentLoc
         ) : (
           <>
             <Select 
-              value={selectedProjectId || ""} 
+              value={selectedProjectId || "none"} 
               onValueChange={handleProjectLink}
             >
               <SelectTrigger className="h-10 rounded-xl bg-card border-2 transition-all hover:border-brand-primary/50">

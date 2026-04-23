@@ -58,7 +58,7 @@ function NoResultsView() {
 export function KeywordDiscovery({ selectedProjectId, setSelectedProjectId, onSwitchToMonitoring }: KeywordDiscoveryProps) {
   const navigate = useNavigate();
   const [selectedLocation, setSelectedLocation] = useState<DataForSeoLocation | null>(null);
-  const { projects } = useProjects(setSelectedProjectId, selectedProjectId);
+  const { projects } = useProjects();
   
   const { 
     query, 
@@ -71,18 +71,26 @@ export function KeywordDiscovery({ selectedProjectId, setSelectedProjectId, onSw
     clearResults
   } = useKeywordDiscovery(selectedProjectId);
 
-  // Sync location when project changes
+  // Sync location when project changes - using a safer pattern for ESLint
   useEffect(() => {
-    if (!selectedProjectId) return;
+    if (!selectedProjectId) {
+      setSelectedLocation(null);
+      return;
+    }
 
     const project = projects.find(p => p.id === selectedProjectId);
     if (project?.location_code && project?.location_name) {
-      setSelectedLocation({
+      const newLoc: DataForSeoLocation = {
         location_code: project.location_code,
         location_name: project.location_name,
         country_iso_code: project.country_code || '',
         location_type: 'Unknown',
         location_code_parent: null
+      };
+      
+      setSelectedLocation(prev => {
+        if (prev?.location_code === newLoc.location_code) return prev;
+        return newLoc;
       });
     }
   }, [selectedProjectId, projects]);
@@ -135,8 +143,8 @@ export function KeywordDiscovery({ selectedProjectId, setSelectedProjectId, onSw
           <DiscoveryResultsTable 
             results={results}
             savedKeywords={savedKeywords}
-            onAddKeyword={(kw) => { void saveKeyword(kw); }}
-            onViewMonitoring={onSwitchToMonitoring || (() => { navigate('/rank-tracker'); })}
+            onAddKeyword={(kw: string) => { void saveKeyword(kw); }}
+            onViewMonitoring={onSwitchToMonitoring || (() => navigate('/rank-tracker'))}
           />
         </div>
       ) : !isLoading && query ? (
