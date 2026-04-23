@@ -48,10 +48,17 @@ export function useProjects() {
     }
   };
 
+  const updateProjectLocal = useCallback((projectId: string, updates: Partial<KeywordProject>) => {
+    setProjects(prev => prev.map(p => 
+      p.id === projectId ? { ...p, ...updates } : p
+    ));
+  }, []);
+
   return {
     projects,
     isLoading,
     createProject,
-    refreshProjects: fetchProjects
+    refreshProjects: fetchProjects,
+    updateProjectLocal
   };
 }

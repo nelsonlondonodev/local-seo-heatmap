@@ -6,23 +6,27 @@ import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { supabase } from '@/lib/supabase';
 import { logger } from '@/lib/logger';
+import { useAuth } from '@/features/auth';
 
 interface SiteSettingsCardProps {
   projectId: string;
   initialUrl?: string | null;
   projectName: string;
-  onUpdate: () => void;
+  onUpdate: (url: string) => void;
 }
 
 export function SiteSettingsCard({ projectId, initialUrl, projectName, onUpdate }: SiteSettingsCardProps) {
+  const { agencyId } = useAuth();
   const [url, setUrl] = useState(initialUrl || '');
   const [isUpdating, setIsUpdating] = useState(false);
   const [isValid, setIsValid] = useState(!!initialUrl);
 
   useEffect(() => {
-    setUrl(initialUrl || '');
-    setIsValid(!!initialUrl);
-  }, [initialUrl]);
+    if (initialUrl !== undefined && initialUrl !== url) {
+      setUrl(initialUrl || '');
+      setIsValid(!!initialUrl);
+    }
+  }, [initialUrl, projectId]);
 
   const cleanUrl = (input: string) => {
     return input
@@ -44,7 +48,10 @@ export function SiteSettingsCard({ projectId, initialUrl, projectName, onUpdate 
     try {
       const { error } = await supabase
         .from('keyword_projects')
-        .update({ target_url: cleaned })
+        .update({ 
+          target_url: cleaned,
+          agency_id: agencyId 
+        })
         .eq('id', projectId);
 
       if (error) throw error;
@@ -52,7 +59,7 @@ export function SiteSettingsCard({ projectId, initialUrl, projectName, onUpdate 
       setUrl(cleaned);
       setIsValid(true);
       toast.success('Configuración del sitio actualizada.');
-      onUpdate();
+      onUpdate(cleaned);
     } catch (error) {
       logger.error('[SITE_SETTINGS] Error updating URL:', error);
       toast.error('Error al guardar la configuración.');

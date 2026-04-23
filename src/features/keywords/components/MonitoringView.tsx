@@ -9,12 +9,17 @@ import { KeywordRankRow } from './KeywordRankRow';
 import { ProjectSelector } from './ProjectSelector';
 import { SiteSettingsCard } from './SiteSettingsCard';
 
+import type { KeywordProject } from '../types/keywords';
+
 interface MonitoringViewProps {
   projectId: string | null;
   onProjectSelect: (id: string | null) => void;
+  projects: KeywordProject[];
+  onProjectUpdate: (projectId: string, updates: Partial<KeywordProject>) => void;
+  onProjectsRefresh: () => Promise<void>;
 }
 
-export function MonitoringView({ projectId, onProjectSelect }: MonitoringViewProps) {
+export function MonitoringView({ projectId, onProjectSelect, projects, onProjectUpdate, onProjectsRefresh }: MonitoringViewProps) {
   const { 
     keywords, 
     isLoading, 
@@ -23,7 +28,6 @@ export function MonitoringView({ projectId, onProjectSelect }: MonitoringViewPro
     updateRank,
     autoUpdateIfStale 
   } = useTrackedKeywords(projectId);
-  const { projects, refreshProjects } = useProjects();
   
   const currentProject = projects.find(p => p.id === projectId);
 
@@ -55,6 +59,7 @@ export function MonitoringView({ projectId, onProjectSelect }: MonitoringViewPro
               <ProjectSelector 
                 selectedProjectId={projectId}
                 onProjectSelect={onProjectSelect}
+                projects={projects}
               />
             </div>
           </div>
@@ -98,9 +103,12 @@ export function MonitoringView({ projectId, onProjectSelect }: MonitoringViewPro
         projectId={projectId}
         projectName={currentProject?.name || ''}
         initialUrl={currentProject?.target_url}
-        onUpdate={() => {
+        onUpdate={(newUrl) => {
+          if (projectId) {
+            onProjectUpdate(projectId, { target_url: newUrl });
+          }
           void fetchKeywords();
-          void refreshProjects();
+          void onProjectsRefresh();
         }}
       />
 

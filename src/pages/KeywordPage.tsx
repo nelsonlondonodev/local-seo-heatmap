@@ -13,7 +13,7 @@ interface KeywordPageProps {
 export function KeywordPage({ initialTab = 'discovery' }: KeywordPageProps) {
   const [searchParams, setSearchParams] = useSearchParams();
   const selectedProjectId = searchParams.get('projectId');
-  const { projects, isLoading } = useProjects();
+  const { projects, refreshProjects, updateProjectLocal } = useProjects();
   
   const setSelectedProjectId = (id: string | null) => {
     if (id) {
@@ -44,12 +44,16 @@ export function KeywordPage({ initialTab = 'discovery' }: KeywordPageProps) {
         {!isMonitoring ? (
           <KeywordDiscovery 
             selectedProjectId={selectedProjectId} 
-            setSelectedProjectId={setSelectedProjectId} 
+            setSelectedProjectId={setSelectedProjectId}
+            projects={projects}
           />
         ) : (
           <MonitoringView 
             projectId={selectedProjectId} 
             onProjectSelect={setSelectedProjectId}
+            projects={projects}
+            onProjectUpdate={updateProjectLocal}
+            onProjectsRefresh={refreshProjects}
           />
         )}
       </div>

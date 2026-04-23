@@ -17,6 +17,7 @@ import type { DataForSeoLocation } from '../types/dataForSeo';
 interface KeywordDiscoveryProps {
   selectedProjectId: string | null;
   setSelectedProjectId: (id: string | null) => void;
+  projects: KeywordProject[];
   onSwitchToMonitoring?: () => void;
 }
 
@@ -56,10 +57,9 @@ function NoResultsView() {
   );
 }
 
-export function KeywordDiscovery({ selectedProjectId, setSelectedProjectId, onSwitchToMonitoring }: KeywordDiscoveryProps) {
+export function KeywordDiscovery({ selectedProjectId, setSelectedProjectId, projects, onSwitchToMonitoring }: KeywordDiscoveryProps) {
   const navigate = useNavigate();
   const [selectedLocation, setSelectedLocation] = useState<DataForSeoLocation | null>(null);
-  const { projects } = useProjects();
   
   const { 
     query, 
@@ -130,6 +130,7 @@ export function KeywordDiscovery({ selectedProjectId, setSelectedProjectId, onSw
             setSelectedProjectId={setSelectedProjectId}
             selectedLocation={selectedLocation}
             setSelectedLocation={setSelectedLocation}
+            projects={projects}
           />
 
           <div className="border-t border-border/50 pt-8">

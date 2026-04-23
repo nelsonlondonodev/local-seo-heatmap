@@ -5,21 +5,20 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useProjects } from '../hooks/useProjects';
+import type { KeywordProject } from '../types/keywords';
 
 interface ProjectSelectorProps {
   onProjectSelect: (id: string | null) => void;
   selectedProjectId?: string | null;
-  currentLocationCode?: number;
-  currentLocationName?: string;
-  currentCountryCode?: string;
+  projects: KeywordProject[];
 }
 
-export function ProjectSelector({ onProjectSelect, selectedProjectId, currentLocationCode, currentLocationName, currentCountryCode }: ProjectSelectorProps) {
+export function ProjectSelector({ onProjectSelect, selectedProjectId, projects }: ProjectSelectorProps) {
   const [isCreating, setIsCreating] = useState(false);
   const [newProjectName, setNewProjectName] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
   
-  const { projects, isLoading, createProject } = useProjects();
+  const { isLoading, createProject } = useProjects();
 
   // Focus effect for improved UX
   useEffect(() => {

@@ -4,18 +4,22 @@ import { LocationSelector } from './LocationSelector';
 
 import type { DataForSeoLocation } from '../types/dataForSeo';
 
+import type { KeywordProject } from '../types/keywords';
+
 interface KeywordConfigPanelProps {
   selectedProjectId: string | null;
   setSelectedProjectId: (id: string | null) => void;
   selectedLocation: DataForSeoLocation | null;
   setSelectedLocation: (loc: DataForSeoLocation | null) => void;
+  projects: KeywordProject[];
 }
 
 export function KeywordConfigPanel({ 
   selectedProjectId, 
   setSelectedProjectId, 
   selectedLocation, 
-  setSelectedLocation 
+  setSelectedLocation,
+  projects
 }: KeywordConfigPanelProps) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-2">
@@ -29,9 +33,7 @@ export function KeywordConfigPanel({
           <ProjectSelector 
             onProjectSelect={setSelectedProjectId} 
             selectedProjectId={selectedProjectId} 
-            currentLocationCode={selectedLocation?.location_code}
-            currentLocationName={selectedLocation?.location_name}
-            currentCountryCode={selectedLocation?.country_iso_code}
+            projects={projects}
           />
         </div>
         <p className="text-[10px] text-muted-foreground italic">Las keywords se guardarán en este proyecto.</p>
