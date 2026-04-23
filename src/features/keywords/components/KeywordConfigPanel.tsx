@@ -5,8 +5,8 @@ import { LocationSelector } from './LocationSelector';
 import type { DataForSeoLocation } from '../types/dataForSeo';
 
 interface KeywordConfigPanelProps {
-  selectedProjectId: string;
-  setSelectedProjectId: (id: string) => void;
+  selectedProjectId: string | null;
+  setSelectedProjectId: (id: string | null) => void;
   selectedLocation: DataForSeoLocation | null;
   setSelectedLocation: (loc: DataForSeoLocation | null) => void;
 }

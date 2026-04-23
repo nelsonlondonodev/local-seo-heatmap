@@ -9,7 +9,7 @@ interface KeywordPageProps {
 }
 
 export function KeywordPage({ initialTab = 'discovery' }: KeywordPageProps) {
-  const [selectedProjectId, setSelectedProjectId] = useState<string>('');
+  const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
   
   const isMonitoring = initialTab === 'monitoring';
 

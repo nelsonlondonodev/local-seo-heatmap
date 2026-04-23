@@ -14,18 +14,52 @@ import type { DataForSeoLocation } from '../types/dataForSeo';
  * KeywordDiscovery Component (Redesigned Flow)
  */
 interface KeywordDiscoveryProps {
-  selectedProjectId: string;
-  setSelectedProjectId: (id: string) => void;
+  selectedProjectId: string | null;
+  setSelectedProjectId: (id: string | null) => void;
   onSwitchToMonitoring?: () => void;
+}
+
+/**
+ * Atomic Component: Research Mode Banner
+ */
+function ResearchModeBanner() {
+  return (
+    <div className="flex items-center gap-3 p-4 rounded-2xl bg-brand-primary/10 border border-brand-primary/20 text-brand-primary animate-in zoom-in-95 duration-500">
+      <div className="p-2 rounded-xl bg-brand-primary/20">
+        <SearchIcon className="h-5 w-5" />
+      </div>
+      <div>
+        <p className="text-sm font-bold">Modo Investigación Activo</p>
+        <p className="text-xs opacity-80 text-balance">
+          Estás explorando palabras clave sin asignarlas a un proyecto. Los resultados no se guardarán automáticamente.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Atomic Component: Empty State for search
+ */
+function NoResultsView() {
+  return (
+    <div className="flex flex-col items-center justify-center py-20 text-center space-y-4">
+      <div className="p-6 rounded-full bg-muted/20">
+        <Info className="h-12 w-12 text-muted-foreground/30" />
+      </div>
+      <div>
+        <h3 className="text-xl font-bold">Sin resultados</h3>
+        <p className="text-muted-foreground">Intenta ajustando la ubicación o el término de búsqueda.</p>
+      </div>
+    </div>
+  );
 }
 
 export function KeywordDiscovery({ selectedProjectId, setSelectedProjectId, onSwitchToMonitoring }: KeywordDiscoveryProps) {
   const navigate = useNavigate();
   const [selectedLocation, setSelectedLocation] = useState<DataForSeoLocation | null>(null);
+  const { projects } = useProjects(setSelectedProjectId, selectedProjectId);
   
-  const { projects } = useProjects();
-  
-
   const { 
     query, 
     setQuery, 
@@ -37,50 +71,32 @@ export function KeywordDiscovery({ selectedProjectId, setSelectedProjectId, onSw
     clearResults
   } = useKeywordDiscovery(selectedProjectId);
 
-  // Effect to load project location when project changes
+  // Sync location when project changes
   useEffect(() => {
-    if (selectedProjectId && projects.length > 0) {
-      const project = projects.find(p => p.id === selectedProjectId);
-      
-      // Robust Type Narrowing: Extract to constants to satisfy TS
-      const code = project?.location_code;
-      const name = project?.location_name;
-      const country = project?.country_code;
+    if (!selectedProjectId) return;
 
-      if (code && name) {
-        setSelectedLocation({
-          location_code: code,
-          location_name: name,
-          country_iso_code: country || '',
-          location_type: 'Unknown',
-          location_code_parent: null
-        });
-      }
+    const project = projects.find(p => p.id === selectedProjectId);
+    if (project?.location_code && project?.location_name) {
+      setSelectedLocation({
+        location_code: project.location_code,
+        location_name: project.location_name,
+        country_iso_code: project.country_code || '',
+        location_type: 'Unknown',
+        location_code_parent: null
+      });
     }
   }, [selectedProjectId, projects]);
 
-  const handleSearch = (e: FormEvent<HTMLFormElement>) => {
+  const handleSearch = (e: FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
-    searchKeywords(selectedLocation?.location_code);
+    void searchKeywords(selectedLocation?.location_code);
   };
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       
-      {/* Research Mode Indicator */}
-      {!selectedProjectId && (
-        <div className="flex items-center gap-3 p-4 rounded-2xl bg-brand-primary/10 border border-brand-primary/20 text-brand-primary animate-in zoom-in-95 duration-500">
-          <div className="p-2 rounded-xl bg-brand-primary/20">
-            <SearchIcon className="h-5 w-5" />
-          </div>
-          <div>
-            <p className="text-sm font-bold">Modo Investigación Activo</p>
-            <p className="text-xs opacity-80">Estás explorando palabras clave sin asignarlas a un proyecto. Los resultados no se guardarán automáticamente.</p>
-          </div>
-        </div>
-      )}
+      {!selectedProjectId && <ResearchModeBanner />}
 
-      {/* Search Configuration Panel */}
       <Card className="border-none shadow-2xl bg-card/50 backdrop-blur-md rounded-3xl overflow-hidden">
         <CardContent className="p-8 space-y-8">
           
@@ -108,7 +124,6 @@ export function KeywordDiscovery({ selectedProjectId, setSelectedProjectId, onSw
         </CardContent>
       </Card>
 
-      {/* Results Section */}
       {isLoading ? (
         <div className="space-y-4">
           {[1, 2, 3, 4, 5].map((i) => (
@@ -120,21 +135,13 @@ export function KeywordDiscovery({ selectedProjectId, setSelectedProjectId, onSw
           <DiscoveryResultsTable 
             results={results}
             savedKeywords={savedKeywords}
-            onAddKeyword={saveKeyword}
-            onViewMonitoring={() => navigate('/rank-tracker')}
+            onAddKeyword={(kw) => { void saveKeyword(kw); }}
+            onViewMonitoring={onSwitchToMonitoring || (() => { navigate('/rank-tracker'); })}
           />
         </div>
-      ) : !isLoading && query && (
-        <div className="flex flex-col items-center justify-center py-20 text-center space-y-4">
-          <div className="p-6 rounded-full bg-muted/20">
-            <Info className="h-12 w-12 text-muted-foreground/30" />
-          </div>
-          <div>
-            <h3 className="text-xl font-bold">Sin resultados</h3>
-            <p className="text-muted-foreground">Intenta ajustando la ubicación o el término de búsqueda.</p>
-          </div>
-        </div>
-      )}
+      ) : !isLoading && query ? (
+        <NoResultsView />
+      ) : null}
     </div>
   );
 }

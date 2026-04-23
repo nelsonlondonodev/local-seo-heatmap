@@ -5,7 +5,7 @@ import { keywordPersistenceService } from '../services/keywordPersistenceService
 import { toast } from 'sonner';
 import type { KeywordProject } from '../types/keywords';
 
-export function useProjects(onProjectSelect?: (id: string) => void) {
+export function useProjects(onProjectSelect?: (id: string | null) => void, selectedProjectId?: string | null) {
   const { user } = useAuth();
   const [projects, setProjects] = useState<KeywordProject[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -19,9 +19,10 @@ export function useProjects(onProjectSelect?: (id: string) => void) {
         .eq('user_id', user.id)
         .order('created_at', { ascending: false });
       
-      const typedData = data as KeywordProject[] | null;
+      const typedData = data as DBProject[] | null;
       setProjects(typedData || []);
-      if (typedData && typedData.length > 0 && onProjectSelect) {
+      // Only auto-select if no project is currently selected
+      if (typedData && typedData.length > 0 && onProjectSelect && !selectedProjectId) {
         onProjectSelect(typedData[0].id);
       }
     } catch (error) {

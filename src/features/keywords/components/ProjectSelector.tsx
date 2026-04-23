@@ -7,8 +7,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useProjects } from '../hooks/useProjects';
 
 interface ProjectSelectorProps {
-  onProjectSelect: (id: string) => void;
-  selectedProjectId?: string;
+  onProjectSelect: (id: string | null) => void;
+  selectedProjectId?: string | null;
   currentLocationCode?: number;
   currentLocationName?: string;
   currentCountryCode?: string;
@@ -19,7 +19,7 @@ export function ProjectSelector({ onProjectSelect, selectedProjectId, currentLoc
   const [newProjectName, setNewProjectName] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
   
-  const { projects, isLoading, createProject } = useProjects(onProjectSelect);
+  const { projects, isLoading, createProject } = useProjects((id: string | null) => onProjectSelect(id), selectedProjectId);
 
   // Focus effect for improved UX
   useEffect(() => {
@@ -52,7 +52,7 @@ export function ProjectSelector({ onProjectSelect, selectedProjectId, currentLoc
   };
 
   const handleProjectLink = (val: string) => {
-    onProjectSelect(val === 'none' ? '' : val);
+    onProjectSelect(val === 'none' ? null : val);
   };
 
   return (

@@ -6,7 +6,7 @@ import { toast } from 'sonner';
 import type { TrackedKeyword } from '../types/keywords';
 import type { SerpItem } from '../types/dataForSeo';
 
-export function useTrackedKeywords(projectId: string) {
+export function useTrackedKeywords(projectId: string | null) {
   const [keywords, setKeywords] = useState<TrackedKeyword[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isUpdating, setIsUpdating] = useState<string | null>(null);

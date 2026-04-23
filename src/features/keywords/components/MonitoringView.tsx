@@ -9,7 +9,7 @@ import { KeywordRankRow } from './KeywordRankRow';
 import { SiteSettingsCard } from './SiteSettingsCard';
 
 interface MonitoringViewProps {
-  projectId: string;
+  projectId: string | null;
 }
 
 export function MonitoringView({ projectId }: MonitoringViewProps) {
@@ -21,7 +21,7 @@ export function MonitoringView({ projectId }: MonitoringViewProps) {
     updateRank,
     autoUpdateIfStale 
   } = useTrackedKeywords(projectId);
-  const { projects } = useProjects();
+  const { projects } = useProjects(undefined, projectId);
   
   const currentProject = projects.find(p => p.id === projectId);
 

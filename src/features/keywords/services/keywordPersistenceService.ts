@@ -167,8 +167,10 @@ export const keywordPersistenceService = {
     }
 
     // Explicit transformation to ensure TrackedKeyword[] compliance
-    return (data as any[] || []).map(row => {
-      const historyArr = (row.keyword_history as DBHistoryEntry[]) || [];
+    const keywords = (data || []) as (DBTrackedKeyword & { keyword_history: DBHistoryEntry[] })[];
+
+    return keywords.map(row => {
+      const historyArr = row.keyword_history || [];
       const latest = historyArr.length > 0 ? historyArr[0] : null;
 
       const latest_history: KeywordHistoryEntry | null = latest ? {
