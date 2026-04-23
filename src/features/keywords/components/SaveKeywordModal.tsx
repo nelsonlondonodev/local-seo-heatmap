@@ -3,7 +3,6 @@ import { Check, Search, FolderPlus, Loader2 } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { useProjects } from '../hooks/useProjects';
 
 interface SaveKeywordModalProps {
@@ -56,9 +55,9 @@ export function SaveKeywordModal({ isOpen, onClose, keyword, onSave }: SaveKeywo
             />
           </div>
 
-          <ScrollArea className="h-[250px] pr-4">
+          <div className="max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
             {isLoading ? (
-              <div className="flex items-center justify-center h-full">
+              <div className="flex items-center justify-center h-full py-10">
                 <Loader2 className="h-6 w-6 animate-spin text-brand-primary" />
               </div>
             ) : filteredProjects.length === 0 ? (
@@ -87,7 +86,7 @@ export function SaveKeywordModal({ isOpen, onClose, keyword, onSave }: SaveKeywo
                 ))}
               </div>
             )}
-          </ScrollArea>
+          </div>
         </div>
 
         <div className="flex justify-end gap-3">
