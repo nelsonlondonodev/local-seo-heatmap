@@ -8,23 +8,41 @@ export async function getAuthenticatedUser(req: Request) {
   const authHeader = req.headers.get('Authorization');
 
   if (!authHeader) {
+    console.error('[auth] No Authorization header found');
     return null;
   }
 
+  // Use built-in env vars for Supabase internal client
   const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
   const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY') ?? '';
+
+  if (!supabaseUrl || !supabaseAnonKey) {
+    console.error('[auth] Missing SUPABASE_URL or SUPABASE_ANON_KEY');
+    return null;
+  }
 
   const supabase = createClient(supabaseUrl, supabaseAnonKey, {
     global: { headers: { Authorization: authHeader } },
   });
 
-  const { data: { user }, error } = await supabase.auth.getUser();
+  try {
+    const { data: { user }, error } = await supabase.auth.getUser();
+    
+    if (error) {
+      console.error('[auth] Error validating user:', error.message);
+      return null;
+    }
 
-  if (error || !user) {
+    if (!user) {
+      console.error('[auth] No user found for token');
+      return null;
+    }
+
+    return user;
+  } catch (err) {
+    console.error('[auth] Unexpected error during getUser:', err);
     return null;
   }
-
-  return user;
 }
 
 /**

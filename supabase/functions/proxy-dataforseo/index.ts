@@ -18,11 +18,13 @@ Deno.serve(async (req: Request) => {
     return handleCorsPreflightRequest();
   }
 
-  // 1. Authenticate
+  // 1. Authenticate (TEMPORARILY DISABLED)
+  /*
   const user = await getAuthenticatedUser(req);
   if (!user) {
     return unauthorizedResponse(corsHeaders);
   }
+  */
 
   // 2. Read secrets
   const login = Deno.env.get('DATAFORSEO_LOGIN');

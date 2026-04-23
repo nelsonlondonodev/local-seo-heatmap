@@ -11,17 +11,21 @@ export async function invokeEdgeFunction<T>(
   const { data: { session } } = await supabase.auth.getSession();
 
   if (!session?.access_token) {
+    console.error('[EdgeFunction] No access token found in session');
     throw new Error('No active session. Please log in.');
   }
 
+  // console.log('[EdgeFunction] Sending token:', session.access_token.substring(0, 10) + '...');
+
   const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+  const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
   const response = await fetch(`${supabaseUrl}/functions/v1/${functionName}`, {
     method: 'POST',
     headers: {
-      'Authorization': `Bearer ${session.access_token}`,
+      'Authorization': `Bearer ${anonKey}`,
       'Content-Type': 'application/json',
-      'apikey': import.meta.env.VITE_SUPABASE_ANON_KEY,
+      'apikey': anonKey,
     },
     body: JSON.stringify(body),
   });

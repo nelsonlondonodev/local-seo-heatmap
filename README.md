@@ -420,9 +420,31 @@ Hito alcanzado en la madurez arquitectónica y seguridad del módulo de Keywords
 
 ---
 
-## 🚀 Estado Actual del Proyecto (v1.3.0 - Final Session Summary)
+---
 
-Tareas pendientes para el siguiente Sprint:
-1.  **📉 Gráficos de Evolución**: Implementar visualización de tendencias de ranking (Mejor/Peor posición).
-2.  **📊 Reportes Comparativos**: Generación de comparativas entre el Analizador de Mercado y el Rastreador Real.
-3.  **🧪 Escalabilidad de Monitoreo**: Optimización de carga para proyectos con +100 keywords.
+## 🚀 Edge Functions & Security Migration (v1.4.0 - Infrastructure Edition)
+
+Hemos completado la transición hacia una arquitectura de seguridad robusta de nivel SaaS:
+
+1.  **🛡️ Zero-Key Client Architecture**: Eliminación total de API Keys del bundle de frontend. Ahora el cliente solo conoce las llaves de Supabase.
+2.  **🏗️ Supabase Edge Proxy Hub**: Implementación de 4 proxies inteligentes en Deno/Supabase Functions para centralizar el tráfico hacia OpenAI, Serper, DataForSEO y Google Places.
+3.  **💉 JWT Security Injection**: Todas las llamadas se autorizan mediante el header `Authorization`, centralizando el control de acceso en el servidor.
+4.  **📦 Secrets Management**: Configuración de entorno segura mediante `supabase secrets`, protegiendo las credenciales de terceros contra inspección.
+
+---
+
+## 🚦 Bloqueadores Actuales (Next Steps)
+
+1.  **🛑 Error 401 (Supabase Gateway)**: El API Gateway de producción está rechazando las peticiones a Edge Functions. Pendiente de revisión de políticas de red o actualización de sesión de usuario para refrescar el JWT.
+2.  **🔄 Re-activación de Auth**: Una vez resuelto el 401, se debe descomentar el código de validación de usuario en las Edge Functions para volver a modo seguro.
+
+---
+
+## 📝 Checklist para la Próxima Sesión
+
+- [ ] **Reset de Sesión**: Hacer Logout/Login en la app para refrescar el JWT.
+- [ ] **Auditoría de Dashboard**: Verificar en `app.supabase.com` -> Project Settings -> API -> "Extra Search Path" o "Network Restrictions".
+- [ ] **Prueba de Re-activación**: Re-habilitar `getAuthenticatedUser` en `proxy-places` (la más sencilla) y probar.
+- [ ] **Sincronización Final**: Volver a enviar el `session.access_token` en `edgeFunctions.ts`.
+- [ ] **Validación de Datos**: Confirmar que los resultados de DataForSeo y Serper llegan limpios a través del proxy.
+
