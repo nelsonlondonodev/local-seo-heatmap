@@ -23,7 +23,7 @@ export async function invokeEdgeFunction<T>(
   const response = await fetch(`${supabaseUrl}/functions/v1/${functionName}`, {
     method: 'POST',
     headers: {
-      'Authorization': `Bearer ${anonKey}`,
+      'Authorization': `Bearer ${session.access_token}`,
       'Content-Type': 'application/json',
       'apikey': anonKey,
     },
