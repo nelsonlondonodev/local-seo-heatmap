@@ -12,24 +12,25 @@ export async function getAuthenticatedUser(req: Request) {
     return null;
   }
 
+  const token = authHeader.replace('Bearer ', '');
+
   // Use built-in env vars for Supabase internal client
   const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
-  const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY') ?? '';
+  const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
 
-  if (!supabaseUrl || !supabaseAnonKey) {
-    console.error('[auth] Missing SUPABASE_URL or SUPABASE_ANON_KEY');
+  if (!supabaseUrl || !supabaseServiceKey) {
+    console.error('[auth] Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY');
     return null;
   }
 
-  const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-    global: { headers: { Authorization: authHeader } },
-  });
+  // Use service_role to have admin privileges for user validation
+  const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
   try {
-    const { data: { user }, error } = await supabase.auth.getUser();
+    const { data: { user }, error } = await supabase.auth.getUser(token);
     
     if (error) {
-      console.error('[auth] Error validating user:', error.message);
+      console.error('[auth] Error validating user with getUser(token):', error.message);
       return null;
     }
 

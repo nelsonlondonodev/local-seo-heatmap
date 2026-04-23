@@ -9,33 +9,21 @@ export async function invokeEdgeFunction<T>(
   body: Record<string, unknown>
 ): Promise<T> {
   const { data: { session } } = await supabase.auth.getSession();
-
-  if (!session?.access_token) {
-    console.error('[EdgeFunction] No access token found in session');
-    throw new Error('No active session. Please log in.');
+  
+  if (!session) {
+    console.warn(`[EdgeFunction] No active session for ${functionName}. This will likely fail with 401.`);
+  } else {
+    // console.log(`[EdgeFunction] Session found, invoking ${functionName}...`);
   }
 
-  // console.log('[EdgeFunction] Sending token:', session.access_token.substring(0, 10) + '...');
-
-  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-  const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-
-  const response = await fetch(`${supabaseUrl}/functions/v1/${functionName}`, {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${session.access_token}`,
-      'Content-Type': 'application/json',
-      'apikey': anonKey,
-    },
-    body: JSON.stringify(body),
+  const { data, error } = await supabase.functions.invoke(functionName, {
+    body,
   });
 
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({ error: `HTTP ${response.status}` }));
-    throw new Error(
-      (errorData as { error?: string }).error || `Edge Function error: ${response.status}`
-    );
+  if (error) {
+    console.error(`[EdgeFunction] Error invoking ${functionName}:`, error);
+    throw new Error(error.message || `Edge Function error: ${functionName}`);
   }
 
-  return response.json() as Promise<T>;
+  return data as T;
 }
