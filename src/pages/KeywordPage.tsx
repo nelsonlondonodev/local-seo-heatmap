@@ -3,6 +3,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Search, TrendingUp } from 'lucide-react';
 import { KeywordDiscovery } from '@/features/keywords/components/KeywordDiscovery';
 import { MonitoringView } from '@/features/keywords/components/MonitoringView';
+import { useProjects } from '@/features/keywords/hooks/useProjects';
+import { useEffect } from 'react';
 
 interface KeywordPageProps {
   initialTab?: 'discovery' | 'monitoring';
@@ -11,6 +13,7 @@ interface KeywordPageProps {
 export function KeywordPage({ initialTab = 'discovery' }: KeywordPageProps) {
   const [searchParams, setSearchParams] = useSearchParams();
   const selectedProjectId = searchParams.get('projectId');
+  const { projects, isLoading } = useProjects();
   
   const setSelectedProjectId = (id: string | null) => {
     if (id) {
@@ -20,6 +23,13 @@ export function KeywordPage({ initialTab = 'discovery' }: KeywordPageProps) {
     }
     setSearchParams(searchParams);
   };
+
+  // Auto-select first project if none selected and projects are available
+  useEffect(() => {
+    if (!selectedProjectId && projects.length > 0 && !isLoading) {
+      setSelectedProjectId(projects[0].id);
+    }
+  }, [selectedProjectId, projects, isLoading]);
   
   const isMonitoring = initialTab === 'monitoring';
 

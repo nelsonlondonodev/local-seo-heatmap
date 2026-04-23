@@ -7,6 +7,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Card, CardContent } from '@/components/ui/card';
 import { KeywordRankRow } from './KeywordRankRow';
 import { ProjectSelector } from './ProjectSelector';
+import { SiteSettingsCard } from './SiteSettingsCard';
 
 interface MonitoringViewProps {
   projectId: string | null;
@@ -40,24 +41,9 @@ export function MonitoringView({ projectId, onProjectSelect }: MonitoringViewPro
     }
   }, [projectId, fetchKeywords, autoUpdateIfStale, currentProject]);
 
-  if (!projectId) {
-    return (
-      <div className="flex flex-col items-center justify-center py-20 text-center space-y-4">
-        <div className="h-20 w-20 rounded-full bg-brand-primary/10 flex items-center justify-center">
-          <BarChart className="h-10 w-10 text-brand-primary" />
-        </div>
-        <div className="space-y-2">
-          <h3 className="text-xl font-bold">Sin proyecto seleccionado</h3>
-          <p className="text-muted-foreground max-w-xs mx-auto">
-            Selecciona un proyecto en la pestaña de Descubrimiento para ver sus keywords en seguimiento.
-          </p>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+      {/* Project Selector - Always visible */}
       <Card className="border-none shadow-2xl bg-card/50 backdrop-blur-md rounded-3xl overflow-hidden">
         <CardContent className="p-8">
           <div className="flex items-center gap-4">
@@ -75,7 +61,21 @@ export function MonitoringView({ projectId, onProjectSelect }: MonitoringViewPro
         </CardContent>
       </Card>
 
-      <div className="flex items-center justify-between">
+      {!projectId ? (
+        <div className="flex flex-col items-center justify-center py-20 text-center space-y-4">
+          <div className="h-20 w-20 rounded-full bg-brand-primary/10 flex items-center justify-center">
+            <BarChart className="h-10 w-10 text-brand-primary" />
+          </div>
+          <div className="space-y-2">
+            <h3 className="text-xl font-bold">Sin proyecto seleccionado</h3>
+            <p className="text-muted-foreground max-w-xs mx-auto">
+              Selecciona un proyecto arriba para ver sus keywords en seguimiento o ve a la pestaña de Descubrimiento para añadir nuevas.
+            </p>
+          </div>
+        </div>
+      ) : (
+        <>
+          <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold">{currentProject?.name}</h2>
           <p className="text-sm text-muted-foreground flex items-center gap-2">
@@ -152,6 +152,8 @@ export function MonitoringView({ projectId, onProjectSelect }: MonitoringViewPro
           </div>
         </CardContent>
       </Card>
+        </>
+      )}
     </div>
   );
 }
