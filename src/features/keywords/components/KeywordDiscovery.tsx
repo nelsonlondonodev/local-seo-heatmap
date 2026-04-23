@@ -67,6 +67,19 @@ export function KeywordDiscovery({ selectedProjectId, setSelectedProjectId, onSw
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       
+      {/* Research Mode Indicator */}
+      {!selectedProjectId && (
+        <div className="flex items-center gap-3 p-4 rounded-2xl bg-brand-primary/10 border border-brand-primary/20 text-brand-primary animate-in zoom-in-95 duration-500">
+          <div className="p-2 rounded-xl bg-brand-primary/20">
+            <SearchIcon className="h-5 w-5" />
+          </div>
+          <div>
+            <p className="text-sm font-bold">Modo Investigación Activo</p>
+            <p className="text-xs opacity-80">Estás explorando palabras clave sin asignarlas a un proyecto. Los resultados no se guardarán automáticamente.</p>
+          </div>
+        </div>
+      )}
+
       {/* Search Configuration Panel */}
       <Card className="border-none shadow-2xl bg-card/50 backdrop-blur-md rounded-3xl overflow-hidden">
         <CardContent className="p-8 space-y-8">

@@ -52,7 +52,7 @@ export function ProjectSelector({ onProjectSelect, selectedProjectId, currentLoc
   };
 
   const handleProjectLink = (val: string) => {
-    onProjectSelect(val);
+    onProjectSelect(val === 'none' ? '' : val);
   };
 
   return (
@@ -113,6 +113,9 @@ export function ProjectSelector({ onProjectSelect, selectedProjectId, currentLoc
                 </div>
               </SelectTrigger>
               <SelectContent className="rounded-xl">
+                <SelectItem value="none" className="rounded-lg text-brand-primary font-medium italic">
+                  Ninguno (Investigación)
+                </SelectItem>
                 {projects.map((p) => (
                   <SelectItem key={p.id} value={p.id} className="rounded-lg">
                     {p.name}
