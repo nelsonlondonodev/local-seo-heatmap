@@ -46,17 +46,28 @@ Hemos finalizado una auditoría técnica profunda para elevar el proyecto a est�
 - Cuenta de Supabase Cloud para las variables de entorno.
 
 ### Variables de Entorno (.env)
-Asegúrate de tener configuradas las siguientes variables para que la conexión a la nube sea estable:
+Solo se requieren variables **públicas** en el frontend:
 ```env
 VITE_SUPABASE_URL=tu_url_de_supabase
 VITE_SUPABASE_ANON_KEY=tu_clave_anon_de_supabase
-VITE_SERPER_API_KEY=tu_api_key_de_serper
-VITE_OPENAI_API_KEY=tu_api_key_de_openai
 
 # Configuración White-Label
 VITE_DEFAULT_COUNTRY=es      # Código de país (gl) por defecto (es, us, co, etc.)
 VITE_DEFAULT_LAT=40.4168    # Latitud por defecto (ej: Madrid)
 VITE_DEFAULT_LNG=-3.7038    # Longitud por defecto
+
+# Modo Demo (datos simulados sin API keys)
+VITE_DEMO_MODE=false
+```
+
+### API Keys (Supabase Edge Function Secrets)
+> ⚠️ **Las API keys NUNCA van en el `.env` del frontend.** Se configuran como Secrets en Supabase:
+```bash
+supabase secrets set SERPER_API_KEY=xxx
+supabase secrets set OPENAI_API_KEY=xxx
+supabase secrets set DATAFORSEO_LOGIN=xxx
+supabase secrets set DATAFORSEO_PASSWORD=xxx
+supabase secrets set GOOGLE_MAPS_API_KEY=xxx
 ```
 
 ### Diagnóstico de Autenticación
