@@ -33,7 +33,9 @@ export function useTrackedKeywords(projectId: string | null) {
 
     setIsUpdating(keywordId);
     try {
-      const serpItems = await dataForSeoService.getSerpResults(keyword, locationCode);
+      // DataForSEO fails if location_code is 0. Fallback to Spain (2724) if project has no location.
+      const finalLocationCode = locationCode || 2724; 
+      const serpItems = await dataForSeoService.getSerpResults(keyword, finalLocationCode);
       const cleanTarget = targetUrl.toLowerCase().replace('https://', '').replace('http://', '').replace('www.', '');
       const match = serpItems.find((item: SerpItem) => 
         item.url?.toLowerCase().includes(cleanTarget) || 
