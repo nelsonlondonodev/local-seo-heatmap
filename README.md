@@ -433,18 +433,21 @@ Hemos completado la transición hacia una arquitectura de seguridad robusta de n
 
 ---
 
-## 🚦 Bloqueadores Actuales (Next Steps)
+## 🚀 Edge Functions & Security API Migration Resolved (v1.4.1 - Production Stable)
 
-1.  **🛑 Error 401 (Supabase Gateway)**: El API Gateway de producción está rechazando las peticiones a Edge Functions. Pendiente de revisión de políticas de red o actualización de sesión de usuario para refrescar el JWT.
-2.  **🔄 Re-activación de Auth**: Una vez resuelto el 401, se debe descomentar el código de validación de usuario en las Edge Functions para volver a modo seguro.
+Hemos resuelto de raíz el problema de autenticación (Errores 401) en las Edge Functions, finalizando con éxito la migración de todas las APIs:
+
+1.  **🛡️ Custom JWT Verification**: El Gateway de Supabase (modo `--verify-jwt`) rechazaba los tokens ES256. Se configuraron las funciones con `--no-verify-jwt` delegando la seguridad de forma nativa a Deno (`getAuthenticatedUser`), garantizando protección total y soporte para todos los tokens.
+2.  **🏗️ Enhanced Proxy Logger**: Se construyó un logger quirúrgico en `edgeFunctions.ts` capaz de capturar respuestas JSON en cuerpos de error 401, permitiendo aislar si el bloqueo proviene del Gateway o del proveedor (ej. DataForSEO).
+3.  **💊 Session Persistence**: Se reconfiguró Supabase Client para usar `localStorage` en lugar de `sessionStorage`, eliminando deslogueos silenciosos que cortaban la comunicación con el proxy.
+4.  **🔒 Secrets Sanitization**: Se actualizaron y comprobaron las variables de entorno en producción (específicamente credenciales de DataForSEO), eliminando espacios fantasma y garantizando llamadas limpias.
 
 ---
 
-## 📝 Checklist para la Próxima Sesión
+## 🚦 Siguiente Enfoque (Next Steps)
 
-- [ ] **Reset de Sesión**: Hacer Logout/Login en la app para refrescar el JWT.
-- [ ] **Auditoría de Dashboard**: Verificar en `app.supabase.com` -> Project Settings -> API -> "Extra Search Path" o "Network Restrictions".
-- [ ] **Prueba de Re-activación**: Re-habilitar `getAuthenticatedUser` en `proxy-places` (la más sencilla) y probar.
-- [ ] **Sincronización Final**: Volver a enviar el `session.access_token` en `edgeFunctions.ts`.
-- [ ] **Validación de Datos**: Confirmar que los resultados de DataForSeo y Serper llegan limpios a través del proxy.
+La arquitectura base está asegurada, permitiendo continuar con el perfeccionamiento de producto:
+1.  **Rank Tracking Automation**: Fortalecer el monitoreo automático.
+2.  **UI/UX Polish**: Mejorar las gráficas de evolución de mercado y animaciones.
+
 
