@@ -444,6 +444,19 @@ Hemos resuelto de raíz el problema de autenticación (Errores 401) en las Edge 
 
 ---
 
+## 🚀 Keyword Tracking & RLS Refactor (v1.5.0 - Data Integrity Edition)
+
+Sesión dedicada a la resolución de conflictos de seguridad, integridad de datos y mejora de la experiencia de usuario (UX) en la creación de proyectos:
+
+1.  **🛡️ Row-Level Security (RLS) Mastery**: Configuración nativa y reparación de políticas `SELECT`, `INSERT` y `UPDATE` para las tablas `keyword_projects` y `keyword_history`. Eliminación definitiva de bloqueos silenciosos y errores `403 Forbidden`.
+2.  **🏗️ Defensive UI Pattern**: Inyección de validaciones estrictas (`.select().single()`) post-mutación para garantizar que las caídas de base de datos se reporten explícitamente en la interfaz de usuario en lugar de simular éxitos falsos.
+3.  **📍 Smart Location Fallback**: Mecanismo de seguridad en las peticiones a la API de DataForSEO que asume un país por defecto en caso de que el proyecto carezca de ubicación, evitando el colapso (código 0) y falsos reportes de "No encontrado".
+4.  **🎓 UX/UI Creation Flow Refactor**: Rediseño arquitectónico de la creación de proyectos mediante un modal exigente (`CreateProjectModal`). Obligación de definir **Nombre, URL (recomendada) y Ubicación (País/Ciudad)** desde el inicio, unificando el ecosistema para SEO Nacional y SEO Local.
+5.  **💳 API Credit Protection**: Desarrollo de un modal de confirmación inteligente ("Pre-flight Check") en el Analizador de Mercado, deteniendo peticiones accidentales a DataForSEO causadas por errores tipográficos.
+6.  **🧼 Clean Code Refactor**: Limpieza exhaustiva mediante linter, eliminando importaciones huérfanas, corrigiendo dependencias de React (`useEffect`) y reparando advertencias visuales de "z-index" superpuestos en componentes modales.
+
+---
+
 ## 🚦 Siguiente Enfoque (Next Steps)
 
 La arquitectura base está asegurada, permitiendo continuar con el perfeccionamiento de producto:
