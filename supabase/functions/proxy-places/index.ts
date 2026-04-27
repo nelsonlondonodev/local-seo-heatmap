@@ -13,13 +13,11 @@ Deno.serve(async (req: Request) => {
     return handleCorsPreflightRequest();
   }
 
-  // 1. Authenticate (TEMPORARILY DISABLED)
-  /*
+  // 1. Authenticate
   const user = await getAuthenticatedUser(req);
   if (!user) {
     return unauthorizedResponse(corsHeaders);
   }
-  */
 
   // 2. Read secret
   const apiKey = Deno.env.get('GOOGLE_MAPS_API_KEY');
