@@ -7,7 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { LocationSelector } from '@/features/keywords/components/LocationSelector';
 import { dataForSeoService } from '@/features/keywords/services/dataForSeoService';
 import type { DataForSeoLocation, DomainRankOverview, RankedKeywordItem } from '@/features/keywords/types/dataForSeo';
-import { formatNumber, formatCurrency } from '@/lib/utils/formatters';
+import { formatNumber, formatCurrency } from '@/lib/utils';
 import { toast } from 'sonner';
 
 export function SiteAnalyzerPage() {

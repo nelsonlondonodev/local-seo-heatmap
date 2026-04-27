@@ -22,3 +22,24 @@ export function chunkArray<T>(array: T[], size: number): T[][] {
   }
   return chunks;
 }
+
+/**
+ * Formats a number with thousands separators
+ */
+export function formatNumber(num: number | null | undefined): string {
+  if (num === null || num === undefined) return '0';
+  return new Intl.NumberFormat('es-CO').format(num);
+}
+
+/**
+ * Formats a number as currency
+ */
+export function formatCurrency(num: number | null | undefined, currency = 'USD'): string {
+  if (num === null || num === undefined) return '$0.00';
+  return new Intl.NumberFormat('es-CO', {
+    style: 'currency',
+    currency: currency,
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  }).format(num);
+}
