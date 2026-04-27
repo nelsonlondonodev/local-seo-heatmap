@@ -1,7 +1,7 @@
 import { supabase } from './supabase';
 
 /**
- * Helper to invoke Supabase Edge Functions with automatic JWT injection.
+ * Helper to invoke Supabase Edge Functions with explicit JWT injection.
  * Centralizes all proxy calls through a single, type-safe entry point.
  */
 export async function invokeEdgeFunction<T>(
@@ -12,8 +12,6 @@ export async function invokeEdgeFunction<T>(
   
   if (!session) {
     console.warn(`[EdgeFunction] No active session for ${functionName}. This will likely fail with 401.`);
-  } else {
-    // console.log(`[EdgeFunction] Session found, invoking ${functionName}...`);
   }
 
   const options: { body: Record<string, unknown>; headers?: Record<string, string> } = { body };
@@ -29,16 +27,16 @@ export async function invokeEdgeFunction<T>(
   if (error) {
     console.error(`[EdgeFunction] Error invoking ${functionName}:`, error);
     
-    // Intento de capturar el cuerpo real del error 401 para ver qué dice
+    // Log detailed response body for debugging proxy errors
     try {
       if (error.context instanceof Response) {
         const bodyText = await error.context.clone().text();
-        console.error(`[EdgeFunction] DETALLE DEL ERROR REAL (${functionName}):`, bodyText);
+        console.error(`[EdgeFunction] Error Response (${functionName}):`, bodyText);
       } else {
-        console.error(`[EdgeFunction] OBJETO ERROR COMPLETO:`, JSON.stringify(error, null, 2));
+        console.error(`[EdgeFunction] Error Object:`, error);
       }
     } catch (e) {
-      console.error(`[EdgeFunction] No se pudo leer el detalle del error:`, e);
+      console.error(`[EdgeFunction] Could not parse error details:`, e);
     }
 
     throw new Error(error.message || `Edge Function error: ${functionName}`);
