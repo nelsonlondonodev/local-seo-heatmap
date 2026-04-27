@@ -28,6 +28,19 @@ export async function invokeEdgeFunction<T>(
 
   if (error) {
     console.error(`[EdgeFunction] Error invoking ${functionName}:`, error);
+    
+    // Intento de capturar el cuerpo real del error 401 para ver qué dice
+    try {
+      if (error.context instanceof Response) {
+        const bodyText = await error.context.clone().text();
+        console.error(`[EdgeFunction] DETALLE DEL ERROR REAL (${functionName}):`, bodyText);
+      } else {
+        console.error(`[EdgeFunction] OBJETO ERROR COMPLETO:`, JSON.stringify(error, null, 2));
+      }
+    } catch (e) {
+      console.error(`[EdgeFunction] No se pudo leer el detalle del error:`, e);
+    }
+
     throw new Error(error.message || `Edge Function error: ${functionName}`);
   }
 
