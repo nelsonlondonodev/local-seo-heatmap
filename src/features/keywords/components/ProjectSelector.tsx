@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { Plus as PlusIcon, Briefcase as ProjectIcon, Loader2 as Spinner, Check as CheckIcon } from 'lucide-react';
+import { Plus as PlusIcon, Briefcase as ProjectIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
 import { CreateProjectModal } from './CreateProjectModal';
 import { useProjects } from '../hooks/useProjects';
 import type { KeywordProject } from '../types/keywords';

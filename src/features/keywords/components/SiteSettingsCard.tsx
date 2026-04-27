@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Globe, Save, Info, CheckCircle2, AlertCircle, MapPin } from 'lucide-react';
+import { Globe, Save, Info, CheckCircle2, AlertCircle } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -11,21 +11,18 @@ import { useAuth } from '@/features/auth';
 interface SiteSettingsCardProps {
   projectId: string;
   initialUrl?: string | null;
-  projectName: string;
   onUpdate: (url: string) => void;
 }
 
-export function SiteSettingsCard({ projectId, initialUrl, projectName, onUpdate }: SiteSettingsCardProps) {
+export function SiteSettingsCard({ projectId, initialUrl, onUpdate }: SiteSettingsCardProps) {
   const { agencyId } = useAuth();
   const [url, setUrl] = useState(initialUrl || '');
   const [isUpdating, setIsUpdating] = useState(false);
   const [isValid, setIsValid] = useState(!!initialUrl);
 
   useEffect(() => {
-    if (initialUrl !== undefined && initialUrl !== url) {
-      setUrl(initialUrl || '');
-      setIsValid(!!initialUrl);
-    }
+    setUrl(initialUrl || '');
+    setIsValid(!!initialUrl);
   }, [initialUrl, projectId]);
 
   const cleanUrl = (input: string) => {

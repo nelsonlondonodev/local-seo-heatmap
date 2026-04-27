@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 import { useTrackedKeywords } from '../hooks/useTrackedKeywords';
-import { useProjects } from '../hooks/useProjects';
-import { BarChart, RefreshCcw, ExternalLink, TrendingUp } from 'lucide-react';
+import { BarChart, RefreshCcw, TrendingUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Card, CardContent } from '@/components/ui/card';
@@ -101,7 +100,6 @@ export function MonitoringView({ projectId, onProjectSelect, projects, onProject
       <SiteSettingsCard 
         key={projectId}
         projectId={projectId}
-        projectName={currentProject?.name || ''}
         initialUrl={currentProject?.target_url}
         onUpdate={(newUrl) => {
           if (projectId) {
