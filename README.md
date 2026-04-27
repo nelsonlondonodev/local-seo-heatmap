@@ -14,6 +14,7 @@
 - [Modelo de Datos](#modelo-de-datos)
 - [Planes y Límites](#planes-y-límites)
 - [Estado Actual del MVP](#estado-actual-del-mvp)
+- [Registro de Versiones](#registro-de-versiones)
 
 ---
 
@@ -454,6 +455,19 @@ Sesión dedicada a la resolución de conflictos de seguridad, integridad de dato
 4.  **🎓 UX/UI Creation Flow Refactor**: Rediseño arquitectónico de la creación de proyectos mediante un modal exigente (`CreateProjectModal`). Obligación de definir **Nombre, URL (recomendada) y Ubicación (País/Ciudad)** desde el inicio, unificando el ecosistema para SEO Nacional y SEO Local.
 5.  **💳 API Credit Protection**: Desarrollo de un modal de confirmación inteligente ("Pre-flight Check") en el Analizador de Mercado, deteniendo peticiones accidentales a DataForSEO causadas por errores tipográficos.
 6.  **🧼 Clean Code Refactor**: Limpieza exhaustiva mediante linter, eliminando importaciones huérfanas, corrigiendo dependencias de React (`useEffect`) y reparando advertencias visuales de "z-index" superpuestos en componentes modales.
+
+---
+
+## 🚀 Site Intelligence & Domain Analysis (v1.6.0 - Explorer Edition)
+
+Hemos expandido el ecosistema de inteligencia SEO con un nuevo módulo dedicado al análisis profundo de sitios web y competencia:
+
+1.  **🌐 Explorador de Dominios (Site Analyzer)**: Nueva sección dedicada a analizar cualquier URL para extraer KPIs críticos: Tráfico Mensual Estimado, Total de Keywords Orgánicas, Costo Equivalente en Ads y desgloses de posición (Top 10).
+2.  **🏗️ Arquitectura de UI Atómica**: Refactorización quirúrgica de la interfaz de análisis en componentes granulares (`DomainSearchForm`, `SiteOverviewCards`, `RankedKeywordsTable`, `SiteAnalyzerEmptyState`), garantizando un mantenimiento simplificado y alto rendimiento.
+3.  **📍 National Intelligence Logic**: Implementación de lógica de filtrado por país para compatibilidad con DataForSEO Labs. El sistema utiliza códigos de ubicación nacionales (ej: España 2724) para garantizar la precisión de los datos pre-calculados a nivel país.
+4.  **🧼 Robust Data Parsing**: Desarrollo de un motor de procesamiento de respuestas específico para DataForSEO Labs, blindado contra estructuras de array complejas y garantizando que la información de palabras clave y URLs de destino se muestre siempre con integridad.
+5.  **✨ Premium Empty State UX**: Diseño de estados de "No Data" dinámicos que informan al usuario de forma elegante cuando un dominio es demasiado nuevo o tiene poco volumen para aparecer en las bases de datos globales.
+6.  **💉 Atomic Utilities & Refactor**: Extracción de lógicas de limpieza de dominios y formateo de divisas (`es-CO`) a utilidades centralizadas, elevando la coherencia visual y técnica de toda la plataforma.
 
 ---
 
