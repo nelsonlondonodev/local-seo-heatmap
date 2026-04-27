@@ -71,3 +71,42 @@ export interface DataForSeoLocation {
   country_iso_code: string;
   location_type: string;
 }
+
+/**
+ * DataForSEO Ranked Keyword (Labs)
+ */
+export interface RankedKeywordItem {
+  keyword_data: {
+    keyword: string;
+    keyword_info?: {
+      search_volume: number | null;
+      cpc: number | null;
+      competition_level: string | null;
+    };
+  };
+  ranked_serp_element: {
+    serp_item: {
+      rank_absolute: number;
+      url: string;
+      title: string;
+      description?: string;
+    };
+  };
+}
+
+/**
+ * DataForSEO Domain Rank Overview (Labs)
+ */
+export interface DomainRankOverview {
+  metrics: {
+    organic: {
+      count: number;
+      etv: number;
+      cost: number;
+      pos_1: number;
+      pos_2_3: number;
+      pos_4_10: number;
+      pos_11_100: number;
+    };
+  };
+}

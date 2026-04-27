@@ -5,7 +5,9 @@ import type {
   DataForSeoResponse, 
   SerpResult, 
   SerpItem,
-  DataForSeoLocation 
+  DataForSeoLocation,
+  DomainRankOverview,
+  RankedKeywordItem
 } from '../types/dataForSeo';
 
 /**
@@ -140,6 +142,48 @@ export const dataForSeoService = {
       `/keywords_data/google/locations/${countryIsoCode}`,
       undefined,
       'GET'
+    );
+    return response?.tasks?.[0]?.result || [];
+  },
+
+  /**
+   * Fetches domain rank overview (traffic, total keywords, cost)
+   */
+  async getDomainRankOverview(
+    target: string,
+    locationCode = 2840,
+    languageCode = 'es'
+  ): Promise<DomainRankOverview | null> {
+    const response = await fetchDataForSeo<DataForSeoResponse<DomainRankOverview>>(
+      '/dataforseo_labs/google/domain_rank_overview/live',
+      [{
+        target,
+        location_code: locationCode,
+        language_code: languageCode
+      }],
+      'POST'
+    );
+    return response?.tasks?.[0]?.result?.[0] || null;
+  },
+
+  /**
+   * Fetches organic ranked keywords for a specific domain.
+   */
+  async getDomainRankedKeywords(
+    target: string,
+    locationCode = 2840,
+    languageCode = 'es',
+    limit = 100
+  ): Promise<RankedKeywordItem[]> {
+    const response = await fetchDataForSeo<DataForSeoResponse<RankedKeywordItem>>(
+      '/dataforseo_labs/google/ranked_keywords/live',
+      [{
+        target,
+        location_code: locationCode,
+        language_code: languageCode,
+        limit
+      }],
+      'POST'
     );
     return response?.tasks?.[0]?.result || [];
   }

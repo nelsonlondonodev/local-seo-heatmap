@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Map, History, Settings, X, ChevronRight, Sparkles, Search, TrendingUp, Target } from 'lucide-react';
+import { Map, History, Settings, X, ChevronRight, Sparkles, Search, TrendingUp, Target, Globe } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { useBranding } from '@/features/branding';
 import { UserSection } from './UserSection';
@@ -8,6 +8,7 @@ import { UserSection } from './UserSection';
 const navItems = [
   { path: '/dashboard', label: 'Mapa de Calor', icon: Map },
   { path: '/market-discovery', label: 'Analizador de Mercado', icon: TrendingUp },
+  { path: '/site-analyzer', label: 'Explorador de Sitios', icon: Globe },
   { path: '/rank-tracker', label: 'Rastreador de Posiciones', icon: Target },
   { path: '/history', label: 'Historial', icon: History },
   { path: '/ai-history', label: 'Contenidos IA', icon: Sparkles },

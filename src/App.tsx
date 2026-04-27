@@ -17,6 +17,7 @@ import { AIHistoryPage } from '@/pages/AIHistoryPage';
 import { KeywordPage } from '@/pages/KeywordPage';
 import { HeatmapResultPage } from '@/pages/HeatmapResultPage';
 import { SettingsPage } from '@/pages/SettingsPage';
+import { SiteAnalyzerPage } from '@/pages/SiteAnalyzerPage';
 import './index.css';
 
 const queryClient = new QueryClient({
@@ -74,6 +75,7 @@ const router = createBrowserRouter([
       { path: '/history', element: <HistoryPage /> },
       { path: '/ai-history', element: <AIHistoryPage /> },
       { path: '/market-discovery', element: <KeywordPage initialTab="discovery" /> },
+      { path: '/site-analyzer', element: <SiteAnalyzerPage /> },
       { path: '/rank-tracker', element: <KeywordPage initialTab="monitoring" /> },
       { path: '/result', element: <HeatmapResultPage /> },
       { path: '/settings', element: <SettingsPage /> },

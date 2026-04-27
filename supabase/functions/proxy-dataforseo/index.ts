@@ -51,6 +51,7 @@ Deno.serve(async (req: Request) => {
     const allowedPrefixes = [
       '/keywords_data/',
       '/serp/',
+      '/dataforseo_labs/',
     ];
     const isAllowed = allowedPrefixes.some(prefix => endpoint.startsWith(prefix));
     if (!isAllowed) {
