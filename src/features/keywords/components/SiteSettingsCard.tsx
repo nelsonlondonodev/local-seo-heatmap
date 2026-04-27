@@ -46,15 +46,18 @@ export function SiteSettingsCard({ projectId, initialUrl, projectName, onUpdate 
 
     setIsUpdating(true);
     try {
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('keyword_projects')
         .update({ 
           target_url: cleaned,
           agency_id: agencyId 
         })
-        .eq('id', projectId);
+        .eq('id', projectId)
+        .select()
+        .single();
 
       if (error) throw error;
+      if (!data) throw new Error('No se pudo actualizar el proyecto en la base de datos (0 filas actualizadas). Revisa las políticas RLS.');
 
       setUrl(cleaned);
       setIsValid(true);
