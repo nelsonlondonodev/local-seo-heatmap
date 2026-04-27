@@ -17,7 +17,17 @@ interface CreateProjectModalProps {
 export function CreateProjectModal({ isOpen, onClose, onCreated }: CreateProjectModalProps) {
   const { createProject, isLoading } = useProjects();
   const [name, setName] = useState('');
+  const [targetUrl, setTargetUrl] = useState('');
   const [location, setLocation] = useState<DataForSeoLocation | null>(null);
+
+  const cleanUrl = (input: string) => {
+    return input
+      .trim()
+      .toLowerCase()
+      .replace(/^https?:\/\//, '')
+      .replace(/^www\./, '')
+      .replace(/\/$/, '');
+  };
 
   const handleCreate = async () => {
     if (!name.trim()) {
@@ -33,11 +43,13 @@ export function CreateProjectModal({ isOpen, onClose, onCreated }: CreateProject
       name.trim(),
       location.location_code,
       location.location_name,
-      location.country_iso_code
+      location.country_iso_code,
+      cleanUrl(targetUrl)
     );
 
     if (project) {
       setName('');
+      setTargetUrl('');
       setLocation(null);
       onCreated(project.id);
       onClose();
@@ -53,7 +65,7 @@ export function CreateProjectModal({ isOpen, onClose, onCreated }: CreateProject
             Nuevo Proyecto
           </DialogTitle>
           <DialogDescription className="text-muted-foreground">
-            Define el nombre y la ubicación de tu nuevo cliente para el rastreo de SEO Local.
+            Define los detalles de tu nuevo cliente para el rastreo SEO y SEO Local.
           </DialogDescription>
         </DialogHeader>
 
@@ -72,7 +84,19 @@ export function CreateProjectModal({ isOpen, onClose, onCreated }: CreateProject
 
           <div className="space-y-2">
             <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground ml-1">
-              Ubicación Geográfica (Muy Importante)
+              Sitio Web (Opcional pero recomendado)
+            </label>
+            <Input
+              placeholder="ej: misitio.com"
+              value={targetUrl}
+              onChange={(e) => setTargetUrl(e.target.value)}
+              className="h-11 rounded-xl border-2 bg-background/50 focus-visible:ring-brand-primary/20"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground ml-1">
+              Ubicación Geográfica (Requerida)
             </label>
             <div className="p-4 bg-muted/30 rounded-2xl border-2 border-transparent focus-within:border-brand-primary/20 transition-all">
               <LocationSelector 
@@ -81,7 +105,7 @@ export function CreateProjectModal({ isOpen, onClose, onCreated }: CreateProject
               />
             </div>
             <p className="text-[11px] text-muted-foreground mt-2 italic px-1 text-balance">
-              Esta ubicación se usará para obtener las posiciones reales y el volumen de búsqueda específico de esta ciudad.
+              Define el país o ciudad base para el análisis del volumen y posicionamiento.
             </p>
           </div>
         </div>

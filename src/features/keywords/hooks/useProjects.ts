@@ -32,11 +32,11 @@ export function useProjects() {
     fetchProjects();
   }, [fetchProjects]);
 
-  const createProject = async (name: string, locationCode?: number, locationName?: string, countryCode?: string) => {
+  const createProject = async (name: string, locationCode?: number, locationName?: string, countryCode?: string, targetUrl?: string) => {
     if (!name.trim() || !user) return null;
     setIsLoading(true);
     try {
-      const project = await keywordPersistenceService.createProject(user.id, name, undefined, locationCode, locationName, countryCode);
+      const project = await keywordPersistenceService.createProject(user.id, name, targetUrl, locationCode, locationName, countryCode);
       toast.success('Proyecto creado correctamente');
       await fetchProjects();
       return project;
