@@ -4,15 +4,26 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { LocationSelector } from '@/features/keywords/components/LocationSelector';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { dataForSeoService } from '@/features/keywords/services/dataForSeoService';
-import type { DataForSeoLocation, DomainRankOverview, RankedKeywordItem } from '@/features/keywords/types/dataForSeo';
+import type { DomainRankOverview, RankedKeywordItem } from '@/features/keywords/types/dataForSeo';
 import { formatNumber, formatCurrency } from '@/lib/utils';
 import { toast } from 'sonner';
 
+const NATIONAL_LOCATIONS = [
+  { name: 'España', code: 2724 },
+  { name: 'Colombia', code: 2170 },
+  { name: 'México', code: 2484 },
+  { name: 'Estados Unidos', code: 2840 },
+  { name: 'Chile', code: 2152 },
+  { name: 'Perú', code: 2604 },
+  { name: 'Argentina', code: 2032 },
+  { name: 'Ecuador', code: 2218 },
+];
+
 export function SiteAnalyzerPage() {
   const [targetUrl, setTargetUrl] = useState('');
-  const [selectedLocation, setSelectedLocation] = useState<DataForSeoLocation | null>(null);
+  const [locationCode, setLocationCode] = useState<number>(2724); // Default Spain
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [overview, setOverview] = useState<DomainRankOverview | null>(null);
   const [keywords, setKeywords] = useState<RankedKeywordItem[]>([]);
@@ -35,12 +46,9 @@ export function SiteAnalyzerPage() {
     setKeywords([]);
 
     try {
-      const locationCode = selectedLocation ? selectedLocation.location_code : 2840; // Default US or Spain depending on country? LocationSelector defaults to CO/ES. Let's use selected or 2724 (Spain)
-      const locCodeToUse = selectedLocation ? selectedLocation.location_code : 2724; // Spain as default if none selected
-
       const [overviewData, keywordsData] = await Promise.all([
-        dataForSeoService.getDomainRankOverview(domain, locCodeToUse),
-        dataForSeoService.getDomainRankedKeywords(domain, locCodeToUse)
+        dataForSeoService.getDomainRankOverview(domain, locationCode),
+        dataForSeoService.getDomainRankedKeywords(domain, locationCode)
       ]);
 
       setOverview(overviewData);
@@ -89,12 +97,25 @@ export function SiteAnalyzerPage() {
               </div>
             </div>
 
-            <div className="flex-1 w-full">
-              <LocationSelector 
-                onLocationSelect={setSelectedLocation}
-                selectedLocation={selectedLocation}
-                initialCountryCode="es"
-              />
+            <div className="flex-1 w-full lg:w-48 shrink-0 space-y-2">
+              <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground ml-1">
+                País de Análisis
+              </label>
+              <Select 
+                value={locationCode.toString()} 
+                onValueChange={(val) => setLocationCode(Number(val))}
+              >
+                <SelectTrigger className="h-12 rounded-xl bg-background border-2 text-lg transition-all hover:border-brand-primary/50">
+                  <SelectValue placeholder="Selecciona un país" />
+                </SelectTrigger>
+                <SelectContent>
+                  {NATIONAL_LOCATIONS.map((loc) => (
+                    <SelectItem key={loc.code} value={loc.code.toString()}>
+                      {loc.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
             <Button 

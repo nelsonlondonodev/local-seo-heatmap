@@ -175,7 +175,7 @@ export const dataForSeoService = {
     languageCode = 'es',
     limit = 100
   ): Promise<RankedKeywordItem[]> {
-    const response = await fetchDataForSeo<DataForSeoResponse<RankedKeywordItem>>(
+    const response = await fetchDataForSeo<DataForSeoResponse<{ items: RankedKeywordItem[] }>>(
       '/dataforseo_labs/google/ranked_keywords/live',
       [{
         target,
@@ -185,7 +185,7 @@ export const dataForSeoService = {
       }],
       'POST'
     );
-    return response?.tasks?.[0]?.result || [];
+    return response?.tasks?.[0]?.result?.[0]?.items || [];
   }
 };
 
