@@ -16,9 +16,15 @@ export async function invokeEdgeFunction<T>(
     // console.log(`[EdgeFunction] Session found, invoking ${functionName}...`);
   }
 
-  const { data, error } = await supabase.functions.invoke(functionName, {
-    body,
-  });
+  const options: { body: Record<string, unknown>; headers?: Record<string, string> } = { body };
+  
+  if (session?.access_token) {
+    options.headers = {
+      Authorization: `Bearer ${session.access_token}`,
+    };
+  }
+
+  const { data, error } = await supabase.functions.invoke(functionName, options);
 
   if (error) {
     console.error(`[EdgeFunction] Error invoking ${functionName}:`, error);
