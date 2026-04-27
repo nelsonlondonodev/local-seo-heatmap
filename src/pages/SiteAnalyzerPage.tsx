@@ -25,6 +25,7 @@ export function SiteAnalyzerPage() {
   const [targetUrl, setTargetUrl] = useState('');
   const [locationCode, setLocationCode] = useState<number>(2724); // Default Spain
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [hasSearched, setHasSearched] = useState(false);
   const [overview, setOverview] = useState<DomainRankOverview | null>(null);
   const [keywords, setKeywords] = useState<RankedKeywordItem[]>([]);
 
@@ -42,6 +43,7 @@ export function SiteAnalyzerPage() {
     }
 
     setIsAnalyzing(true);
+    setHasSearched(false);
     setOverview(null);
     setKeywords([]);
 
@@ -60,6 +62,7 @@ export function SiteAnalyzerPage() {
       toast.error('Hubo un error al analizar el dominio. Revisa la consola para más detalles.');
     } finally {
       setIsAnalyzing(false);
+      setHasSearched(true);
     }
   };
 
@@ -246,6 +249,20 @@ export function SiteAnalyzerPage() {
                 </TableBody>
               </Table>
             </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {hasSearched && !isAnalyzing && (!overview || !overview.metrics || !overview.metrics.organic) && keywords.length === 0 && (
+        <Card className="border-2 shadow-sm border-dashed bg-muted/20 animate-in fade-in duration-500">
+          <CardContent className="flex flex-col items-center justify-center py-16 text-center">
+            <div className="h-16 w-16 rounded-full bg-muted flex items-center justify-center mb-4">
+              <Globe className="h-8 w-8 text-muted-foreground" />
+            </div>
+            <h3 className="text-xl font-bold mb-2">No se encontraron datos</h3>
+            <p className="text-muted-foreground max-w-md">
+              Es posible que el dominio ingresado sea muy nuevo o su volumen de tráfico orgánico en el país seleccionado no sea suficiente para aparecer en las bases de datos globales de análisis.
+            </p>
           </CardContent>
         </Card>
       )}
