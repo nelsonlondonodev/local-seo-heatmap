@@ -18,6 +18,7 @@ import {
 import { useHeatmaps } from '@/hooks';
 import type { ResultsSummary } from '@/types';
 import type { Database } from '@/types/database';
+import { isResultsSummary, safeCastArray } from '@/util/mappers';
 
 type HeatmapRecord = Database['public']['Tables']['heatmaps']['Row'];
 
@@ -88,7 +89,8 @@ export function HistoryPage() {
       ) : (
         <div className="space-y-4">
           {history.map((entry) => {
-            const summary = (entry.results_summary as unknown as ResultsSummary) || { avgRank: 0, bestRank: null, foundCount: 0, totalCount: 0 };
+            const summary = isResultsSummary(entry.results_summary) ? entry.results_summary : { avgRank: 0, bestRank: null, foundCount: 0, totalCount: 0 };
+            const advertisers = safeCastArray<string>(entry.advertisers);
             
             return (
               <motion.div key={entry.id} variants={fadeInUp}>
@@ -132,11 +134,11 @@ export function HistoryPage() {
                             )}
                           </div>
                         )}
-                        {entry.advertisers && (entry.advertisers as string[]).length > 0 && (
+                        {advertisers.length > 0 && (
                           <div className="flex items-center gap-2 pt-1">
                             <Badge variant="outline" className="text-amber-600 border-amber-500/30 bg-amber-500/5 text-[10px] gap-1 px-1.5 h-5 font-bold">
                               <Megaphone className="h-3 w-3" />
-                              ADS DETECTADOS: {(entry.advertisers as string[]).length}
+                              ADS DETECTADOS: {advertisers.length}
                             </Badge>
                           </div>
                         )}

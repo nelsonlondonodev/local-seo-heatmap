@@ -1,8 +1,7 @@
 import { supabase } from '@/lib/supabase';
 import type { HeatmapResult, GridPoint, ResultsSummary } from '@/types';
-import type { Database } from '@/types/database';
-
-type Json = Database['public']['Tables']['heatmaps']['Row']['results_summary'];
+import type { Database, Json } from '@/types/database';
+import { isResultsSummary } from '@/util/mappers';
 
 /**
  * Service to handle persistence of heatmap data in Supabase Cloud.
@@ -25,12 +24,12 @@ export const heatmapService = {
       radius_km: result.config.radiusKm,
       center_lat: result.config.centerLat,
       center_lng: result.config.centerLng,
-      points: result.points as unknown as Database['public']['Tables']['heatmaps']['Row']['points'],
-      results_summary: summary as unknown as Database['public']['Tables']['heatmaps']['Row']['results_summary'],
+      points: result.points as unknown as Json,
+      results_summary: summary as unknown as Json,
       prospect_name: result.config.prospectName || null,
       prospect_email: result.config.prospectEmail || null,
-      advertisers: result.advertisers as unknown as Database['public']['Tables']['heatmaps']['Row']['advertisers'],
-      competitors: result.competitors as unknown as Database['public']['Tables']['heatmaps']['Row']['competitors'],
+      advertisers: (result.advertisers || []) as unknown as Json,
+      competitors: (result.competitors || []) as unknown as Json,
     };
 
     const { data, error } = await supabase
@@ -99,7 +98,7 @@ export const heatmapService = {
     }
 
     return (data || []).map(row => {
-      const summary = row.results_summary as unknown as ResultsSummary | null;
+      const summary = isResultsSummary(row.results_summary) ? row.results_summary : null;
       return {
         date: row.created_at,
         avgRank: summary?.avgRank || 0,

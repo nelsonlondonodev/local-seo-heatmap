@@ -1,5 +1,6 @@
 import { useLocation, useNavigate, Navigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { useMemo } from 'react';
 import { staggerContainer, fadeInUp } from '@/config/animations';
 import { 
   MapPin, Search, Calendar, Grid3X3, ArrowLeft, Plus, 
@@ -19,7 +20,7 @@ import { isAdvertiser } from '../features/heatmap/utils/textUtils';
 import { useBranding } from '@/features/branding';
 import { APP_CONFIG } from '@/config/constants';
 import type { Database } from '@/types/database';
-import type { GridPoint, ResultsSummary, CompetitorStat } from '@/types';
+import { mapHeatmapToResult } from '@/util/mappers';
 
 type HeatmapRecord = Database['public']['Tables']['heatmaps']['Row'];
 
@@ -31,18 +32,18 @@ export function HeatmapResultPage() {
   const { config: branding } = useBranding();
 
   const state = location.state as { heatmap?: HeatmapRecord } | null;
-  const heatmap = state?.heatmap;
+  const heatmapRow = state?.heatmap;
 
-  if (!heatmap) {
+  const result = useMemo(() => heatmapRow ? mapHeatmapToResult(heatmapRow) : null, [heatmapRow]);
+
+  if (!heatmapRow || !result) {
     return <Navigate to="/history" replace />;
   }
 
-  const center: [number, number] = [Number(heatmap.center_lat), Number(heatmap.center_lng)];
-  const points = (heatmap.points as unknown as GridPoint[]) || [];
-  const summary = (heatmap.results_summary as unknown as ResultsSummary) || { avgRank: 0, bestRank: null, foundCount: 0, totalCount: 0 };
-  const advertisers = (heatmap.advertisers as string[]) || [];
-  const competitors = (heatmap.competitors as unknown as CompetitorStat[]) || [];
-  const isTargetInAds = isAdvertiser(heatmap.business_name, advertisers);
+  const { config, points, advertisers, competitors, createdAt } = result;
+  const center: [number, number] = [config.centerLat, config.centerLng];
+  const summary = isResultsSummary(heatmapRow.results_summary) ? heatmapRow.results_summary : { avgRank: 0, bestRank: null, foundCount: 0, totalCount: 0 };
+  const isTargetInAds = isAdvertiser(config.businessName, advertisers);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('es-ES', {
@@ -142,46 +143,46 @@ export function HeatmapResultPage() {
             </CardHeader>
             <CardContent className="pt-6 space-y-6">
               <div className="space-y-4">
-                {heatmap.prospect_name && (
+                {heatmapRow.prospect_name && (
                   <StatRow 
                     icon={Target} 
                     label="Lead / Prospecto" 
-                    value={heatmap.prospect_name} 
+                    value={heatmapRow.prospect_name} 
                     colorClass="bg-primary/20 text-primary border border-primary/20" 
                   />
                 )}
                 <StatRow 
                   icon={Search} 
                   label="Palabra Clave" 
-                  value={heatmap.keyword} 
+                  value={config.keyword} 
                   colorClass="bg-primary/10 text-primary" 
                 />
                 <StatRow 
                   icon={MapPin} 
                   label="Negocio Objetivo" 
-                  value={heatmap.business_name} 
+                  value={config.businessName} 
                   colorClass="bg-emerald-500/10 text-emerald-500" 
                 />
                 <StatRow 
                   icon={Grid3X3} 
                   label="Parámetros de Grid" 
-                  value={`${heatmap.grid_size} Puntos • Radio: ${heatmap.radius_km} km`} 
+                  value={`${config.gridSize} Puntos • Radio: ${config.radiusKm} km`} 
                   colorClass="bg-blue-500/10 text-blue-500" 
                 />
                 <StatRow 
                   icon={Calendar} 
                   label="Fecha del Análisis" 
-                  value={formatDate(heatmap.created_at)} 
+                  value={formatDate(createdAt)} 
                   colorClass="bg-orange-500/10 text-orange-500" 
                 />
               </div>
 
-              {heatmap.prospect_email && (
+              {heatmapRow.prospect_email && (
                 <div className="pt-4 border-t border-border/50">
                   <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider mb-2">Contacto del Lead</p>
                   <div className="flex items-center gap-2 text-sm font-medium bg-secondary/30 p-2 rounded-md">
                     <Mail className="h-4 w-4 text-primary" />
-                    {heatmap.prospect_email}
+                    {heatmapRow.prospect_email}
                   </div>
                 </div>
               )}
@@ -233,8 +234,8 @@ export function HeatmapResultPage() {
             <VisibilityScore points={points} />
             
             <LocalVisibilityGraph 
-              placeId={heatmap.place_id}
-              keyword={heatmap.keyword}
+              placeId={config.placeId}
+              keyword={config.keyword}
             />
 
             <div className="grid grid-cols-2 gap-4">
@@ -272,7 +273,7 @@ export function HeatmapResultPage() {
                 center={center}
                 zoom={13}
                 points={points}
-                businessName={heatmap.business_name}
+                businessName={config.businessName}
                 // View-only mode implies no click handler needed
               />
 
@@ -284,7 +285,7 @@ export function HeatmapResultPage() {
       </div>
 
       <SalesStrategyHub 
-        heatmap={heatmap}
+        heatmap={result}
         competitors={competitors}
         itemVariants={fadeInUp}
       />
