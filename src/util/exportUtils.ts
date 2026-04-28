@@ -3,7 +3,7 @@ import { toast } from 'sonner';
 /**
  * Utility to export data to a CSV file and trigger a download.
  */
-export function exportToCsv<T extends Record<string, any>>(
+export function exportToCsv<T extends Record<string, unknown>>(
   data: T[],
   filename: string,
   headers?: string[]
@@ -20,7 +20,7 @@ export function exportToCsv<T extends Record<string, any>>(
     columns.map(col => {
       const val = row[col];
       // Escape commas and quotes
-      const escaped = ('' + (val ?? '')).replace(/"/g, '""');
+      const escaped = String(val ?? '').replace(/"/g, '""');
       return `"${escaped}"`;
     }).join(',')
   );
@@ -43,7 +43,7 @@ export function exportToCsv<T extends Record<string, any>>(
 /**
  * Utility to copy data to clipboard in a format suitable for Excel/Sheets (TSV).
  */
-export async function copyToClipboardAsTsv<T extends Record<string, any>>(
+export async function copyToClipboardAsTsv<T extends Record<string, unknown>>(
   data: T[],
   headers?: string[]
 ) {
@@ -55,7 +55,7 @@ export async function copyToClipboardAsTsv<T extends Record<string, any>>(
   const rows = data.map(row => 
     columns.map(col => {
       const val = row[col];
-      return val ?? '';
+      return String(val ?? '');
     }).join('\t')
   );
 

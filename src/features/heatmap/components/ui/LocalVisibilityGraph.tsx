@@ -12,6 +12,23 @@ interface LocalVisibilityGraphProps {
   keyword: string;
 }
 
+interface ChartDataPoint {
+  date: string;
+  avgRank: number;
+  bestRank: number;
+  fullDate: string;
+  formattedDate: string;
+}
+
+interface TooltipPayload {
+  payload: ChartDataPoint;
+}
+
+interface CustomTooltipProps {
+  active?: boolean;
+  payload?: TooltipPayload[];
+}
+
 /**
  * Historical ranking chart component using Recharts.
  * Redesigned for premium aesthetics and robust UX.
@@ -29,7 +46,7 @@ export function LocalVisibilityGraph({ placeId, keyword }: LocalVisibilityGraphP
   }
 
   // Format date for the X-axis and Tooltip
-  const chartData = history.map(h => ({
+  const chartData: ChartDataPoint[] = history.map(h => ({
     ...h,
     fullDate: new Date(h.date).toLocaleDateString('es-ES', {
       day: '2-digit', month: 'long', year: 'numeric'
@@ -49,7 +66,7 @@ export function LocalVisibilityGraph({ placeId, keyword }: LocalVisibilityGraphP
   const trendBg = improvement > 0 ? 'bg-emerald-500/10' : (improvement < 0 ? 'bg-rose-500/10' : 'bg-muted/10');
 
   // Custom Hub Tooltip
-  const CustomTooltip = ({ active, payload }: any) => {
+  const CustomTooltip = ({ active, payload }: CustomTooltipProps) => {
     if (active && payload && payload.length) {
       const data = payload[0].payload;
       return (
