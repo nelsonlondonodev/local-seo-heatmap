@@ -1,5 +1,6 @@
 import { logger } from '@/lib/logger';
 import { invokeEdgeFunction } from '@/lib/edgeFunctions';
+import type { DataForSeoProxyRequest } from '@/types/edge-functions';
 import type { 
   KeywordSuggestion, 
   DataForSeoResponse, 
@@ -15,7 +16,7 @@ import type {
  */
 async function fetchDataForSeo<T>(endpoint: string, payload?: unknown, method?: 'GET' | 'POST'): Promise<T | null> {
   try {
-    return await invokeEdgeFunction<T>('proxy-dataforseo', {
+    return await invokeEdgeFunction<T, DataForSeoProxyRequest>('proxy-dataforseo', {
       endpoint,
       payload,
       method,

@@ -4,12 +4,13 @@ import { invokeEdgeFunction } from '@/lib/edgeFunctions';
 import { safeJsonParse } from '@/util/jsonUtils';
 import type { AIResponse, GeneratedGBPPost, PostPromptContent, StoredAIContent, ReviewReplyPrompt, GeneratedReviewReply, BioOptimizerPrompt, GeneratedBio } from '@/features/ai-optimization/types';
 import type { ChatMessage, ContentPart, ChatCompletionResponse } from '@/types/openai';
+import type { OpenAiProxyRequest } from '@/types/edge-functions';
 
 /**
  * Internal helper to call OpenAI API via Supabase Edge Function proxy.
  */
 async function callOpenAI(messages: ChatMessage[], responseFormat: "json_object" | "text" = "json_object"): Promise<ChatCompletionResponse> {
-  return invokeEdgeFunction<ChatCompletionResponse>('proxy-openai', {
+  return invokeEdgeFunction<ChatCompletionResponse, OpenAiProxyRequest>('proxy-openai', {
     messages,
     response_format: { type: responseFormat },
   });
