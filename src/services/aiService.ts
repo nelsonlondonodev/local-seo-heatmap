@@ -1,6 +1,7 @@
 import { supabase } from '@/lib/supabase';
 import { getErrorMessage } from '@/lib/errors';
 import { invokeEdgeFunction } from '@/lib/edgeFunctions';
+import { safeJsonParse } from '@/util/jsonUtils';
 import type { AIResponse, GeneratedGBPPost, PostPromptContent, StoredAIContent, ReviewReplyPrompt, GeneratedReviewReply, BioOptimizerPrompt, GeneratedBio } from '@/features/ai-optimization/types';
 import type { ChatMessage, ContentPart, ChatCompletionResponse } from '@/types/openai';
 
@@ -47,7 +48,10 @@ export const aiService = {
       ];
 
       const rawData = await callOpenAI(messages);
-      const aiContent = JSON.parse(rawData.choices[0].message.content);
+      const aiContent = safeJsonParse<{ content: string }>(
+        rawData.choices[0].message.content, 
+        { content: '' }
+      );
 
       return { 
         data: {
@@ -90,7 +94,10 @@ export const aiService = {
       ];
 
       const rawData = await callOpenAI(messages);
-      const aiContent = JSON.parse(rawData.choices[0].message.content);
+      const aiContent = safeJsonParse<{ content: string; usedKeywords?: string[] }>(
+        rawData.choices[0].message.content, 
+        { content: '', usedKeywords: [] }
+      );
 
       return { 
         data: {
@@ -148,7 +155,10 @@ export const aiService = {
       ];
 
       const rawData = await callOpenAI(messages);
-      const aiContent = JSON.parse(rawData.choices[0].message.content);
+      const aiContent = safeJsonParse<{ content: string; hashtags?: string[]; optimizedFilename?: string }>(
+        rawData.choices[0].message.content, 
+        { content: '', hashtags: [], optimizedFilename: '' }
+      );
 
       return { 
         data: {
