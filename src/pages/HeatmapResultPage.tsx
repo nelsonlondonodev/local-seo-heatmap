@@ -106,7 +106,8 @@ export function HeatmapResultPage() {
                   id: crypto.randomUUID(),
                   created_at: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
                   results_summary: {
-                    ...currentSummary,
+                    foundCount: currentSummary.foundCount,
+                    totalCount: currentSummary.totalCount,
                     avgRank: (currentSummary.avgRank || 10) + 5,
                     bestRank: (currentSummary.bestRank || 5) + 2
                   }
