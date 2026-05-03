@@ -8,6 +8,7 @@ import type { SerpItem } from '../types/dataForSeo';
 
 export function useTrackedKeywords(projectId: string | null) {
   const [keywords, setKeywords] = useState<TrackedKeyword[]>([]);
+  const [staleKeywords, setStaleKeywords] = useState<TrackedKeyword[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isUpdating, setIsUpdating] = useState<string | null>(null);
 
@@ -17,7 +18,17 @@ export function useTrackedKeywords(projectId: string | null) {
     try {
       const data = await keywordPersistenceService.getProjectKeywords(projectId);
       setKeywords(data);
-      return data; // Return data for immediate use in auto-update logic
+      
+      // Calcular pasivamente cuáles están desactualizadas (ej. > 7 días)
+      const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
+      const now = Date.now();
+      const stale = data.filter(kw => {
+        const lastUpdate = kw.latest_history ? new Date(kw.latest_history.created_at).getTime() : 0;
+        return (now - lastUpdate) > SEVEN_DAYS_MS;
+      });
+      setStaleKeywords(stale);
+
+      return data;
     } catch (error) {
       logger.error('[USE_TRACKED_KEYWORDS] Error fetching:', error);
     } finally {
@@ -57,35 +68,29 @@ export function useTrackedKeywords(projectId: string | null) {
   }, [fetchKeywords]);
 
   /**
-   * Automatically updates rankings that are older than 3 days or haven't been tracked yet.
+   * Actualiza masivamente las keywords desactualizadas, disparado manualmente por el usuario.
    */
-  const autoUpdateIfStale = useCallback(async (data: TrackedKeyword[], locationCode: number, targetUrl: string) => {
-    const THREE_DAYS_MS = 3 * 24 * 60 * 60 * 1000;
-    const now = Date.now();
+  const updateStaleKeywords = useCallback(async (locationCode: number, targetUrl: string) => {
+    if (staleKeywords.length === 0) return;
 
-    const staleKeywords = data.filter(kw => {
-      const lastUpdate = kw.latest_history ? new Date(kw.latest_history.created_at).getTime() : 0;
-      return (now - lastUpdate) > THREE_DAYS_MS;
-    });
-
-    if (staleKeywords.length > 0) {
-      toast.info(`Detectadas ${staleKeywords.length} keywords para actualización automática...`);
-      
-      // Update sequentially to manage API load
-      for (const kw of staleKeywords) {
-        await updateRank(kw.id, kw.keyword, locationCode, targetUrl, true);
-      }
-      
-      toast.success('Actualización automática completada.');
+    toast.info(`Iniciando actualización de ${staleKeywords.length} palabras clave...`);
+    
+    // Update sequentially to manage API load
+    for (const kw of staleKeywords) {
+      await updateRank(kw.id, kw.keyword, locationCode, targetUrl, true);
     }
-  }, [updateRank]);
+    
+    toast.success('Actualización masiva completada.');
+    // staleKeywords will be updated implicitly via the fetchKeywords call inside updateRank
+  }, [staleKeywords, updateRank]);
 
   return {
     keywords,
+    staleKeywords,
     isLoading,
     isUpdating,
     fetchKeywords,
     updateRank,
-    autoUpdateIfStale
+    updateStaleKeywords
   };
 }

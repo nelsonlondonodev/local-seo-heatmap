@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useTrackedKeywords } from '../hooks/useTrackedKeywords';
-import { BarChart, RefreshCcw, TrendingUp } from 'lucide-react';
+import { BarChart, RefreshCcw, TrendingUp, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Card, CardContent } from '@/components/ui/card';
@@ -21,28 +21,21 @@ interface MonitoringViewProps {
 export function MonitoringView({ projectId, onProjectSelect, projects, onProjectUpdate, onProjectsRefresh }: MonitoringViewProps) {
   const { 
     keywords, 
+    staleKeywords,
     isLoading, 
     isUpdating, 
     fetchKeywords, 
     updateRank,
-    autoUpdateIfStale 
+    updateStaleKeywords 
   } = useTrackedKeywords(projectId);
   
   const currentProject = projects.find(p => p.id === projectId);
 
   useEffect(() => {
     if (projectId) {
-      fetchKeywords().then(data => {
-        if (data && currentProject) {
-          autoUpdateIfStale(
-            data, 
-            currentProject.location_code || 0, 
-            currentProject.target_url || ''
-          );
-        }
-      });
+      void fetchKeywords();
     }
-  }, [projectId, fetchKeywords, autoUpdateIfStale, currentProject]);
+  }, [projectId, fetchKeywords]);
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -109,6 +102,30 @@ export function MonitoringView({ projectId, onProjectSelect, projects, onProject
           void onProjectsRefresh();
         }}
       />
+
+      {/* Smart Banner for Stale Keywords */}
+      {staleKeywords.length > 0 && (
+        <div className="bg-amber-500/10 border border-amber-500/30 rounded-2xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 animate-in fade-in zoom-in-95 duration-500">
+          <div className="flex items-start sm:items-center gap-3">
+            <div className="p-2 bg-amber-500/20 rounded-full shrink-0">
+              <AlertTriangle className="h-5 w-5 text-amber-600" />
+            </div>
+            <div>
+              <h4 className="font-bold text-amber-700 dark:text-amber-500 text-sm">Datos Desactualizados</h4>
+              <p className="text-sm text-amber-600/80 dark:text-amber-400/80 mt-0.5">
+                Tienes {staleKeywords.length} palabra(s) clave que no se escanean desde hace más de 7 días.
+              </p>
+            </div>
+          </div>
+          <Button 
+            onClick={() => updateStaleKeywords(currentProject?.location_code || 0, currentProject?.target_url || '')}
+            disabled={isUpdating !== null}
+            className="w-full sm:w-auto bg-amber-500 hover:bg-amber-600 text-white shadow-lg shadow-amber-500/20 shrink-0 font-bold"
+          >
+            {isUpdating ? 'Actualizando...' : 'Actualizar Ahora'}
+          </Button>
+        </div>
+      )}
 
       <Card className="border-none shadow-2xl bg-card/30 backdrop-blur-md rounded-3xl overflow-hidden">
         <CardContent className="p-0">
