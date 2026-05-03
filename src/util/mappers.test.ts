@@ -71,6 +71,7 @@ describe('mappers.ts', () => {
         prospect_email: 'john@example.com',
         created_at: mockDate,
         user_id: 'user-123',
+        agency_id: null,
         // JSON columns mocked
         points: [{ lat: 40.71, lng: -74.00, rank: 1 }],
         advertisers: ['Ad 1'],
@@ -103,6 +104,7 @@ describe('mappers.ts', () => {
         prospect_email: null,
         created_at: mockDate,
         user_id: 'user-1',
+        agency_id: null,
         points: null,
         advertisers: null,
         competitors: null,

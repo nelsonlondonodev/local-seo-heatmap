@@ -20,7 +20,7 @@ import { isAdvertiser } from '../features/heatmap/utils/textUtils';
 import { useBranding } from '@/features/branding';
 import { APP_CONFIG } from '@/config/constants';
 import type { Database } from '@/types/database';
-import { mapHeatmapToResult } from '@/util/mappers';
+import { mapHeatmapToResult, isResultsSummary } from '@/util/mappers';
 
 type HeatmapRecord = Database['public']['Tables']['heatmaps']['Row'];
 
@@ -32,18 +32,18 @@ export function HeatmapResultPage() {
   const { config: branding } = useBranding();
 
   const state = location.state as { heatmap?: HeatmapRecord } | null;
-  const heatmapRow = state?.heatmap;
+  const heatmap = state?.heatmap;
 
-  const result = useMemo(() => heatmapRow ? mapHeatmapToResult(heatmapRow) : null, [heatmapRow]);
+  const result = useMemo(() => heatmap ? mapHeatmapToResult(heatmap) : null, [heatmap]);
 
-  if (!heatmapRow || !result) {
+  if (!heatmap || !result) {
     return <Navigate to="/history" replace />;
   }
 
   const { config, points, advertisers, competitors, createdAt } = result;
   const center: [number, number] = [config.centerLat, config.centerLng];
-  const summary = isResultsSummary(heatmapRow.results_summary) ? heatmapRow.results_summary : { avgRank: 0, bestRank: null, foundCount: 0, totalCount: 0 };
-  const isTargetInAds = isAdvertiser(config.businessName, advertisers);
+  const summary = isResultsSummary(heatmap.results_summary) ? heatmap.results_summary : { avgRank: 0, bestRank: null, foundCount: 0, totalCount: 0 };
+  const isTargetInAds = isAdvertiser(config.businessName, advertisers || []);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('es-ES', {
@@ -102,7 +102,7 @@ export function HeatmapResultPage() {
                 const { supabase } = await import('@/lib/supabase');
                 const currentSummary = summary;
                 const mock = {
-                  ...heatmap,
+                  ...(heatmap as HeatmapRecord),
                   id: crypto.randomUUID(),
                   created_at: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
                   results_summary: {
@@ -143,11 +143,11 @@ export function HeatmapResultPage() {
             </CardHeader>
             <CardContent className="pt-6 space-y-6">
               <div className="space-y-4">
-                {heatmapRow.prospect_name && (
+                {heatmap.prospect_name && (
                   <StatRow 
                     icon={Target} 
                     label="Lead / Prospecto" 
-                    value={heatmapRow.prospect_name} 
+                    value={heatmap.prospect_name} 
                     colorClass="bg-primary/20 text-primary border border-primary/20" 
                   />
                 )}
@@ -177,12 +177,12 @@ export function HeatmapResultPage() {
                 />
               </div>
 
-              {heatmapRow.prospect_email && (
+              {heatmap.prospect_email && (
                 <div className="pt-4 border-t border-border/50">
                   <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider mb-2">Contacto del Lead</p>
                   <div className="flex items-center gap-2 text-sm font-medium bg-secondary/30 p-2 rounded-md">
                     <Mail className="h-4 w-4 text-primary" />
-                    {heatmapRow.prospect_email}
+                    {heatmap.prospect_email}
                   </div>
                 </div>
               )}
@@ -214,11 +214,11 @@ export function HeatmapResultPage() {
                 </div>
               </div>
 
-              {advertisers.length > 0 && (
+              {(advertisers || []).length > 0 && (
                 <div className="pt-3 border-t border-border/50">
-                  <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider mb-2">Competencia con Ads ({advertisers.length})</p>
+                  <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider mb-2">Competencia con Ads ({(advertisers || []).length})</p>
                   <div className="space-y-1.5 max-h-[120px] overflow-y-auto pr-1">
-                    {advertisers.map((ad, idx) => (
+                    {(advertisers || []).map((ad, idx) => (
                       <div key={idx} className="flex items-center gap-2 text-[11px] font-medium bg-secondary/20 p-1.5 rounded border border-transparent hover:border-amber-500/20 transition-colors">
                         <div className="h-1.5 w-1.5 rounded-full bg-amber-500" />
                         <span className="truncate">{ad}</span>
@@ -285,8 +285,8 @@ export function HeatmapResultPage() {
       </div>
 
       <SalesStrategyHub 
-        heatmap={result}
-        competitors={competitors}
+        heatmap={heatmap as HeatmapRecord}
+        competitors={competitors || []}
         itemVariants={fadeInUp}
       />
 
