@@ -39,9 +39,8 @@ export function safeCastArray<T>(data: unknown): T[] {
  * the database JSON storage and our strict frontend interfaces.
  */
 export function mapHeatmapToResult(row: HeatmapRow): HeatmapResult {
-  const summary = isResultsSummary(row.results_summary) 
-    ? row.results_summary 
-    : { avgRank: 0, bestRank: null, foundCount: 0, totalCount: 0 };
+  // Results summary is deliberately ignored here since HeatmapResult 
+  // interface does not use it. If needed, it would be added to the interface first.
 
   return {
     id: row.id,
