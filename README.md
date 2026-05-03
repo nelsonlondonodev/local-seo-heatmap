@@ -471,6 +471,17 @@ Hemos expandido el ecosistema de inteligencia SEO con un nuevo módulo dedicado 
 
 ---
 
+## 🚀 Pre-Production Quality & UX Edition (v1.7.0)
+
+Sesión enfocada en blindar la aplicación para el paso a producción mediante testing automatizado y mejoras críticas de experiencia de usuario:
+
+1.  **🧪 Vitest Testing Suite**: Implementación de pruebas unitarias y de componentes (React Testing Library) con 100% de cobertura en utilidades clave (`mappers`, `jsonUtils`, `exportUtils`) y validación de componentes interactivos (`DomainSearchForm`, `LocalVisibilityGraph`).
+2.  **🛡️ Integration Testing**: Creación de pruebas de integración end-to-end simuladas para `SiteAnalyzerPage`, garantizando que el flujo de exploración y consumo de créditos sea invulnerable a fallos estructurales.
+3.  **💳 API Credit Protection (Smart UX)**: Eliminación definitiva de "gastos fantasma" de la API de DataForSEO. Se reemplazó la recarga automática de posiciones por un *Smart Banner* que notifica al usuario cuando los datos están obsoletos, delegando la decisión de consumo de créditos a una actualización manual.
+4.  **🔧 Technical Debt Resolution**: Eliminación de errores críticos de compilación (Strict TypeScript) incluyendo fallos en propagación de JSON y corrección de advertencias dimensionales (Width/Height) del contenedor en gráficos de Recharts.
+
+---
+
 ## 🚦 Siguiente Enfoque (Next Steps)
 
 La arquitectura base está asegurada, permitiendo continuar con el perfeccionamiento de producto:
