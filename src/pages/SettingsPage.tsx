@@ -21,7 +21,8 @@ const itemVariants = { hidden: { opacity: 0, y: 12 }, visible: { opacity: 1, y: 
 export function SettingsPage() {
   const { user, role } = useAuth();
   const queryClient = useQueryClient();
-  const isOwnerOrAdmin = role === 'owner' || role === 'super-admin';
+  const isAgencyManagementAllowed = role === 'owner' || role === 'super-admin' || role === 'admin';
+  const isBillingAllowed = role === 'owner' || role === 'super-admin';
 
   // State for Agency Form
   const [agencyName, setAgencyName] = useState('');
@@ -31,14 +32,14 @@ export function SettingsPage() {
   const { data: agency, isLoading: isLoadingAgency } = useQuery({
     queryKey: ['my-agency', user?.id],
     queryFn: () => user?.id ? agencyService.getAgencyByOwnerId(user.id) : null,
-    enabled: !!user?.id && isOwnerOrAdmin,
+    enabled: !!user?.id && isAgencyManagementAllowed,
   });
 
   // Fetch Team Users
   const { data: teamUsers, isLoading: isLoadingTeam } = useQuery({
     queryKey: ['agency-users', agency?.id],
     queryFn: () => agency?.id ? agencyService.getAgencyUsers(agency.id) : [],
-    enabled: !!agency?.id && isOwnerOrAdmin,
+    enabled: !!agency?.id && isAgencyManagementAllowed,
   });
 
   // Populate form when agency data loads
@@ -79,9 +80,11 @@ export function SettingsPage() {
         <Tabs defaultValue="profile" className="space-y-6">
           <TabsList className="flex flex-wrap h-auto">
             <TabsTrigger value="profile" className="gap-1.5"><User className="h-3.5 w-3.5" />Perfil</TabsTrigger>
-            <TabsTrigger value="billing" className="gap-1.5"><CreditCard className="h-3.5 w-3.5" />Plan</TabsTrigger>
+            {isBillingAllowed && (
+              <TabsTrigger value="billing" className="gap-1.5"><CreditCard className="h-3.5 w-3.5" />Plan</TabsTrigger>
+            )}
             <TabsTrigger value="notifications" className="gap-1.5"><Bell className="h-3.5 w-3.5" />Notificaciones</TabsTrigger>
-            {isOwnerOrAdmin && (
+            {isAgencyManagementAllowed && (
               <>
                 <TabsTrigger value="agency" className="gap-1.5"><Building2 className="h-3.5 w-3.5" />Agencia (White Label)</TabsTrigger>
                 <TabsTrigger value="team" className="gap-1.5"><Users className="h-3.5 w-3.5" />Equipo</TabsTrigger>
@@ -100,19 +103,21 @@ export function SettingsPage() {
             </Card>
           </TabsContent>
 
-          <TabsContent value="billing">
-            <Card>
-              <CardHeader><CardTitle>Plan Actual</CardTitle><CardDescription>Gestiona tu suscripción</CardDescription></CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-center gap-3 rounded-lg border border-border p-4">
-                  <div className="flex-1"><p className="font-semibold">Plan Free</p><p className="text-sm text-muted-foreground">3 búsquedas diarias • Grid hasta 5×5</p></div>
-                  <Badge>Activo</Badge>
-                </div>
-                <Separator />
-                <Button variant="outline" className="gap-2"><CreditCard className="h-4 w-4" />Actualizar a Pro</Button>
-              </CardContent>
-            </Card>
-          </TabsContent>
+          {isBillingAllowed && (
+            <TabsContent value="billing">
+              <Card>
+                <CardHeader><CardTitle>Plan Actual</CardTitle><CardDescription>Gestiona tu suscripción</CardDescription></CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex items-center gap-3 rounded-lg border border-border p-4">
+                    <div className="flex-1"><p className="font-semibold">Plan Free</p><p className="text-sm text-muted-foreground">3 búsquedas diarias • Grid hasta 5×5</p></div>
+                    <Badge>Activo</Badge>
+                  </div>
+                  <Separator />
+                  <Button variant="outline" className="gap-2"><CreditCard className="h-4 w-4" />Actualizar a Pro</Button>
+                </CardContent>
+              </Card>
+            </TabsContent>
+          )}
 
           <TabsContent value="notifications">
             <Card>
@@ -121,7 +126,7 @@ export function SettingsPage() {
             </Card>
           </TabsContent>
 
-          {isOwnerOrAdmin && (
+          {isAgencyManagementAllowed && (
             <>
               <TabsContent value="agency">
                 <Card>
