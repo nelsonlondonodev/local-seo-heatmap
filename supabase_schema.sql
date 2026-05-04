@@ -73,6 +73,9 @@ CREATE POLICY "Owners can view their own agency"
 CREATE POLICY "SuperAdmins can view all profiles" 
   ON public.profiles FOR SELECT USING (public.is_super_admin());
 
+CREATE POLICY "SuperAdmins can update all profiles" 
+  ON public.profiles FOR UPDATE USING (public.is_super_admin());
+
 CREATE POLICY "Users can view their own profile" 
   ON public.profiles FOR SELECT USING (auth.uid() = id);
 
