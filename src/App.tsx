@@ -18,6 +18,7 @@ import { KeywordPage } from '@/pages/KeywordPage';
 import { HeatmapResultPage } from '@/pages/HeatmapResultPage';
 import { SettingsPage } from '@/pages/SettingsPage';
 import { SiteAnalyzerPage } from '@/pages/SiteAnalyzerPage';
+import { AdminPage } from '@/pages/AdminPage';
 import './index.css';
 
 const queryClient = new QueryClient({
@@ -79,6 +80,14 @@ const router = createBrowserRouter([
       { path: '/rank-tracker', element: <KeywordPage initialTab="monitoring" /> },
       { path: '/result', element: <HeatmapResultPage /> },
       { path: '/settings', element: <SettingsPage /> },
+      { 
+        path: '/admin', 
+        element: (
+          <ProtectedRoute allowedRoles={['super-admin']}>
+            <AdminPage />
+          </ProtectedRoute>
+        ) 
+      },
     ],
   },
   { path: '*', element: <Navigate to="/" replace /> },

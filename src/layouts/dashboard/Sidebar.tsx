@@ -1,8 +1,9 @@
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Map, History, Settings, X, ChevronRight, Sparkles, Search, TrendingUp, Target, Globe } from 'lucide-react';
+import { Map, History, Settings, X, ChevronRight, Sparkles, Search, TrendingUp, Target, Globe, ShieldAlert } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { useBranding } from '@/features/branding';
+import { useAuth } from '@/features/auth';
 import { UserSection } from './UserSection';
 
 const navItems = [
@@ -27,6 +28,12 @@ interface SidebarProps {
 export function Sidebar({ isOpen, onClose, onLogoutClick }: SidebarProps) {
   const location = useLocation();
   const { config } = useBranding();
+  const { role } = useAuth();
+
+  const itemsToRender = [...navItems];
+  if (role === 'super-admin') {
+    itemsToRender.push({ path: '/admin', label: 'Panel Admin', icon: ShieldAlert });
+  }
 
   return (
     <>
@@ -74,7 +81,7 @@ export function Sidebar({ isOpen, onClose, onLogoutClick }: SidebarProps) {
 
           {/* Navigation Items */}
           <nav className="flex-1 space-y-1 p-3">
-            {navItems.map((item) => {
+            {itemsToRender.map((item) => {
               const isActive = location.pathname === item.path;
               return (
                 <Link
