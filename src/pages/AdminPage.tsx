@@ -158,7 +158,7 @@ export function AdminPage() {
                         </TableCell>
                         <TableCell className="text-right">
                           <Select
-                            defaultValue={user.role || 'client'}
+                            value={user.role || 'client'}
                             onValueChange={(value) => handleRoleChange(user.id, value as UserRole)}
                             disabled={user.id === currentUser?.id}
                           >
