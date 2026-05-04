@@ -41,22 +41,29 @@ ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.heatmaps ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.agencies ENABLE ROW LEVEL SECURITY;
 
--- 5. Create Policies
+-- 5. Create Security Definer Functions
+CREATE OR REPLACE FUNCTION public.is_super_admin()
+RETURNS boolean AS $$
+BEGIN
+  RETURN EXISTS (
+    SELECT 1 FROM public.profiles 
+    WHERE id = auth.uid() AND role = 'super-admin'
+  );
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- 6. Create Policies
 
 -- Agencies Policies
 CREATE POLICY "SuperAdmins can do everything on agencies" 
-  ON public.agencies FOR ALL USING (
-    EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'super-admin')
-  );
+  ON public.agencies FOR ALL USING (public.is_super_admin());
 
 CREATE POLICY "Owners can view their own agency" 
   ON public.agencies FOR SELECT USING (owner_id = auth.uid());
 
 -- Profiles Policies
 CREATE POLICY "SuperAdmins can view all profiles" 
-  ON public.profiles FOR SELECT USING (
-    EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'super-admin')
-  );
+  ON public.profiles FOR SELECT USING (public.is_super_admin());
 
 CREATE POLICY "Users can view their own profile" 
   ON public.profiles FOR SELECT USING (auth.uid() = id);
@@ -66,9 +73,7 @@ CREATE POLICY "Users can update their own profile"
 
 -- Heatmaps Policies
 CREATE POLICY "SuperAdmins can view all heatmaps" 
-  ON public.heatmaps FOR SELECT USING (
-    EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'super-admin')
-  );
+  ON public.heatmaps FOR SELECT USING (public.is_super_admin());
 
 CREATE POLICY "Users can view their own heatmaps" 
   ON public.heatmaps FOR SELECT USING (auth.uid() = user_id);
@@ -87,7 +92,7 @@ CREATE POLICY "Users can create their own heatmaps"
 CREATE POLICY "Users can delete their own heatmaps" 
   ON public.heatmaps FOR DELETE USING (auth.uid() = user_id);
 
--- 6. Trigger: Automatically create a profile when a user signs up
+-- 7. Trigger: Automatically create a profile when a user signs up
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER AS $$
 BEGIN
