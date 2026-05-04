@@ -47,14 +47,18 @@ export const heatmapService = {
   },
 
   /**
-   * Retrieves all heatmaps for a specific user, ordered by creation date.
+   * Retrieves heatmaps based on role. Staff/Admins see all agency heatmaps, clients see their own.
    */
-  async getUserHeatmaps(userId: string) {
-    const { data, error } = await supabase
-      .from('heatmaps')
-      .select('*')
-      .eq('user_id', userId)
-      .order('created_at', { ascending: false });
+  async getUserHeatmaps(userId: string, role?: string, agencyId?: string | null) {
+    let query = supabase.from('heatmaps').select('*');
+
+    if (agencyId && ['owner', 'super-admin', 'admin', 'staff'].includes(role || '')) {
+      query = query.eq('agency_id', agencyId);
+    } else {
+      query = query.eq('user_id', userId);
+    }
+
+    const { data, error } = await query.order('created_at', { ascending: false });
 
     if (error) {
       console.error('[HEATMAP_SERVICE] Error fetching heatmaps:', error.message);

@@ -9,15 +9,15 @@ import { toast } from 'sonner';
  * Handles fetching, saving, and deleting heatmaps from Supabase.
  */
 export function useHeatmaps() {
-  const { user, profile } = useAuth();
+  const { user, profile, role } = useAuth();
   const queryClient = useQueryClient();
 
   // 1. Query to fetch the full history from the cloud
   const historyQuery = useQuery({
-    queryKey: ['heatmaps', user?.id],
+    queryKey: ['heatmaps', user?.id, profile?.agency_id],
     queryFn: () => {
       if (!user?.id) throw new Error('User not authenticated');
-      return heatmapService.getUserHeatmaps(user.id);
+      return heatmapService.getUserHeatmaps(user.id, role || undefined, profile?.agency_id);
     },
     enabled: !!user?.id,
     placeholderData: (previousData) => previousData, // Smooth transitions

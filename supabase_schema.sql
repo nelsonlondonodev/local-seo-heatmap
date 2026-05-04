@@ -73,6 +73,14 @@ CREATE POLICY "SuperAdmins can view all heatmaps"
 CREATE POLICY "Users can view their own heatmaps" 
   ON public.heatmaps FOR SELECT USING (auth.uid() = user_id);
 
+CREATE POLICY "Agency members can view all agency heatmaps" 
+  ON public.heatmaps FOR SELECT USING (
+    agency_id IN (
+      SELECT agency_id FROM public.profiles 
+      WHERE id = auth.uid() AND role IN ('owner', 'admin', 'staff')
+    )
+  );
+
 CREATE POLICY "Users can create their own heatmaps" 
   ON public.heatmaps FOR INSERT WITH CHECK (auth.uid() = user_id);
 
