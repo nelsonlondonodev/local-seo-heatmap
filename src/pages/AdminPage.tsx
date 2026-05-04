@@ -9,6 +9,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { adminService } from '@/services/adminService';
+import { useAuth } from '@/features/auth';
 import type { UserRole } from '@/features/auth/types';
 
 const ROLES: { value: UserRole; label: string }[] = [
@@ -21,6 +22,7 @@ const ROLES: { value: UserRole; label: string }[] = [
 
 export function AdminPage() {
   const queryClient = useQueryClient();
+  const { user: currentUser } = useAuth();
 
   const { data: metrics, isLoading: isLoadingMetrics } = useQuery({
     queryKey: ['admin-metrics'],
@@ -158,6 +160,7 @@ export function AdminPage() {
                           <Select
                             defaultValue={user.role || 'client'}
                             onValueChange={(value) => handleRoleChange(user.id, value as UserRole)}
+                            disabled={user.id === currentUser?.id}
                           >
                             <SelectTrigger className="w-[140px] ml-auto h-8 text-xs">
                               <SelectValue placeholder="Cambiar rol" />
