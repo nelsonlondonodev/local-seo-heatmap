@@ -482,6 +482,18 @@ Sesión enfocada en blindar la aplicación para el paso a producción mediante t
 
 ---
 
+## 🚀 Role-Based Access Control & White Label Administration (v1.8.0)
+
+Hemos construido e integrado un ecosistema completo de jerarquías y administración de agencias (White Label), preparando la aplicación para su lanzamiento SaaS definitivo:
+
+1.  **🛡️ Jerarquía de Roles Estricta**: Creación de un sistema de 5 niveles (`super-admin`, `owner`, `admin`, `staff`, `client`), protegiendo todas las vistas de la aplicación y garantizando el aislamiento de datos entre agencias.
+2.  **👑 Panel de Super Administración (`/admin`)**: Dashboard global con métricas en tiempo real y capacidad de alterar roles en caliente mediante mutaciones controladas por React Query.
+3.  **🏢 White Label Agency Settings**: Módulo exclusivo en la Configuración para que los `owner` y `admin` definan el nombre y logo de su agencia, y gestionen a su propio equipo (`staff` y `client`).
+4.  **🔒 Master RLS Refactor (Security Definer)**: Parcheo avanzado de Row Level Security (RLS) en Supabase para evitar bucles infinitos de recursión, utilizando funciones `SECURITY DEFINER` protegidas con las mejores prácticas de la industria.
+5.  **🔗 Historial Compartido (Agency-Level)**: Modificación quirúrgica del hook de historiales y servicios para permitir que los miembros de una agencia vean los mapas de calor creados por su equipo, mientras los clientes solo ven los suyos.
+
+---
+
 ## 🚦 Siguiente Enfoque (Next Steps)
 
 La arquitectura base está asegurada, permitiendo continuar con el perfeccionamiento de producto:
