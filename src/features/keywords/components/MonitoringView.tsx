@@ -1,23 +1,13 @@
-import { useEffect } from 'react';
-import { useTrackedKeywords } from '../hooks/useTrackedKeywords';
-import { BarChart, RefreshCcw, TrendingUp, AlertTriangle, Trash2 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { useState } from 'react';
-import { DeleteProjectModal } from './DeleteProjectModal';
-import { Skeleton } from '@/components/ui/skeleton';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
-import { Loader2 } from 'lucide-react';
+import { useTrackedKeywords } from '../hooks/useTrackedKeywords';
+import { BarChart, RefreshCcw, TrendingUp, Trash2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { ConfirmDeleteModal } from '@/components/shared/ConfirmDeleteModal';
 import { Card, CardContent } from '@/components/ui/card';
 import { KeywordRankRow } from './KeywordRankRow';
 import { ProjectSelector } from './ProjectSelector';
 import { SiteSettingsCard } from './SiteSettingsCard';
+import { Skeleton } from '@/components/ui/skeleton';
 
 import type { KeywordProject } from '../types/keywords';
 
@@ -125,15 +115,23 @@ export function MonitoringView({
         </div>
       </div>
 
-      <DeleteProjectModal 
+      <ConfirmDeleteModal
         isOpen={isDeleting}
         onOpenChange={setIsDeleting}
-        projectName={currentProject?.name || ''}
         onConfirm={async () => {
           if (projectId) {
             await onProjectDelete(projectId);
           }
         }}
+        title="¿Eliminar este proyecto?"
+        description={
+          <>
+            Estás a punto de eliminar <span className="text-foreground font-bold">"{currentProject?.name}"</span>. 
+            Esta acción borrará permanentemente todas las palabras clave y el historial de rankings asociado.
+          </>
+        }
+        confirmText="Sí, eliminar proyecto"
+        loadingText="Eliminando proyecto..."
       />
 
       <SiteSettingsCard 
@@ -226,57 +224,25 @@ export function MonitoringView({
         </>
       )}
 
-      {/* Delete Keyword Confirmation Modal */}
-      <Dialog open={!!keywordToDelete} onOpenChange={(open) => !open && setKeywordToDelete(null)}>
-        <DialogContent className="sm:max-w-[400px] border-none shadow-2xl p-0 overflow-hidden rounded-[2rem]">
-          <div className="bg-destructive/5 p-8 pb-4">
-            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-destructive/10 text-destructive animate-in zoom-in duration-300">
-              <AlertTriangle className="h-8 w-8" />
-            </div>
-            <DialogHeader>
-              <DialogTitle className="text-2xl font-black text-center text-foreground tracking-tight">¿Dejar de rastrear?</DialogTitle>
-              <DialogDescription className="text-center text-muted-foreground pt-3 font-medium leading-relaxed px-2">
-                ¿Estás seguro de eliminar <span className="text-foreground font-bold">"{keywordToDelete?.keyword}"</span>? Se borrará todo el historial de posiciones de esta palabra clave.
-              </DialogDescription>
-            </DialogHeader>
-          </div>
-          
-          <DialogFooter className="p-8 pt-4 flex flex-col gap-3 sm:flex-col sm:space-x-0">
-            <Button
-              className="w-full rounded-2xl h-14 font-black text-base bg-destructive text-destructive-foreground shadow-lg shadow-destructive/20 hover:scale-[1.02] active:scale-[0.98] transition-all"
-              onClick={async () => {
-                if (keywordToDelete) {
-                  setIsDeletingKeyword(true);
-                  try {
-                    await deleteKeyword(keywordToDelete.id);
-                    setKeywordToDelete(null);
-                  } finally {
-                    setIsDeletingKeyword(false);
-                  }
-                }
-              }}
-              disabled={isDeletingKeyword}
-            >
-              {isDeletingKeyword ? (
-                <>
-                  <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                  Eliminando...
-                </>
-              ) : (
-                'Sí, eliminar palabra clave'
-              )}
-            </Button>
-            <Button
-              variant="ghost"
-              onClick={() => setKeywordToDelete(null)}
-              className="w-full rounded-2xl h-14 font-bold text-muted-foreground hover:bg-secondary hover:text-foreground transition-all"
-              disabled={isDeletingKeyword}
-            >
-              Cancelar
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <ConfirmDeleteModal
+        isOpen={!!keywordToDelete}
+        onOpenChange={(open) => !open && setKeywordToDelete(null)}
+        onConfirm={async () => {
+          if (keywordToDelete) {
+            await deleteKeyword(keywordToDelete.id);
+            setKeywordToDelete(null);
+          }
+        }}
+        title="¿Dejar de rastrear?"
+        description={
+          <>
+            ¿Estás seguro de eliminar <span className="text-foreground font-bold">"{keywordToDelete?.keyword}"</span>? 
+            Se borrará todo el historial de posiciones de esta palabra clave.
+          </>
+        }
+        confirmText="Sí, eliminar palabra clave"
+        loadingText="Eliminando..."
+      />
     </div>
   );
 }

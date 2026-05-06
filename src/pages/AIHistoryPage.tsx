@@ -6,15 +6,7 @@ import { useAuth } from '@/features/auth/hooks/useAuth';
 import { useAIHistory } from '@/features/ai-optimization/hooks/useAIHistory';
 import { AIContentCard } from '@/features/ai-optimization/components/AIContentCard';
 import { useState } from 'react';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
+import { ConfirmDeleteModal } from '@/components/shared/ConfirmDeleteModal';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -118,47 +110,24 @@ export function AIHistoryPage() {
         </motion.div>
       )}
 
-      {/* Delete Confirmation Modal */}
-      <Dialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
-        <DialogContent className="sm:max-w-[400px] border-none shadow-2xl p-0 overflow-hidden rounded-[2rem]">
-          <div className="bg-destructive/5 p-8 pb-4">
-            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-destructive/10 text-destructive animate-in zoom-in duration-300">
-              <AlertTriangle className="h-8 w-8" />
-            </div>
-            <DialogHeader>
-              <DialogTitle className="text-2xl font-black text-center text-foreground tracking-tight">¿Eliminar contenido?</DialogTitle>
-              <DialogDescription className="text-center text-muted-foreground pt-3 font-medium leading-relaxed px-2">
-                Esta acción es <span className="text-destructive font-bold">irreversible</span>. El contenido se borrará permanentemente de tu biblioteca.
-              </DialogDescription>
-            </DialogHeader>
-          </div>
-          
-          <DialogFooter className="p-8 pt-4 flex flex-col gap-3 sm:flex-col sm:space-x-0">
-            <Button
-              className="w-full rounded-2xl h-14 font-black text-base bg-destructive text-destructive-foreground shadow-lg shadow-destructive/20 hover:scale-[1.02] active:scale-[0.98] transition-all"
-              onClick={confirmDelete}
-              disabled={isDeleting}
-            >
-              {isDeleting ? (
-                <>
-                  <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                  Borrando de la nube...
-                </>
-              ) : (
-                'Sí, eliminar para siempre'
-              )}
-            </Button>
-            <Button
-              variant="ghost"
-              onClick={() => setDeleteConfirmOpen(false)}
-              className="w-full rounded-2xl h-14 font-bold text-muted-foreground hover:bg-secondary hover:text-foreground transition-all"
-              disabled={isDeleting}
-            >
-              Cancelar, mantener copia
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <ConfirmDeleteModal 
+        isOpen={deleteConfirmOpen}
+        onOpenChange={setDeleteConfirmOpen}
+        onConfirm={async () => {
+          if (idToDelete) {
+            await deleteContent(idToDelete);
+            setIdToDelete(null);
+          }
+        }}
+        title="¿Eliminar contenido?"
+        description={
+          <>
+            Esta acción es <span className="text-destructive font-bold">irreversible</span>. El contenido se borrará permanentemente de tu biblioteca.
+          </>
+        }
+        confirmText="Sí, eliminar para siempre"
+        loadingText="Borrando de la nube..."
+      />
     </motion.div>
   );
 }

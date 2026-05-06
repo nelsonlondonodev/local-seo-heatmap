@@ -7,15 +7,8 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
 import { useHeatmaps } from '@/hooks';
+import { ConfirmDeleteModal } from '@/components/shared/ConfirmDeleteModal';
 import type { ResultsSummary } from '@/types';
 import type { Database } from '@/types/database';
 import { isResultsSummary, safeCastArray } from '@/util/mappers';
@@ -190,47 +183,19 @@ export function HistoryPage() {
         </div>
       )}
 
-      {/* Delete Confirmation Modal */}
-      <Dialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
-        <DialogContent className="sm:max-w-[400px] border-none shadow-2xl p-0 overflow-hidden">
-          <div className="bg-destructive/5 p-6 pb-0">
-            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10 text-destructive animate-in zoom-in duration-300">
-              <AlertTriangle className="h-7 w-7" />
-            </div>
-            <DialogHeader>
-              <DialogTitle className="text-2xl font-bold text-center text-primary">Confirmar eliminación</DialogTitle>
-              <DialogDescription className="text-center text-muted-foreground pt-2">
-                ¿Estás seguro de que quieres eliminar este análisis? Esta acción es <span className="text-destructive font-bold">irreversible</span> y los datos se perderán de tu historial.
-              </DialogDescription>
-            </DialogHeader>
-          </div>
-          
-          <DialogFooter className="p-6 pt-8 flex sm:flex-col gap-3">
-            <Button
-              className="w-full rounded-xl h-12 font-bold text-base bg-red-600 text-white shadow-lg shadow-red-600/20 hover:bg-red-700 transition-all active:scale-[0.98]"
-              onClick={confirmDelete}
-              disabled={isDeleting}
-            >
-              {isDeleting ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Eliminando...
-                </>
-              ) : (
-                'Sí, eliminar permanentemente'
-              )}
-            </Button>
-            <Button
-              variant="ghost"
-              onClick={() => setDeleteConfirmOpen(false)}
-              className="w-full rounded-xl h-12 font-semibold text-muted-foreground hover:bg-secondary transition-all"
-              disabled={isDeleting}
-            >
-              No, mantener análisis
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <ConfirmDeleteModal 
+        isOpen={deleteConfirmOpen}
+        onOpenChange={setDeleteConfirmOpen}
+        onConfirm={confirmDelete}
+        title="¿Eliminar este análisis?"
+        description={
+          <>
+            ¿Estás seguro de que quieres eliminar este análisis? Esta acción es <span className="text-destructive font-bold">irreversible</span> y los datos se perderán de tu historial.
+          </>
+        }
+        confirmText="Sí, eliminar permanentemente"
+        loadingText="Eliminando..."
+      />
     </motion.div>
   );
 }
