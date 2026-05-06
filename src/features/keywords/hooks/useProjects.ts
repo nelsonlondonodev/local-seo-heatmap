@@ -54,10 +54,23 @@ export function useProjects() {
     ));
   }, []);
 
+  const deleteProject = async (projectId: string) => {
+    try {
+      await keywordPersistenceService.deleteProject(projectId);
+      toast.success('Proyecto eliminado correctamente');
+      await fetchProjects();
+      return true;
+    } catch (error) {
+      toast.error('No se pudo eliminar el proyecto');
+      return false;
+    }
+  };
+
   return {
     projects,
     isLoading,
     createProject,
+    deleteProject,
     refreshProjects: fetchProjects,
     updateProjectLocal
   };

@@ -13,7 +13,7 @@ interface KeywordPageProps {
 export function KeywordPage({ initialTab = 'discovery' }: KeywordPageProps) {
   const [searchParams, setSearchParams] = useSearchParams();
   const selectedProjectId = searchParams.get('projectId');
-  const { projects, refreshProjects, updateProjectLocal } = useProjects();
+  const { projects, refreshProjects, updateProjectLocal, deleteProject } = useProjects();
   
   const setSelectedProjectId = (id: string | null) => {
     if (id) {
@@ -54,6 +54,12 @@ export function KeywordPage({ initialTab = 'discovery' }: KeywordPageProps) {
             projects={projects}
             onProjectUpdate={updateProjectLocal}
             onProjectsRefresh={refreshProjects}
+            onProjectDelete={async (id) => {
+              const success = await deleteProject(id);
+              if (success) {
+                setSelectedProjectId(null);
+              }
+            }}
           />
         )}
       </div>

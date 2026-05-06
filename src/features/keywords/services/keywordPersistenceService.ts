@@ -191,5 +191,20 @@ export const keywordPersistenceService = {
         latest_history
       };
     });
+  },
+
+  /**
+   * Deletes a project and all its associated data (cascade).
+   */
+  async deleteProject(projectId: string): Promise<void> {
+    const { error } = await supabase
+      .from('keyword_projects')
+      .delete()
+      .eq('id', projectId);
+
+    if (error) {
+      logger.error('[KW_PERSISTENCE] Error deleting project:', error.message);
+      throw error;
+    }
   }
 };

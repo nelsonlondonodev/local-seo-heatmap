@@ -1,7 +1,9 @@
 import { useEffect } from 'react';
 import { useTrackedKeywords } from '../hooks/useTrackedKeywords';
-import { BarChart, RefreshCcw, TrendingUp, AlertTriangle } from 'lucide-react';
+import { BarChart, RefreshCcw, TrendingUp, AlertTriangle, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useState } from 'react';
+import { DeleteProjectModal } from './DeleteProjectModal';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Card, CardContent } from '@/components/ui/card';
 import { KeywordRankRow } from './KeywordRankRow';
@@ -16,9 +18,17 @@ interface MonitoringViewProps {
   projects: KeywordProject[];
   onProjectUpdate: (projectId: string, updates: Partial<KeywordProject>) => void;
   onProjectsRefresh: () => Promise<void>;
+  onProjectDelete: (projectId: string) => Promise<void>;
 }
 
-export function MonitoringView({ projectId, onProjectSelect, projects, onProjectUpdate, onProjectsRefresh }: MonitoringViewProps) {
+export function MonitoringView({ 
+  projectId, 
+  onProjectSelect, 
+  projects, 
+  onProjectUpdate, 
+  onProjectsRefresh,
+  onProjectDelete
+}: MonitoringViewProps) {
   const { 
     keywords, 
     staleKeywords,
@@ -28,6 +38,8 @@ export function MonitoringView({ projectId, onProjectSelect, projects, onProject
     updateRank,
     updateStaleKeywords 
   } = useTrackedKeywords(projectId);
+  
+  const [isDeleting, setIsDeleting] = useState(false);
   
   const currentProject = projects.find(p => p.id === projectId);
 
@@ -79,16 +91,34 @@ export function MonitoringView({ projectId, onProjectSelect, projects, onProject
             Ubicación Base: <span className="text-brand-primary font-medium">{currentProject?.location_name || 'No definida'}</span>
           </p>
         </div>
-        <Button 
-          variant="outline" 
-          onClick={() => fetchKeywords()} 
-          disabled={isLoading}
-          className="rounded-xl border-2 hover:bg-brand-primary/10"
-        >
-          <RefreshCcw className={`h-4 w-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
-          Refrescar Rankings
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button 
+            variant="outline" 
+            onClick={() => fetchKeywords()} 
+            disabled={isLoading}
+            className="rounded-xl border-2 hover:bg-brand-primary/10"
+          >
+            <RefreshCcw className={`h-4 w-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
+            Refrescar Rankings
+          </Button>
+          <Button 
+            variant="outline" 
+            size="icon"
+            onClick={() => setIsDeleting(true)}
+            title="Eliminar Proyecto"
+            className="rounded-xl border-2 border-destructive/20 text-destructive hover:bg-destructive hover:text-destructive-foreground transition-all"
+          >
+            <Trash2 className="h-4 w-4" />
+          </Button>
+        </div>
       </div>
+
+      <DeleteProjectModal 
+        isOpen={isDeleting}
+        onOpenChange={setIsDeleting}
+        projectName={currentProject?.name || ''}
+        onConfirm={() => projectId && onProjectDelete(projectId)}
+      />
 
       <SiteSettingsCard 
         key={projectId}
