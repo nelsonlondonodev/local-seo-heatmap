@@ -10,8 +10,7 @@ export default defineConfig(({ mode }) => {
   if (mode === 'production') {
     const required = [
       'VITE_SUPABASE_URL', 
-      'VITE_SUPABASE_ANON_KEY', 
-      'VITE_SERPER_API_KEY'
+      'VITE_SUPABASE_ANON_KEY'
     ];
     
     required.forEach(key => {

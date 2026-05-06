@@ -1,4 +1,4 @@
-import { corsHeaders, handleCorsPreflightRequest } from '../_shared/cors.ts';
+import { corsHeaders, handleCorsPreflightRequest, buildCorsHeaders } from '../_shared/cors.ts';
 import { getAuthenticatedUser, unauthorizedResponse } from '../_shared/auth.ts';
 
 /**
@@ -9,14 +9,22 @@ import { getAuthenticatedUser, unauthorizedResponse } from '../_shared/auth.ts';
  * Expected body: { textQuery: string, maxResultCount?: number }
  */
 Deno.serve(async (req: Request) => {
+  const origin = req.headers.get('Origin');
+  const dynamicCors = buildCorsHeaders(origin);
+
   if (req.method === 'OPTIONS') {
-    return handleCorsPreflightRequest();
+    return handleCorsPreflightRequest(origin);
+  }
+
+  // Reject requests from disallowed origins
+  if (!dynamicCors['Access-Control-Allow-Origin']) {
+    return new Response('Forbidden', { status: 403 });
   }
 
   // 1. Authenticate
   const user = await getAuthenticatedUser(req);
   if (!user) {
-    return unauthorizedResponse(corsHeaders);
+    return unauthorizedResponse(dynamicCors);
   }
 
   // 2. Read secret
@@ -24,7 +32,7 @@ Deno.serve(async (req: Request) => {
   if (!apiKey) {
     return new Response(
       JSON.stringify({ error: 'Server misconfiguration: Missing GOOGLE_MAPS_API_KEY secret.' }),
-      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      { status: 500, headers: { ...dynamicCors, 'Content-Type': 'application/json' } }
     );
   }
 
@@ -35,7 +43,7 @@ Deno.serve(async (req: Request) => {
     if (!textQuery || typeof textQuery !== 'string') {
       return new Response(
         JSON.stringify({ error: 'Invalid payload: "textQuery" string is required.' }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        { status: 400, headers: { ...dynamicCors, 'Content-Type': 'application/json' } }
       );
     }
 
@@ -57,13 +65,13 @@ Deno.serve(async (req: Request) => {
 
     return new Response(JSON.stringify(data), {
       status: googleResponse.status,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      headers: { ...dynamicCors, 'Content-Type': 'application/json' },
     });
   } catch (error) {
     console.error('[proxy-places] Error:', error);
     return new Response(
       JSON.stringify({ error: 'Internal proxy error.' }),
-      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      { status: 500, headers: { ...dynamicCors, 'Content-Type': 'application/json' } }
     );
   }
 });
