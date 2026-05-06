@@ -4,7 +4,7 @@ import type { Database, Json } from '@/types/database';
 import type { KeywordProject, TrackedKeyword, KeywordHistoryEntry } from '../types/keywords';
 
 // Exact type definitions derived from Database schema
-type DBProject = Database['public']['Tables']['keyword_projects']['Row'];
+
 type DBTrackedKeyword = Database['public']['Tables']['tracked_keywords']['Row'];
 type DBHistoryEntry = Database['public']['Tables']['keyword_history']['Row'];
 

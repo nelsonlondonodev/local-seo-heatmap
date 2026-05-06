@@ -41,7 +41,7 @@ export function MonitoringView({
   
   const [isDeleting, setIsDeleting] = useState(false);
   const [keywordToDelete, setKeywordToDelete] = useState<{ id: string, keyword: string } | null>(null);
-  const [isDeletingKeyword, setIsDeletingKeyword] = useState(false);
+
   
   const currentProject = projects.find(p => p.id === projectId);
 

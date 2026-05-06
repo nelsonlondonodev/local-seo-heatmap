@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Trophy, Target, Eye, EyeOff } from 'lucide-react';
+import { Trophy, Target, Eye } from 'lucide-react';
 import type { GridPoint } from '@/types';
 
 interface VisibilityScoreProps {

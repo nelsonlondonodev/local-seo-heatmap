@@ -39,8 +39,8 @@ describe('exportUtils', () => {
       const removeChildSpy = vi.spyOn(document.body, 'removeChild');
       
       const mockAnchor = document.createElement('a');
-      const clickSpy = vi.spyOn(mockAnchor, 'click').mockImplementation(() => {});
-      const setAttributeSpy = vi.spyOn(mockAnchor, 'setAttribute');
+      vi.spyOn(mockAnchor, 'click').mockImplementation(() => {});
+      vi.spyOn(mockAnchor, 'setAttribute');
       
       createElementSpy.mockReturnValue(mockAnchor);
 
@@ -72,7 +72,7 @@ describe('exportUtils', () => {
       
       expect(blobSpy).toHaveBeenCalled();
       // Inspecting the payload sent to Blob
-      const blobCallArg = blobSpy.mock.calls[0][0][0] as string;
+      const blobCallArg = blobSpy.mock.calls[0]?.[0]?.[0] as string;
       expect(blobCallArg).toContain('Notes Header,Value Header');
       expect(blobCallArg).toContain('"Hello, World"');
       expect(blobCallArg).toContain('"""quoted"""'); // testing quote escaping

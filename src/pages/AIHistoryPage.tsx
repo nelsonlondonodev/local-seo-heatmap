@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Sparkles, Search, MessageSquareMore, AlertTriangle, Loader2 } from 'lucide-react';
+import { Sparkles, Search, MessageSquareMore } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useAuth } from '@/features/auth/hooks/useAuth';
@@ -27,27 +27,15 @@ const itemVariants = {
 export function AIHistoryPage() {
   const { user } = useAuth();
   const { filteredHistory, isLoading, searchTerm, setSearchTerm, deleteContent } = useAIHistory(user?.id);
-  
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [idToDelete, setIdToDelete] = useState<string | null>(null);
-  const [isDeleting, setIsDeleting] = useState(false);
 
   const handleDeleteClick = (id: string) => {
     setIdToDelete(id);
     setDeleteConfirmOpen(true);
   };
 
-  const confirmDelete = async () => {
-    if (!idToDelete) return;
-    setIsDeleting(true);
-    try {
-      await deleteContent(idToDelete);
-      setDeleteConfirmOpen(false);
-      setIdToDelete(null);
-    } finally {
-      setIsDeleting(false);
-    }
-  };
+
 
   return (
     <motion.div

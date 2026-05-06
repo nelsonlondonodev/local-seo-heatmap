@@ -28,7 +28,7 @@ export function ProjectSelector({ onProjectSelect, selectedProjectId, projects }
       <div className="flex gap-2">
         <Select 
           value={selectedProjectId || "none"} 
-          onValueChange={handleProjectLink}
+          onValueChange={(val: string | null) => val && handleProjectLink(val)}
         >
           <SelectTrigger className="h-10 rounded-xl bg-card border-2 transition-all hover:border-brand-primary/50">
             <div className="flex items-center gap-2 overflow-hidden">

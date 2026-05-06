@@ -1,5 +1,5 @@
 import { supabase } from '@/lib/supabase';
-import type { HeatmapResult, GridPoint, ResultsSummary } from '@/types';
+import type { HeatmapResult, GridPoint } from '@/types';
 import type { Database, Json } from '@/types/database';
 import { isResultsSummary } from '@/util/mappers';
 

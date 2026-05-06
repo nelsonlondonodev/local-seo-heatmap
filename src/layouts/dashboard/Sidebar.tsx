@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Map, History, Settings, X, ChevronRight, Sparkles, Search, TrendingUp, Target, Globe, ShieldAlert } from 'lucide-react';
+import { Map, History, Settings, X, ChevronRight, Sparkles, TrendingUp, Target, Globe, ShieldAlert } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { useBranding } from '@/features/branding';
 import { useAuth } from '@/features/auth';

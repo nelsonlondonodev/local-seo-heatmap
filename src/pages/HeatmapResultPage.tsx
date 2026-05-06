@@ -5,7 +5,7 @@ import { staggerContainer, fadeInUp } from '@/config/animations';
 import { 
   MapPin, Search, Calendar, Grid3X3, ArrowLeft, Plus, 
   Printer, Target, Mail, Megaphone, CheckCircle2, 
-  AlertCircle, Trophy, Trash2, AlertTriangle, Loader2 
+  AlertCircle, Trophy, Trash2 
 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -33,7 +33,7 @@ export function HeatmapResultPage() {
   const location = useLocation();
   const navigate = useNavigate();
   const { config: branding } = useBranding();
-  const { deleteHeatmap, isDeleting } = useHeatmaps();
+  const { deleteHeatmap } = useHeatmaps();
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
 
   const state = location.state as { heatmap?: HeatmapRecord } | null;

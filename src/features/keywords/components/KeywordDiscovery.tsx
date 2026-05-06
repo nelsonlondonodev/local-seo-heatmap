@@ -8,7 +8,7 @@ import { DiscoverySearchForm } from './DiscoverySearchForm';
 import { DiscoveryResultsTable } from './DiscoveryResultsTable';
 import { SaveKeywordModal } from './SaveKeywordModal';
 import { useKeywordDiscovery } from '../hooks/useKeywordDiscovery';
-import { useProjects } from '../hooks/useProjects';
+import type { KeywordProject } from '../types/keywords';
 import type { DataForSeoLocation } from '../types/dataForSeo';
 
 /**

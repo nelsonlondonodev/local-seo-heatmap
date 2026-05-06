@@ -1,5 +1,5 @@
 import { supabase } from '@/lib/supabase';
-import type { Database } from '@/types/database';
+
 import type { UserProfile } from './profileService';
 import type { UserRole } from '@/features/auth/types';
 

@@ -1,15 +1,15 @@
 import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { staggerList, fadeInUp } from '@/config/animations';
 import { useNavigate } from 'react-router-dom';
-import { History, Search, Calendar, Grid3X3, MapPin, Trash2, ExternalLink, AlertTriangle, Loader2, Target, Mail, Megaphone } from 'lucide-react';
+import { History, Search, Calendar, Grid3X3, MapPin, Trash2, ExternalLink, Target, Mail, Megaphone } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useHeatmaps } from '@/hooks';
 import { ConfirmDeleteModal } from '@/components/shared/ConfirmDeleteModal';
-import type { ResultsSummary } from '@/types';
+
 import type { Database } from '@/types/database';
 import { isResultsSummary, safeCastArray } from '@/util/mappers';
 

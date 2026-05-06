@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect, useRef, useCallback } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+
 import { toast } from 'sonner';
 import { MAP_DEFAULT_CENTER, COST_PER_POINT } from '@/config/constants';
 import { generateGridPoints } from '../utils/grid';
@@ -13,11 +13,8 @@ import type { GridSize, HeatmapConfig, GridPoint } from '@/types';
  */
 export function useHeatmap() {
   // 1. Context & Navigation Hooks
-  const location = useLocation();
-  const navigate = useNavigate();
-  const { saveHeatmap } = useHeatmaps();
 
-  // 2. Persistent Refs
+  const { saveHeatmap } = useHeatmaps();
   const hasLoadedHistory = useRef(false);
 
   // 3. Application State

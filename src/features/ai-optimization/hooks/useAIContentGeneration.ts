@@ -67,11 +67,11 @@ export function useAIContentGeneration({ businessName, keyword, location, heatma
         await aiService.saveGeneratedContent({
           userId: user.id,
           heatmapId,
-          business_name: businessName,
+          businessName: businessName,
           keyword,
           content: response.data.content,
           hashtags: response.data.hashtags,
-          optimized_filename: response.data.optimizedFilename
+          optimizedFilename: response.data.optimizedFilename
         });
         toast.success('Guardado en el historial');
       } else {

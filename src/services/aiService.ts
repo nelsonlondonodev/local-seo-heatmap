@@ -25,7 +25,7 @@ export const aiService = {
    */
   async generateReviewReply(prompt: ReviewReplyPrompt): Promise<AIResponse<GeneratedReviewReply>> {
     try {
-      const messages = [
+      const messages: ChatMessage[] = [
         {
           role: 'system',
           content: `Eres un experto en atención al cliente y reputación online para negocios locales. 
@@ -74,7 +74,7 @@ export const aiService = {
    */
   async generateLocalBio(prompt: BioOptimizerPrompt): Promise<AIResponse<GeneratedBio>> {
     try {
-      const messages = [
+      const messages: ChatMessage[] = [
         {
           role: 'system',
           content: `Eres un experto en Copywriting y SEO Local para perfiles de Google Business (GBP). 
@@ -137,7 +137,7 @@ export const aiService = {
         });
       }
 
-      const messages = [
+      const messages: ChatMessage[] = [
         {
           role: 'system',
           content: `Eres un consultor experto en SEO Local y Vision AI. 

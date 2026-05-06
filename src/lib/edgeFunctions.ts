@@ -22,7 +22,7 @@ export async function invokeEdgeFunction<TResponse = unknown, TRequest = Record<
     };
   }
 
-  const { data, error } = await supabase.functions.invoke(functionName, options);
+  const { data, error } = await supabase.functions.invoke(functionName, options as any);
 
   if (error) {
     console.error(`[EdgeFunction] Error invoking ${functionName}:`, error);
@@ -42,5 +42,5 @@ export async function invokeEdgeFunction<TResponse = unknown, TRequest = Record<
     throw new Error(error.message || `Edge Function error: ${functionName}`);
   }
 
-  return data as T;
+  return data as TResponse;
 }

@@ -1,10 +1,9 @@
 import { useSearchParams } from 'react-router-dom';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Search, TrendingUp } from 'lucide-react';
+
 import { KeywordDiscovery } from '@/features/keywords/components/KeywordDiscovery';
 import { MonitoringView } from '@/features/keywords/components/MonitoringView';
 import { useProjects } from '@/features/keywords/hooks/useProjects';
-import { useEffect, useCallback } from 'react';
+import { useCallback } from 'react';
 
 interface KeywordPageProps {
   initialTab?: 'discovery' | 'monitoring';
