@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import { motion } from 'framer-motion';
-import { Calendar, FileText, Check, Copy, MessageSquareMore } from 'lucide-react';
+import { Calendar, FileText, Check, Copy, Trash2 } from 'lucide-react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -9,12 +8,13 @@ import type { StoredAIContent } from '../types';
 
 interface AIContentCardProps {
   item: StoredAIContent;
+  onDelete: () => void;
 }
 
 /**
  * Reusable Card component for AI history items.
  */
-export function AIContentCard({ item }: AIContentCardProps) {
+export function AIContentCard({ item, onDelete }: AIContentCardProps) {
   const [copied, setCopied] = useState(false);
 
   const copyToClipboard = () => {
@@ -31,7 +31,7 @@ export function AIContentCard({ item }: AIContentCardProps) {
   };
 
   return (
-    <Card className="h-full border-primary/10 hover:border-primary/30 transition-all hover:shadow-md group">
+    <Card className="h-full border-primary/10 hover:border-primary/30 transition-all hover:shadow-md group relative">
       <CardHeader className="pb-3 border-b border-border/50">
         <div className="flex justify-between items-start gap-4">
           <div className="space-y-1">
@@ -44,9 +44,22 @@ export function AIContentCard({ item }: AIContentCardProps) {
               {formatDate(item.created_at)}
             </div>
           </div>
-          <Badge variant="secondary" className="text-[10px] font-bold uppercase tracking-tight">
-            {item.keyword}
-          </Badge>
+          <div className="flex flex-col items-end gap-2">
+            <Badge variant="secondary" className="text-[10px] font-bold uppercase tracking-tight">
+              {item.keyword}
+            </Badge>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={(e) => {
+                e.stopPropagation();
+                onDelete();
+              }}
+              className="h-7 w-7 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 opacity-0 group-hover:opacity-100 transition-opacity"
+            >
+              <Trash2 className="h-3.5 w-3.5" />
+            </Button>
+          </div>
         </div>
       </CardHeader>
       <CardContent className="pt-4 flex flex-col h-[calc(100%-80px)]">

@@ -5,11 +5,21 @@ import { staggerContainer, fadeInUp } from '@/config/animations';
 import { 
   MapPin, Search, Calendar, Grid3X3, ArrowLeft, Plus, 
   Printer, Target, Mail, Megaphone, CheckCircle2, 
-  AlertCircle, Trophy 
+  AlertCircle, Trophy, Trash2, AlertTriangle, Loader2 
 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { useState } from 'react';
+import { useHeatmaps } from '@/hooks';
 import { HeatmapMap, HeatmapLegend } from '@/features/heatmap';
 import { StatRow } from '@/features/heatmap/components/ui/StatRow';
 import { SalesStrategyHub } from '@/features/heatmap/components/ui/SalesStrategyHub';
@@ -30,6 +40,8 @@ export function HeatmapResultPage() {
   const location = useLocation();
   const navigate = useNavigate();
   const { config: branding } = useBranding();
+  const { deleteHeatmap, isDeleting } = useHeatmaps();
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
 
   const state = location.state as { heatmap?: HeatmapRecord } | null;
   const heatmap = state?.heatmap;
@@ -126,6 +138,14 @@ export function HeatmapResultPage() {
           <Button variant="secondary" onClick={() => window.print()} className="gap-2 font-semibold">
             <Printer className="h-4 w-4" />
             Imprimir Reporte
+          </Button>
+          <Button 
+            variant="ghost" 
+            onClick={() => setDeleteConfirmOpen(true)} 
+            className="gap-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10 font-bold"
+          >
+            <Trash2 className="h-4 w-4" />
+            Eliminar
           </Button>
           <Button onClick={() => navigate('/dashboard')} className="gap-2 focus:ring-primary/20 transition-all font-bold">
             <Plus className="h-4 w-4" />
@@ -319,6 +339,52 @@ export function HeatmapResultPage() {
       <div className="print-footer">
         {branding.name} — Reporte de Inteligencia Local generado el {formatDate(heatmap.created_at)}
       </div>
+
+      {/* Delete Confirmation Modal */}
+      <Dialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
+        <DialogContent className="sm:max-w-[400px] border-none shadow-2xl p-0 overflow-hidden rounded-[2rem]">
+          <div className="bg-destructive/5 p-8 pb-4">
+            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-destructive/10 text-destructive animate-in zoom-in duration-300">
+              <AlertTriangle className="h-8 w-8" />
+            </div>
+            <DialogHeader>
+              <DialogTitle className="text-2xl font-black text-center text-foreground tracking-tight">¿Eliminar este análisis?</DialogTitle>
+              <DialogDescription className="text-center text-muted-foreground pt-3 font-medium leading-relaxed px-2">
+                Estás visualizando el análisis de <span className="text-foreground font-bold">"{config.businessName}"</span>. 
+                Si lo eliminas, desaparecerá de tu historial permanentemente.
+              </DialogDescription>
+            </DialogHeader>
+          </div>
+          
+          <DialogFooter className="p-8 pt-4 flex flex-col gap-3 sm:flex-col sm:space-x-0">
+            <Button
+              className="w-full rounded-2xl h-14 font-black text-base bg-destructive text-destructive-foreground shadow-lg shadow-destructive/20 hover:scale-[1.02] active:scale-[0.98] transition-all"
+              onClick={async () => {
+                await deleteHeatmap(heatmap.id);
+                navigate('/history', { replace: true });
+              }}
+              disabled={isDeleting}
+            >
+              {isDeleting ? (
+                <>
+                  <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                  Eliminando del historial...
+                </>
+              ) : (
+                'Sí, eliminar análisis'
+              )}
+            </Button>
+            <Button
+              variant="ghost"
+              onClick={() => setDeleteConfirmOpen(false)}
+              className="w-full rounded-2xl h-14 font-bold text-muted-foreground hover:bg-secondary hover:text-foreground transition-all"
+              disabled={isDeleting}
+            >
+              Cancelar
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </motion.div>
   );
 }

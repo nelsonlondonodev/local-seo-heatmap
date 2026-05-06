@@ -224,5 +224,20 @@ export const keywordPersistenceService = {
     }
 
     return (data || []) as KeywordProject[];
+  },
+
+  /**
+   * Deletes a tracked keyword and its history.
+   */
+  async deleteTrackedKeyword(keywordId: string): Promise<void> {
+    const { error } = await supabase
+      .from('tracked_keywords')
+      .delete()
+      .eq('id', keywordId);
+
+    if (error) {
+      logger.error('[KW_PERSISTENCE] Error deleting keyword:', error.message);
+      throw error;
+    }
   }
 };

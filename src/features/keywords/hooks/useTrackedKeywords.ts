@@ -84,6 +84,18 @@ export function useTrackedKeywords(projectId: string | null) {
     // staleKeywords will be updated implicitly via the fetchKeywords call inside updateRank
   }, [staleKeywords, updateRank]);
 
+  const deleteKeyword = useCallback(async (keywordId: string) => {
+    try {
+      await keywordPersistenceService.deleteTrackedKeyword(keywordId);
+      toast.success('Palabra clave eliminada del seguimiento');
+      await fetchKeywords();
+      return true;
+    } catch (error) {
+      toast.error('No se pudo eliminar la palabra clave');
+      return false;
+    }
+  }, [fetchKeywords]);
+
   return {
     keywords,
     staleKeywords,
@@ -91,6 +103,7 @@ export function useTrackedKeywords(projectId: string | null) {
     isUpdating,
     fetchKeywords,
     updateRank,
-    updateStaleKeywords
+    updateStaleKeywords,
+    deleteKeyword
   };
 }

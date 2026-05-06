@@ -33,11 +33,24 @@ export function useAIHistory(userId?: string) {
     item.content.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const deleteContent = async (contentId: string) => {
+    const response = await aiService.deleteGeneratedContent(contentId);
+    if (!response.error) {
+      toast.success('Contenido eliminado');
+      await loadHistory();
+      return true;
+    } else {
+      toast.error(response.error);
+      return false;
+    }
+  };
+
   return {
     filteredHistory,
     isLoading,
     searchTerm,
     setSearchTerm,
-    refreshHistory: loadHistory
+    refreshHistory: loadHistory,
+    deleteContent
   };
 }

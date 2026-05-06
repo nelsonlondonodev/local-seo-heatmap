@@ -228,5 +228,23 @@ export const aiService = {
       console.error('[GET_AI_HISTORY_ERROR]:', error);
       return { error: 'No se pudo cargar el historial de contenidos.' };
     }
+  },
+
+  /**
+   * Deletes a specific AI-generated content entry.
+   */
+  async deleteGeneratedContent(contentId: string): Promise<{ error?: string }> {
+    try {
+      const { error } = await supabase
+        .from('ai_generated_content')
+        .delete()
+        .eq('id', contentId);
+
+      if (error) throw error;
+      return {};
+    } catch (error: unknown) {
+      console.error('[DELETE_AI_CONTENT_ERROR]:', error);
+      return { error: 'No se pudo eliminar el contenido del historial.' };
+    }
   }
 };

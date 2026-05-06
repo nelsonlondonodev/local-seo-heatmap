@@ -1,10 +1,20 @@
 import { motion } from 'framer-motion';
-import { Sparkles, Search, MessageSquareMore } from 'lucide-react';
+import { Sparkles, Search, MessageSquareMore, AlertTriangle, Loader2 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import { useAIHistory } from '@/features/ai-optimization/hooks/useAIHistory';
 import { AIContentCard } from '@/features/ai-optimization/components/AIContentCard';
+import { useState } from 'react';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -21,13 +31,31 @@ const itemVariants = {
 
 /**
  * AI Content Library Page.
- * Refactored surgically:
- * - Data fetching and filtering moved to useAIHistory hook.
- * - Card rendering moved to AIContentCard atomic component.
  */
 export function AIHistoryPage() {
   const { user } = useAuth();
-  const { filteredHistory, isLoading, searchTerm, setSearchTerm } = useAIHistory(user?.id);
+  const { filteredHistory, isLoading, searchTerm, setSearchTerm, deleteContent } = useAIHistory(user?.id);
+  
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [idToDelete, setIdToDelete] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleDeleteClick = (id: string) => {
+    setIdToDelete(id);
+    setDeleteConfirmOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!idToDelete) return;
+    setIsDeleting(true);
+    try {
+      await deleteContent(idToDelete);
+      setDeleteConfirmOpen(false);
+      setIdToDelete(null);
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   return (
     <motion.div
@@ -68,7 +96,10 @@ export function AIHistoryPage() {
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {filteredHistory.map((item) => (
             <motion.div key={item.id} variants={itemVariants}>
-              <AIContentCard item={item} />
+              <AIContentCard 
+                item={item} 
+                onDelete={() => handleDeleteClick(item.id)}
+              />
             </motion.div>
           ))}
         </div>
@@ -86,6 +117,48 @@ export function AIHistoryPage() {
           </p>
         </motion.div>
       )}
+
+      {/* Delete Confirmation Modal */}
+      <Dialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
+        <DialogContent className="sm:max-w-[400px] border-none shadow-2xl p-0 overflow-hidden rounded-[2rem]">
+          <div className="bg-destructive/5 p-8 pb-4">
+            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-destructive/10 text-destructive animate-in zoom-in duration-300">
+              <AlertTriangle className="h-8 w-8" />
+            </div>
+            <DialogHeader>
+              <DialogTitle className="text-2xl font-black text-center text-foreground tracking-tight">¿Eliminar contenido?</DialogTitle>
+              <DialogDescription className="text-center text-muted-foreground pt-3 font-medium leading-relaxed px-2">
+                Esta acción es <span className="text-destructive font-bold">irreversible</span>. El contenido se borrará permanentemente de tu biblioteca.
+              </DialogDescription>
+            </DialogHeader>
+          </div>
+          
+          <DialogFooter className="p-8 pt-4 flex flex-col gap-3 sm:flex-col sm:space-x-0">
+            <Button
+              className="w-full rounded-2xl h-14 font-black text-base bg-destructive text-destructive-foreground shadow-lg shadow-destructive/20 hover:scale-[1.02] active:scale-[0.98] transition-all"
+              onClick={confirmDelete}
+              disabled={isDeleting}
+            >
+              {isDeleting ? (
+                <>
+                  <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                  Borrando de la nube...
+                </>
+              ) : (
+                'Sí, eliminar para siempre'
+              )}
+            </Button>
+            <Button
+              variant="ghost"
+              onClick={() => setDeleteConfirmOpen(false)}
+              className="w-full rounded-2xl h-14 font-bold text-muted-foreground hover:bg-secondary hover:text-foreground transition-all"
+              disabled={isDeleting}
+            >
+              Cancelar, mantener copia
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </motion.div>
   );
 }

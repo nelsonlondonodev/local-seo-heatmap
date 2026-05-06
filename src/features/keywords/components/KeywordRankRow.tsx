@@ -1,4 +1,4 @@
-import { RefreshCcw, TrendingUp, TrendingDown, Minus } from 'lucide-react';
+import { RefreshCcw, TrendingUp, TrendingDown, Minus, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 
@@ -8,9 +8,10 @@ interface KeywordRankRowProps {
   kw: TrackedKeyword;
   isUpdating: boolean;
   onUpdate: (id: string, keyword: string) => void;
+  onDelete: () => void;
 }
 
-export function KeywordRankRow({ kw, isUpdating, onUpdate }: KeywordRankRowProps) {
+export function KeywordRankRow({ kw, isUpdating, onUpdate, onDelete }: KeywordRankRowProps) {
   const getRankChange = (change: number | null | undefined) => {
     if (!change || change === 0) return <Minus className="h-3 w-3 text-muted-foreground" />;
     if (change > 0) return (
@@ -59,15 +60,25 @@ export function KeywordRankRow({ kw, isUpdating, onUpdate }: KeywordRankRowProps
         </span>
       </td>
       <td className="px-6 py-5 text-right">
-        <Button
-          size="sm"
-          variant="ghost"
-          className="rounded-xl hover:bg-brand-primary hover:text-primary-foreground transition-all"
-          disabled={isUpdating}
-          onClick={() => onUpdate(kw.id, kw.keyword)}
-        >
-          <RefreshCcw className={`h-4 w-4 ${isUpdating ? 'animate-spin' : ''}`} />
-        </Button>
+        <div className="flex items-center justify-end gap-2">
+          <Button
+            size="sm"
+            variant="ghost"
+            className="rounded-xl hover:bg-brand-primary hover:text-primary-foreground transition-all"
+            disabled={isUpdating}
+            onClick={() => onUpdate(kw.id, kw.keyword)}
+          >
+            <RefreshCcw className={`h-4 w-4 ${isUpdating ? 'animate-spin' : ''}`} />
+          </Button>
+          <Button
+            size="sm"
+            variant="ghost"
+            className="rounded-xl text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all opacity-0 group-hover:opacity-100"
+            onClick={onDelete}
+          >
+            <Trash2 className="h-4 w-4" />
+          </Button>
+        </div>
       </td>
     </tr>
   );
