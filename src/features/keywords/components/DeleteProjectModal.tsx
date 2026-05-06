@@ -1,4 +1,5 @@
-import { AlertTriangle, Trash2, XCircle } from 'lucide-react';
+import { useState } from 'react';
+import { AlertTriangle, Trash2, XCircle, Loader2 } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -13,7 +14,7 @@ import { Badge } from '@/components/ui/badge';
 interface DeleteProjectModalProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
-  onConfirm: () => void;
+  onConfirm: () => Promise<void>;
   projectName: string;
 }
 
@@ -26,6 +27,18 @@ export function DeleteProjectModal({
   onConfirm,
   projectName,
 }: DeleteProjectModalProps) {
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleConfirm = async () => {
+    setIsDeleting(true);
+    try {
+      await onConfirm();
+      onOpenChange(false);
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[480px] p-0 overflow-hidden border-none shadow-2xl">
@@ -70,20 +83,23 @@ export function DeleteProjectModal({
           <Button 
             variant="ghost" 
             onClick={() => onOpenChange(false)}
+            disabled={isDeleting}
             className="font-semibold text-muted-foreground hover:bg-background"
           >
             Cancelar, mantener proyecto
           </Button>
           <Button 
             variant="destructive"
-            onClick={() => {
-              onOpenChange(false);
-              onConfirm();
-            }}
+            onClick={handleConfirm}
+            disabled={isDeleting}
             className="gap-2 font-bold px-8 shadow-lg shadow-destructive/20"
           >
-            <Trash2 className="h-4 w-4" />
-            Eliminar Definitivamente
+            {isDeleting ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Trash2 className="h-4 w-4" />
+            )}
+            {isDeleting ? 'Eliminando...' : 'Eliminar Definitivamente'}
           </Button>
         </DialogFooter>
       </DialogContent>

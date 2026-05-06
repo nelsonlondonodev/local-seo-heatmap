@@ -206,5 +206,23 @@ export const keywordPersistenceService = {
       logger.error('[KW_PERSISTENCE] Error deleting project:', error.message);
       throw error;
     }
+  },
+
+  /**
+   * Fetches all projects for a specific user.
+   */
+  async getUserProjects(userId: string): Promise<KeywordProject[]> {
+    const { data, error } = await supabase
+      .from('keyword_projects')
+      .select('*')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      logger.error('[KW_PERSISTENCE] Error fetching user projects:', error.message);
+      throw error;
+    }
+
+    return (data || []) as KeywordProject[];
   }
 };

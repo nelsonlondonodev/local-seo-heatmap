@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback } from 'react';
-import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/features/auth';
 import { keywordPersistenceService } from '../services/keywordPersistenceService';
 import { toast } from 'sonner';
@@ -13,14 +12,8 @@ export function useProjects() {
   const fetchProjects = useCallback(async () => {
     if (!user) return;
     try {
-      const { data } = await supabase
-        .from('keyword_projects')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false });
-      
-      const typedData = data as KeywordProject[] | null;
-      setProjects(typedData || []);
+      const data = await keywordPersistenceService.getUserProjects(user.id);
+      setProjects(data);
     } catch (error) {
       console.error('Error fetching projects:', error);
     } finally {
@@ -32,7 +25,13 @@ export function useProjects() {
     fetchProjects();
   }, [fetchProjects]);
 
-  const createProject = async (name: string, locationCode?: number, locationName?: string, countryCode?: string, targetUrl?: string) => {
+  const createProject = useCallback(async (
+    name: string, 
+    locationCode?: number, 
+    locationName?: string, 
+    countryCode?: string, 
+    targetUrl?: string
+  ) => {
     if (!name.trim() || !user) return null;
     setIsLoading(true);
     try {
@@ -46,7 +45,7 @@ export function useProjects() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [user, fetchProjects]);
 
   const updateProjectLocal = useCallback((projectId: string, updates: Partial<KeywordProject>) => {
     setProjects(prev => prev.map(p => 
@@ -54,7 +53,7 @@ export function useProjects() {
     ));
   }, []);
 
-  const deleteProject = async (projectId: string) => {
+  const deleteProject = useCallback(async (projectId: string) => {
     try {
       await keywordPersistenceService.deleteProject(projectId);
       toast.success('Proyecto eliminado correctamente');
@@ -64,7 +63,7 @@ export function useProjects() {
       toast.error('No se pudo eliminar el proyecto');
       return false;
     }
-  };
+  }, [fetchProjects]);
 
   return {
     projects,
