@@ -4,7 +4,7 @@ import { Search, TrendingUp } from 'lucide-react';
 import { KeywordDiscovery } from '@/features/keywords/components/KeywordDiscovery';
 import { MonitoringView } from '@/features/keywords/components/MonitoringView';
 import { useProjects } from '@/features/keywords/hooks/useProjects';
-import { useEffect } from 'react';
+import { useEffect, useCallback } from 'react';
 
 interface KeywordPageProps {
   initialTab?: 'discovery' | 'monitoring';
@@ -54,12 +54,12 @@ export function KeywordPage({ initialTab = 'discovery' }: KeywordPageProps) {
             projects={projects}
             onProjectUpdate={updateProjectLocal}
             onProjectsRefresh={refreshProjects}
-            onProjectDelete={async (id) => {
+            onProjectDelete={useCallback(async (id: string) => {
               const success = await deleteProject(id);
               if (success) {
                 setSelectedProjectId(null);
               }
-            }}
+            }, [deleteProject, setSelectedProjectId])}
           />
         )}
       </div>

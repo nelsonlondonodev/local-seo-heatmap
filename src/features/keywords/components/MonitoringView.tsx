@@ -117,7 +117,11 @@ export function MonitoringView({
         isOpen={isDeleting}
         onOpenChange={setIsDeleting}
         projectName={currentProject?.name || ''}
-        onConfirm={() => projectId && onProjectDelete(projectId)}
+        onConfirm={async () => {
+          if (projectId) {
+            await onProjectDelete(projectId);
+          }
+        }}
       />
 
       <SiteSettingsCard 
