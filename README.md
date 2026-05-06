@@ -492,6 +492,16 @@ Hemos construido e integrado un ecosistema completo de jerarquías y administrac
 4.  **🔒 Master RLS Refactor (Security Definer)**: Parcheo avanzado de Row Level Security (RLS) en Supabase para evitar bucles infinitos de recursión, utilizando funciones `SECURITY DEFINER` protegidas con las mejores prácticas de la industria.
 5.  **🔗 Historial Compartido (Agency-Level)**: Modificación quirúrgica del hook de historiales y servicios para permitir que los miembros de una agencia vean los mapas de calor creados por su equipo, mientras los clientes solo ven los suyos.
 
+## 🚀 Production Deployment & Security Hardening (v1.9.0)
+
+Hito alcanzado en el lanzamiento oficial y blindaje de infraestructura para producción:
+
+1.  **📦 Vercel Production Release**: Despliegue exitoso en `local-seo-heatmap-six.vercel.app` con configuración de **SPA Routing** optimizada en `vercel.json`, resolviendo errores 404 mediante reglas de reescritura nativas.
+2.  **🛡️ Security Headers & CSP**: Implementación de una política de seguridad de contenido (**Content-Security-Policy**) estricta junto con headers de protección industrial (`X-Frame-Options`, `X-Content-Type-Options`, `Referrer-Policy`) para mitigar ataques XSS y Clickjacking.
+3.  **🔒 Dynamic CORS Origin Validation**: Blindaje de las Edge Functions de Supabase. Ahora los proxies (`proxy-openai`, `proxy-serper`, etc.) solo aceptan peticiones desde el dominio de producción y localhost, bloqueando accesos no autorizados con **403 Forbidden**.
+4.  **💉 TypeScript Strict Compliance (Final)**: Limpieza quirúrgica de errores de tipado, importaciones huérfanas y variables no utilizadas que bloqueaban el pipeline de construcción de producción.
+5.  **🧼 Zero-Exposure API Strategy**: Eliminación definitiva de cualquier rastro de API Keys en el código fuente del cliente (incluyendo `VITE_SERPER_API_KEY`), delegando la totalidad de la inteligencia y secretos al entorno seguro de Supabase Secrets.
+
 ---
 
 ## 🚦 Siguiente Enfoque (Next Steps)
