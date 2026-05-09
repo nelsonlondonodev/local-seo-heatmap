@@ -1,12 +1,11 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Map, Eye, EyeOff, Loader2, Mail, Lock } from 'lucide-react';
+import { Eye, EyeOff, Loader2, Mail, Lock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { useAuth } from '@/features/auth';
-import { useBranding } from '@/features/branding';
+import { AuthInput } from './AuthInput';
+import { AuthBrand } from './AuthBrand';
 
 interface LoginFormProps {
   from: string;
@@ -14,7 +13,6 @@ interface LoginFormProps {
 
 export function LoginForm({ from }: LoginFormProps) {
   const { signIn, signInWithGoogle } = useAuth();
-  const { config } = useBranding();
   const navigate = useNavigate();
 
   const [email, setEmail] = useState('');
@@ -40,12 +38,8 @@ export function LoginForm({ from }: LoginFormProps) {
   return (
     <div className="flex w-full flex-col justify-center px-8 lg:w-1/2">
       <div className="mx-auto w-full max-w-md">
-        {/* Mobile Logo */}
-        <div className="mb-10 flex lg:hidden items-center gap-3 justify-center">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary shadow-lg shadow-primary/20">
-            <Map className="h-6 w-6 text-white" />
-          </div>
-          <span className="text-2xl font-black tracking-tighter text-white">{config.name}</span>
+        <div className="mb-10 flex lg:hidden justify-center">
+          <AuthBrand />
         </div>
 
         <motion.div
@@ -67,48 +61,41 @@ export function LoginForm({ from }: LoginFormProps) {
               </motion.div>
             )}
 
-            <div className="space-y-2">
-              <Label htmlFor="email" className="text-xs font-black uppercase tracking-widest text-slate-500 ml-1">Email</Label>
-              <div className="relative">
-                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="tu@email.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  className="h-14 rounded-2xl bg-white/5 border-white/10 pl-11 focus:border-primary/50 focus:ring-primary/20 transition-all text-white font-medium"
-                />
-              </div>
-            </div>
+            <AuthInput
+              id="email"
+              label="Email"
+              type="email"
+              placeholder="tu@email.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              icon={Mail}
+              autoComplete="email"
+            />
 
-            <div className="space-y-2">
-              <div className="flex items-center justify-between ml-1">
-                <Label htmlFor="password" className="text-xs font-black uppercase tracking-widest text-slate-500">Contraseña</Label>
-                <Link to="/forgot-password" size="sm" className="text-[10px] font-black uppercase tracking-widest text-primary hover:underline">
-                  ¿Olvidaste la clave?
-                </Link>
-              </div>
-              <div className="relative">
-                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
-                <Input
-                  id="password"
-                  type={showPassword ? 'text' : 'password'}
-                  placeholder="••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  className="h-14 rounded-2xl bg-white/5 border-white/10 pl-11 pr-12 focus:border-primary/50 focus:ring-primary/20 transition-all text-white font-medium"
-                />
+            <AuthInput
+              id="password"
+              label="Contraseña"
+              type={showPassword ? 'text' : 'password'}
+              placeholder="••••••••"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              icon={Lock}
+              autoComplete="current-password"
+              rightElement={
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white transition-colors"
+                  className="text-slate-500 hover:text-white transition-colors"
                 >
                   {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                 </button>
-              </div>
+              }
+            />
+
+            <div className="flex justify-end pr-1">
+              <Link to="/forgot-password" size="sm" className="text-[10px] font-black uppercase tracking-widest text-primary hover:underline">
+                ¿Olvidaste la clave?
+              </Link>
             </div>
 
             <Button 
@@ -123,7 +110,7 @@ export function LoginForm({ from }: LoginFormProps) {
           <div className="relative my-10">
             <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-white/5"></div></div>
             <div className="relative flex justify-center text-[10px] uppercase tracking-widest font-black text-slate-500">
-              <span className="bg-[#030712] px-4">O continuar con</span>
+              <span className="bg-[#030712] px-4">O continúa con</span>
             </div>
           </div>
 
