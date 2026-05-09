@@ -1,4 +1,4 @@
-import React, { ReactNode, ChangeEvent, ComponentType } from 'react';
+import type { ReactNode, ChangeEvent, ComponentType } from 'react';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 
