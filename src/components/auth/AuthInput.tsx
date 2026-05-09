@@ -1,7 +1,6 @@
-import { ReactNode } from 'react';
+import React, { ReactNode, ChangeEvent, ComponentType } from 'react';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
-import type { LucideIcon } from 'lucide-react';
 
 interface AuthInputProps {
   id: string;
@@ -9,8 +8,8 @@ interface AuthInputProps {
   type: string;
   placeholder: string;
   value: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  icon: LucideIcon;
+  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  icon: ComponentType<{ className?: string }>;
   rightElement?: ReactNode;
   required?: boolean;
   autoComplete?: string;
