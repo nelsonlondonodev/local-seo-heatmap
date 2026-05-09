@@ -142,6 +142,19 @@
     }
 }
 
+@layer utilities {
+  .glass-morphism {
+    @apply bg-background/60 backdrop-blur-xl border-white/10 dark:border-white/5;
+  }
+  .text-gradient {
+    @apply bg-gradient-to-br from-foreground via-foreground/90 to-foreground/70 bg-clip-text text-transparent;
+  }
+  .bg-grid-pattern {
+    background-image: radial-gradient(circle, var(--border) 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+}
+
 /** 
  * SEO Report Print Optimization
  */
