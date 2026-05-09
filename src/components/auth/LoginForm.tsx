@@ -93,7 +93,7 @@ export function LoginForm({ from }: LoginFormProps) {
             />
 
             <div className="flex justify-end pr-1">
-              <Link to="/forgot-password" size="sm" className="text-[10px] font-black uppercase tracking-widest text-primary hover:underline">
+              <Link to="/forgot-password" className="text-[10px] font-black uppercase tracking-widest text-primary hover:underline">
                 ¿Olvidaste la clave?
               </Link>
             </div>

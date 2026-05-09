@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import type { Variants } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { ArrowRight, MousePointer2, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -6,7 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { MapMockup } from './MapMockup';
 
 export function Hero() {
-  const revealVariants = {
+  const revealVariants: Variants = {
     hidden: { opacity: 0, y: 40 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } },
   };
