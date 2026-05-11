@@ -1,4 +1,5 @@
-import { Search, Crosshair, Grid3X3, Zap, Layers, LucideIcon } from 'lucide-react';
+import { Search, Crosshair, Grid3X3, Zap, Layers } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import {

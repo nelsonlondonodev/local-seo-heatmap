@@ -1,7 +1,8 @@
 import { motion } from 'framer-motion';
 import { fadeInUp } from '@/config/animations';
 import { Card, CardContent } from '@/components/ui/card';
-import { History, TrendingUp, Target, ShieldCheck, LucideIcon } from 'lucide-react';
+import { History, TrendingUp, Target, ShieldCheck } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import { useHeatmaps } from '@/hooks';
 import { useMemo } from 'react';
 import { isResultsSummary } from '@/util/mappers';
