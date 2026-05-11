@@ -158,6 +158,38 @@ function CenterMarker({ position, businessName }: { position: [number, number], 
   );
 }
 
+/**
+ * Map Controls (Zoom / Fullscreen)
+ */
+function MapControls({ 
+  isFullscreen, 
+  onToggleFullscreen, 
+  onRecenter 
+}: { 
+  isFullscreen: boolean; 
+  onToggleFullscreen: () => void; 
+  onRecenter: () => void;
+}) {
+  return (
+    <div className="absolute right-4 top-4 z-[1000] flex flex-col gap-2">
+      <Button 
+        variant="secondary" size="icon" 
+        className="h-10 w-10 bg-white/90 backdrop-blur-md shadow-xl hover:bg-white border-white/20 rounded-xl text-zinc-900 transition-all hover:scale-105 active:scale-95"
+        onClick={onToggleFullscreen}
+      >
+        {isFullscreen ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
+      </Button>
+      <Button 
+        variant="secondary" size="icon" 
+        className="h-10 w-10 bg-white/90 backdrop-blur-md shadow-xl hover:bg-white border-white/20 rounded-xl text-zinc-900 transition-all hover:scale-105 active:scale-95"
+        onClick={onRecenter}
+      >
+        <Crosshair className="h-4 w-4" />
+      </Button>
+    </div>
+  );
+}
+
 export function HeatmapMap({ center, zoom, points, businessName, radiusKm, onMapClick }: HeatmapMapProps) {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -177,6 +209,10 @@ export function HeatmapMap({ center, zoom, points, businessName, radiusKm, onMap
     else await document.exitFullscreen();
   };
 
+  const handleRecenter = () => {
+    mapRef.current?.flyTo(center, zoom, { duration: 1.5 });
+  };
+
   return (
     <div 
       ref={containerRef}
@@ -185,23 +221,11 @@ export function HeatmapMap({ center, zoom, points, businessName, radiusKm, onMap
         isFullscreen ? "rounded-none" : ""
       )}
     >
-      {/* MAP CONTROLS OVERLAY */}
-      <div className="absolute right-4 top-4 z-[1000] flex flex-col gap-2">
-        <Button 
-          variant="secondary" size="icon" 
-          className="h-10 w-10 bg-white/90 backdrop-blur-md shadow-xl hover:bg-white border-white/20 rounded-xl text-zinc-900 transition-all hover:scale-105 active:scale-95"
-          onClick={toggleFullscreen}
-        >
-          {isFullscreen ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
-        </Button>
-        <Button 
-          variant="secondary" size="icon" 
-          className="h-10 w-10 bg-white/90 backdrop-blur-md shadow-xl hover:bg-white border-white/20 rounded-xl text-zinc-900 transition-all hover:scale-105 active:scale-95"
-          onClick={() => mapRef.current?.flyTo(center, zoom, { duration: 1.5 })}
-        >
-          <Crosshair className="h-4 w-4" />
-        </Button>
-      </div>
+      <MapControls 
+        isFullscreen={isFullscreen} 
+        onToggleFullscreen={toggleFullscreen} 
+        onRecenter={handleRecenter} 
+      />
 
       <MapContainer
         center={center}
@@ -219,8 +243,6 @@ export function HeatmapMap({ center, zoom, points, businessName, radiusKm, onMap
         
         <MapEvents onMapClick={onMapClick} />
         <CoverageCircle center={center} radiusKm={radiusKm} />
-
-        {/* Center marker indicating current selection */}
         <CenterMarker position={center} businessName={businessName} />
 
         {/* Dynamic points grid with rank numbers */}

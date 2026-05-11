@@ -19,7 +19,16 @@ interface SearchFormProps {
 }
 
 /**
- * Atomic Density Selector Button
+ * Atomic Section Label
+ */
+const SectionLabel = ({ children, className }: { children: React.ReactNode; className?: string }) => (
+  <Label className={cn("text-xs font-black uppercase text-zinc-500 tracking-widest", className)}>
+    {children}
+  </Label>
+);
+
+/**
+ * Density Selector Button
  */
 function DensityButton({ 
   label, 
@@ -34,11 +43,7 @@ function DensityButton({
   isActive: boolean; 
   onClick: () => void;
 }) {
-  const IconMap: Record<string, LucideIcon> = {
-    '3x3': Zap,
-    '5x5': Layers,
-    '7x7': Grid3X3
-  };
+  const IconMap: Record<string, LucideIcon> = { '3x3': Zap, '5x5': Layers, '7x7': Grid3X3 };
   const Icon = IconMap[value] || Grid3X3;
 
   return (
@@ -66,6 +71,30 @@ function DensityButton({
   );
 }
 
+/**
+ * Coordinates Display with Reset
+ */
+function CoordinateBox({ center, onReset }: { center: [number, number], onReset: () => void }) {
+  return (
+    <div className="space-y-2 pt-4 border-t border-zinc-800/50">
+      <SectionLabel className="text-[10px]">Coordenadas del Centro</SectionLabel>
+      <div className="relative group overflow-hidden rounded-xl border border-zinc-800 bg-zinc-950/50 p-4 shadow-inner">
+        <p className="text-xs font-bold font-mono text-zinc-400">
+          {center[0].toFixed(6)}, {center[1].toFixed(6)}
+        </p>
+        <button 
+          type="button"
+          onClick={onReset}
+          className="absolute right-2 top-1/2 -translate-y-1/2 h-9 w-9 flex items-center justify-center rounded-lg bg-zinc-800 hover:bg-zinc-700 text-primary transition-all shadow-sm border border-zinc-700/50 active:scale-95"
+          title="Resetear al centro original"
+        >
+          <Crosshair className="h-4 w-4" />
+        </button>
+      </div>
+    </div>
+  );
+}
+
 export function SearchForm({ heatmap }: SearchFormProps) {
   return (
     <div className="space-y-6">
@@ -86,13 +115,12 @@ export function SearchForm({ heatmap }: SearchFormProps) {
 
       {/* 2. What: Keyword */}
       <div className="space-y-2">
-        <Label htmlFor="keyword" className="text-xs font-black uppercase text-zinc-500 tracking-widest">Palabra clave de búsqueda</Label>
+        <SectionLabel>Palabra clave de búsqueda</SectionLabel>
         <div className="relative group">
           <div className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors">
             <Search className="h-4 w-4" />
           </div>
           <Input
-            id="keyword"
             placeholder="ej: peluquería cerca de mí"
             className="pl-9 h-12 bg-zinc-900/50 border-zinc-800 transition-all focus:ring-primary/20 rounded-xl focus:border-primary/50"
             value={heatmap.keyword}
@@ -104,7 +132,7 @@ export function SearchForm({ heatmap }: SearchFormProps) {
       <div className="space-y-5">
         {/* 3. Where: Radius */}
         <div className="space-y-2">
-          <Label className="text-xs font-black uppercase text-zinc-500 tracking-widest">Radio de Análisis (km)</Label>
+          <SectionLabel>Radio de Análisis (km)</SectionLabel>
           <Select
             value={String(heatmap.radiusKm)}
             onValueChange={(v) => heatmap.setRadiusKm(Number(v))}
@@ -124,7 +152,7 @@ export function SearchForm({ heatmap }: SearchFormProps) {
 
         {/* 4. Density: Grid Size */}
         <div className="space-y-2">
-          <Label className="text-xs font-black uppercase text-zinc-500 tracking-widest">Densidad de Puntos (Grid)</Label>
+          <SectionLabel>Densidad de Puntos (Grid)</SectionLabel>
           <div className="grid grid-cols-3 gap-3">
             {GRID_OPTIONS.map((option) => (
               <DensityButton
@@ -138,23 +166,7 @@ export function SearchForm({ heatmap }: SearchFormProps) {
         </div>
       </div>
 
-      {/* 5. Location Reference */}
-      <div className="space-y-2 pt-4 border-t border-zinc-800/50">
-        <Label className="text-[10px] uppercase font-black text-zinc-500 tracking-widest">Coordenadas del Centro</Label>
-        <div className="relative group overflow-hidden rounded-xl border border-zinc-800 bg-zinc-950/50 p-4 shadow-inner">
-          <p className="text-xs font-bold font-mono text-zinc-400">
-            {heatmap.center[0].toFixed(6)}, {heatmap.center[1].toFixed(6)}
-          </p>
-          <button 
-            type="button"
-            onClick={heatmap.handleResetCenter}
-            className="absolute right-2 top-1/2 -translate-y-1/2 h-9 w-9 flex items-center justify-center rounded-lg bg-zinc-800 hover:bg-zinc-700 text-primary transition-all shadow-sm border border-zinc-700/50 active:scale-95"
-            title="Resetear al centro original"
-          >
-            <Crosshair className="h-4 w-4" />
-          </button>
-        </div>
-      </div>
+      <CoordinateBox center={heatmap.center} onReset={heatmap.handleResetCenter} />
 
       <div className="pt-2">
         <CostIndicator estimatedCost={heatmap.estimatedCost} />
