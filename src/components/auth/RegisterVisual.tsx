@@ -3,6 +3,31 @@ import { MapMockup } from '../landing/MapMockup';
 import { Sparkles, CheckCircle2 } from 'lucide-react';
 import { registerContent } from './AuthData';
 
+const containerVariants = {
+  hidden: { opacity: 0, scale: 0.9 },
+  visible: { 
+    opacity: 1, 
+    scale: 1,
+    transition: { duration: 1 }
+  }
+};
+
+function BenefitItem({ text, index }: { text: string; index: number }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.5 + index * 0.1 }}
+      className="flex items-center gap-3 rounded-2xl bg-white/5 p-4 border border-white/5"
+    >
+      <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/20 text-primary">
+        <CheckCircle2 className="h-4 w-4" />
+      </div>
+      <span className="text-sm font-bold text-zinc-300">{text}</span>
+    </motion.div>
+  );
+}
+
 export function RegisterVisual() {
   return (
     <div className="relative hidden w-1/2 flex-col items-center justify-center overflow-hidden bg-[#030712] lg:flex border-r border-white/5">
@@ -11,9 +36,9 @@ export function RegisterVisual() {
       
       <div className="relative z-10 w-full max-w-2xl px-12">
         <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 1 }}
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
           className="mb-12"
         >
           <div className="mb-6 inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-1.5 text-[10px] font-black uppercase tracking-widest text-primary border border-primary/20">
@@ -30,18 +55,7 @@ export function RegisterVisual() {
 
           <div className="grid grid-cols-2 gap-4">
             {registerContent.benefits.map((benefit, index) => (
-              <motion.div
-                key={benefit}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.5 + index * 0.1 }}
-                className="flex items-center gap-3 rounded-2xl bg-white/5 p-4 border border-white/5"
-              >
-                <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/20 text-primary">
-                  <CheckCircle2 className="h-4 w-4" />
-                </div>
-                <span className="text-sm font-bold text-zinc-300">{benefit}</span>
-              </motion.div>
+              <BenefitItem key={benefit} text={benefit} index={index} />
             ))}
           </div>
         </motion.div>
@@ -56,3 +70,4 @@ export function RegisterVisual() {
     </div>
   );
 }
+
