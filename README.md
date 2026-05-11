@@ -513,14 +513,16 @@ Hito alcanzado en la excelencia visual y estructural del producto:
 5.  **🛡️ Production Build Mastery**: Resolución de conflictos críticos de tipado en animaciones (`Framer Motion`) e imports estrictos (`verbatimModuleSyntax`), garantizando un despliegue en producción 100% estable.
 6.  **✨ UX/UI Polish**: Integración de Micro-animaciones sincronizadas, Glassmorphism avanzado y corrección de jerarquías tipográficas para una experiencia de usuario fluida y cohesiva.
 
-## 🚀 UI Polish & Readability (v2.1.0)
+## 🚀 Reporting Dorado & History Intelligence (v2.2.0)
 
-Hito alcanzado en el refinamiento visual y la experiencia de lectura:
+Hito alcanzado en la profesionalización de los reportes ejecutivos y la gestión inteligente del historial:
 
-1.  **👁️ Legibilidad Crítica**: Mejora del contraste en textos secundarios y labels en toda la aplicación (Landing y Auth) usando una paleta de `zinc-300/400`, eliminando la fatiga visual en el modo oscuro.
-2.  **🛡️ Limpieza de Colisiones (Z-Index)**: Reestructuración de capas y reposicionamiento absoluto del Mapa de Calor para evitar que los elementos decorativos obstruyan títulos y descripciones.
-3.  **🏗️ Refactorización Atómica de Features**: Extracción de la lógica decorativa a un sub-componente `FeatureDecoration`, simplificando el componente principal y facilitando futuras expansiones visuales.
-4.  **✨ Ajustes de Atmósfera Premium**: Suavizado de efectos de brillo (`blur`), sombras de celdas y micro-animaciones para lograr una interfaz más equilibrada, profesional y "limpia".
+1.  **📊 LocalDominanceGauge (SoLV)**: Implementación de un medidor radial premium basado en SVG para visualizar el "Share of Local Vision". Incluye estados dinámicos (Crítico, Competitivo, Dominante) y animaciones de alta fidelidad con `framer-motion`.
+2.  **💡 Centro de Estrategia Dorado**: Nuevo módulo `SalesStrategyHub` con "Píldoras de Inteligencia" (Punto Ciego, Oportunidad de Oro, Fuerza de Marca) que traducen datos técnicos en argumentos de venta persuasivos para consultores.
+3.  **🖼️ Heatmap Mini-Previews**: Integración de `HeatmapThumbnail` en el historial, permitiendo visualizar la cuadrícula de colores de cada escaneo sin necesidad de abrirlo, mejorando la navegación visual.
+4.  **⚖️ Modo Comparativo Ejecutivo**: Nueva interfaz de selección múltiple con una barra de herramientas flotante ("Floating Compare Bar") para elegir y contrastar dos análisis históricos ("Antes vs. Después").
+5.  **💅 Premium SaaS Aesthetics**: Refactorización estética total del panel de resultados e historial utilizando una base `zinc-950`, tipografía italiana en negrita (`black italic`) y efectos de cristalería (glassmorphism) avanzados.
+6.  **🛡️ Surgical Stability Fixes**: Resolución de errores de compilación críticos (Strict TS) y adición formal del componente `Checkbox` mediante el CLI de `shadcn`, garantizando un build de producción impecable.
 
 ---
 
