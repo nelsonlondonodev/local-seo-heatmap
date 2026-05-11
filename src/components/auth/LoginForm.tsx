@@ -48,9 +48,7 @@ export function LoginForm({ from }: LoginFormProps) {
   return (
     <div className="flex w-full flex-col justify-center px-8 lg:w-1/2">
       <div className="mx-auto w-full max-w-md">
-        <div className="mb-10 flex lg:hidden justify-center">
-          <AuthBrand />
-        </div>
+
 
         <motion.div
           variants={containerVariants}
