@@ -9,6 +9,8 @@ import { ProspectingTab } from '@/features/heatmap/components/forms/ProspectingT
 
 
 
+import { DashboardOverview } from '@/features/heatmap/components/ui/DashboardOverview';
+
 export function DashboardPage() {
   const heatmap = useHeatmap();
 
@@ -17,19 +19,23 @@ export function DashboardPage() {
       variants={staggerContainer}
       initial="hidden"
       animate="visible"
-      className="space-y-6"
+      className="space-y-8"
     >
       {/* Header */}
       <motion.div variants={fadeInUp} className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
+          <h1 className="text-3xl font-black tracking-tighter text-white italic">
             Panel de Control
           </h1>
-          <p className="text-muted-foreground">
+          <p className="text-zinc-400 font-medium">
             Analiza el mercado local o genera nuevas ventas
           </p>
         </div>
       </motion.div>
+
+      {/* High Level Stats */}
+      <DashboardOverview />
+
 
       <Tabs defaultValue="analysis" className="w-full">
         <TabsList className="grid w-full grid-cols-2 lg:w-[400px]">
@@ -73,6 +79,7 @@ export function DashboardPage() {
                   zoom={13}
                   points={heatmap.points}
                   businessName={heatmap.businessName}
+                  radiusKm={heatmap.radiusKm}
                   onMapClick={heatmap.handleMapClick}
                 />
 

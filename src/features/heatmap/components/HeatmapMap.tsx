@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { MapContainer, TileLayer, useMapEvents, Marker, Tooltip, useMap } from 'react-leaflet';
+import { MapContainer, TileLayer, useMapEvents, Marker, Tooltip, useMap, Circle } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { Maximize2, Minimize2, Crosshair, MapPin } from 'lucide-react';
@@ -25,6 +25,7 @@ interface HeatmapMapProps {
   zoom: number;
   points: GridPoint[];
   businessName?: string;
+  radiusKm?: number;
   onMapClick?: (lat: number, lng: number) => void;
 }
 
@@ -114,7 +115,7 @@ function MapEvents({ onMapClick }: { onMapClick?: (lat: number, lng: number) => 
  * HeatmapMap Component
  * Visualizes geographic data using Leaflet with DivIcon markers for rank display.
  */
-export function HeatmapMap({ center, zoom, points, businessName, onMapClick }: HeatmapMapProps) {
+export function HeatmapMap({ center, zoom, points, businessName, radiusKm, onMapClick }: HeatmapMapProps) {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<L.Map | null>(null);
@@ -211,6 +212,22 @@ export function HeatmapMap({ center, zoom, points, businessName, onMapClick }: H
         
         <MapEvents onMapClick={onMapClick} />
         
+        {/* Dynamic radius circle to visualize coverage area */}
+        {radiusKm && (
+          <Circle
+            center={center}
+            radius={radiusKm * 1000}
+            pathOptions={{
+              fillColor: 'rgb(var(--primary))',
+              fillOpacity: 0.05,
+              color: 'rgb(var(--primary))',
+              weight: 2,
+              dashArray: '5, 10',
+              opacity: 0.3
+            }}
+          />
+        )}
+
         {/* Center marker indicating current selection */}
         <Marker position={center} icon={DefaultIcon}>
           <Tooltip permanent direction="top" offset={[0, -40]} opacity={1}>
@@ -244,4 +261,5 @@ export function HeatmapMap({ center, zoom, points, businessName, onMapClick }: H
     </div>
   );
 }
+
 

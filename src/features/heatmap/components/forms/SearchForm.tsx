@@ -1,4 +1,4 @@
-import { Search, Crosshair } from 'lucide-react';
+import { Search, Crosshair, Grid3X3, Zap, Layers } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import {
@@ -12,12 +12,19 @@ import { GRID_OPTIONS, RADIUS_OPTIONS } from '@/config/constants';
 import { BusinessSearch, CostIndicator, type PlaceSuggestion } from '@/features/heatmap';
 import { useHeatmap } from '../../hooks/useHeatmap';
 import type { GridSize } from '@/types';
+import { cn } from '@/lib/utils';
 
 interface SearchFormProps {
   heatmap: ReturnType<typeof useHeatmap>;
 }
 
 export function SearchForm({ heatmap }: SearchFormProps) {
+  const getGridIcon = (val: string) => {
+    if (val === '3x3') return <Zap className="h-3 w-3" />;
+    if (val === '5x5') return <Layers className="h-3 w-3" />;
+    return <Grid3X3 className="h-3 w-3" />;
+  };
+
   return (
     <div className="space-y-5">
       {/* 1. Who: Business Search */}
@@ -75,22 +82,31 @@ export function SearchForm({ heatmap }: SearchFormProps) {
 
         {/* 4. Density: Grid Size */}
         <div className="space-y-2">
-          <Label>Grid</Label>
-          <Select
-            value={heatmap.gridSize}
-            onValueChange={(v) => heatmap.setGridSize(v as GridSize)}
-          >
-            <SelectTrigger className="hover:border-primary/50 transition-colors">
-              <SelectValue placeholder="Grid" />
-            </SelectTrigger>
-            <SelectContent>
-              {GRID_OPTIONS.map((option) => (
-                <SelectItem key={option.value} value={option.value}>
-                  {option.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <Label className="text-xs uppercase font-bold text-muted-foreground tracking-wider">Densidad Grid</Label>
+          <div className="grid grid-cols-3 gap-2">
+            {GRID_OPTIONS.map((option) => (
+              <button
+                key={option.value}
+                type="button"
+                onClick={() => heatmap.setGridSize(option.value)}
+                className={cn(
+                  "flex flex-col items-center justify-center rounded-xl border p-2 transition-all active:scale-95 gap-1",
+                  heatmap.gridSize === option.value
+                    ? "border-primary bg-primary/10 text-primary ring-1 ring-primary"
+                    : "border-border bg-white/5 hover:border-primary/40 text-muted-foreground"
+                )}
+              >
+                <div className={cn(
+                  "flex h-6 w-6 items-center justify-center rounded-lg mb-0.5",
+                  heatmap.gridSize === option.value ? "bg-primary/20" : "bg-muted/50"
+                )}>
+                  {getGridIcon(option.value)}
+                </div>
+                <span className="text-[10px] font-black">{option.label}</span>
+                <span className="text-[8px] uppercase tracking-tighter opacity-60 font-bold">{option.description}</span>
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
