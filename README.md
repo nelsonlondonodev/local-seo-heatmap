@@ -513,6 +513,15 @@ Hito alcanzado en la excelencia visual y estructural del producto:
 5.  **🛡️ Production Build Mastery**: Resolución de conflictos críticos de tipado en animaciones (`Framer Motion`) e imports estrictos (`verbatimModuleSyntax`), garantizando un despliegue en producción 100% estable.
 6.  **✨ UX/UI Polish**: Integración de Micro-animaciones sincronizadas, Glassmorphism avanzado y corrección de jerarquías tipográficas para una experiencia de usuario fluida y cohesiva.
 
+## 🚀 UI Polish & Readability (v2.1.0)
+
+Hito alcanzado en el refinamiento visual y la experiencia de lectura:
+
+1.  **👁️ Legibilidad Crítica**: Mejora del contraste en textos secundarios y labels en toda la aplicación (Landing y Auth) usando una paleta de `zinc-300/400`, eliminando la fatiga visual en el modo oscuro.
+2.  **🛡️ Limpieza de Colisiones (Z-Index)**: Reestructuración de capas y reposicionamiento absoluto del Mapa de Calor para evitar que los elementos decorativos obstruyan títulos y descripciones.
+3.  **🏗️ Refactorización Atómica de Features**: Extracción de la lógica decorativa a un sub-componente `FeatureDecoration`, simplificando el componente principal y facilitando futuras expansiones visuales.
+4.  **✨ Ajustes de Atmósfera Premium**: Suavizado de efectos de brillo (`blur`), sombras de celdas y micro-animaciones para lograr una interfaz más equilibrada, profesional y "limpia".
+
 ---
 
 ## 🚦 Siguiente Enfoque (Next Steps)

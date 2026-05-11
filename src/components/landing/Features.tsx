@@ -3,6 +3,21 @@ import type { Variants } from 'framer-motion';
 import { bentoFeatures } from './LandingData';
 import { MapMockup } from './MapMockup';
 
+interface FeatureDecorationProps {
+  title: string;
+}
+
+function FeatureDecoration({ title }: FeatureDecorationProps) {
+  if (title === 'Mapas de Calor 7×7') {
+    return (
+      <div className="absolute -bottom-20 -right-20 w-[120%] h-[120%] opacity-15 group-hover:opacity-30 transition-all duration-1000 pointer-events-none z-0">
+        <MapMockup />
+      </div>
+    );
+  }
+  return null;
+}
+
 export function Features() {
   const revealVariants: Variants = {
     hidden: { opacity: 0, y: 40 },
@@ -40,11 +55,8 @@ export function Features() {
                 <h3 className="text-2xl font-black mb-4 text-white tracking-tight">{f.title}</h3>
                 <p className="text-zinc-300 font-medium leading-relaxed pr-10">{f.description}</p>
               </div>
-              {f.title === 'Mapas de Calor 7×7' && (
-                <div className="absolute -bottom-20 -right-20 w-[120%] h-[120%] opacity-15 group-hover:opacity-30 transition-all duration-1000 pointer-events-none z-0">
-                  <MapMockup />
-                </div>
-              )}
+              
+              <FeatureDecoration title={f.title} />
             </motion.div>
           ))}
         </div>
