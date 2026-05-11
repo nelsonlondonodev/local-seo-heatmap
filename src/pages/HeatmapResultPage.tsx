@@ -16,7 +16,7 @@ import { ConfirmDeleteModal } from '@/components/shared/ConfirmDeleteModal';
 import { HeatmapMap, HeatmapLegend } from '@/features/heatmap';
 import { StatRow } from '@/features/heatmap/components/ui/StatRow';
 import { SalesStrategyHub } from '@/features/heatmap/components/ui/SalesStrategyHub';
-import { VisibilityScore } from '@/features/heatmap/components/ui/VisibilityScore';
+import { LocalDominanceGauge } from '@/features/heatmap/components/ui/LocalDominanceGauge';
 import { LocalVisibilityGraph } from '@/features/heatmap/components/ui/LocalVisibilityGraph';
 import { getRankColor } from '@/config/constants';
 import { isAdvertiser } from '../features/heatmap/utils/textUtils';
@@ -245,7 +245,7 @@ export function HeatmapResultPage() {
           </Card>
 
           <div className="space-y-4">
-            <VisibilityScore points={points} />
+            <LocalDominanceGauge points={points} />
             
             <LocalVisibilityGraph 
               placeId={config.placeId}
