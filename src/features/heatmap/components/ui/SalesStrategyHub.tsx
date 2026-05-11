@@ -1,7 +1,9 @@
 import { motion, type Variants } from 'framer-motion';
-import { Trophy, Sparkles, Megaphone, MessageSquare, FileText } from 'lucide-react';
+import { Trophy, Sparkles, Megaphone, MessageSquare, FileText, Target } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Card } from '@/components/ui/card';
+import { cn } from '@/lib/utils';
 import { CompetitorsTable } from './CompetitorsTable';
 import { PostGeneratorCard, ReviewReplyCard, LocalBioOptimizerCard } from '@/features/ai-optimization';
 import { cleanBusinessName } from '../../utils/textUtils';
