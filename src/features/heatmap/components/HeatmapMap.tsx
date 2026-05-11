@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, memo } from 'react';
 import { MapContainer, TileLayer, useMapEvents, Marker, Tooltip, useMap, Circle } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { Maximize2, Minimize2, Crosshair, MapPin } from 'lucide-react';
+import { Maximize2, Minimize2, Crosshair } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import type { GridPoint } from '@/types';

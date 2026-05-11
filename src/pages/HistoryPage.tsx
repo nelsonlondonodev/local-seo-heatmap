@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { staggerList, fadeInUp } from '@/config/animations';
 import { useNavigate } from 'react-router-dom';
-import { History, Search, Calendar, Grid3X3, MapPin, Trash2, Target, Megaphone } from 'lucide-react';
+import { History, Search, Calendar, MapPin, Trash2 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -21,7 +21,7 @@ type HeatmapRecord = Database['public']['Tables']['heatmaps']['Row'];
 function getRankVariant(rank: number | null): 'default' | 'secondary' | 'destructive' {
   if (rank === null) return 'secondary';
   if (rank <= 3) return 'default';
-  if (rank <= 7) return 'secondary';
+  if (rank <= 10) return 'secondary';
   return 'destructive';
 }
 
@@ -81,17 +81,6 @@ export function HistoryPage() {
           <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20 px-3 py-1 font-bold">
             {history.length} {history.length === 1 ? 'Análisis' : 'Análisis'}
           </Badge>
-          {selectedIds.length > 0 && (
-             <Button 
-              size="sm" 
-              className="gap-2 bg-white text-black hover:bg-zinc-200 font-bold"
-              disabled={selectedIds.length !== 2}
-              onClick={handleCompare}
-            >
-              <Grid3X3 className="h-4 w-4" />
-              Comparar ({selectedIds.length}/2)
-            </Button>
-          )}
         </div>
       </motion.div>
 
@@ -217,43 +206,45 @@ export function HistoryPage() {
       )}
 
       {/* Floating Compare Bar */}
-      {selectedIds.length > 0 && (
-        <motion.div 
-          initial={{ y: 100, x: "-50%" }}
-          animate={{ y: 0, x: "-50%" }}
-          exit={{ y: 100, x: "-50%" }}
-          className="fixed bottom-8 left-1/2 z-50 w-[calc(100%-2rem)] max-w-lg"
-        >
-          <div className="bg-zinc-950/90 border border-primary/30 px-6 py-4 rounded-3xl shadow-[0_20px_50px_-15px_rgba(var(--primary-rgb),0.3)] flex items-center justify-between gap-4 backdrop-blur-2xl">
-             <div className="flex flex-col">
-                <span className="text-[10px] font-black uppercase text-primary tracking-[0.2em] mb-0.5">Modo Comparativo</span>
-                <span className="text-xs font-bold text-zinc-300">
-                  {selectedIds.length === 2 
-                    ? "¡Listos para comparar!" 
-                    : `Selecciona ${2 - selectedIds.length} más`}
-                </span>
-             </div>
-             <div className="flex items-center gap-3">
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  className="text-[10px] font-black uppercase tracking-widest text-zinc-500 hover:text-white"
-                  onClick={() => setSelectedIds([])}
-                >
-                  Limpiar
-                </Button>
-                <Button 
-                  size="sm" 
-                  className="bg-primary hover:bg-primary/90 text-white font-black text-[10px] uppercase tracking-widest h-10 px-6 rounded-xl"
-                  disabled={selectedIds.length !== 2}
-                  onClick={handleCompare}
-                >
-                  Ver Comparativa
-                </Button>
-             </div>
-          </div>
-        </motion.div>
-      )}
+      <AnimatePresence>
+        {selectedIds.length > 0 && (
+          <motion.div 
+            initial={{ y: 100, x: "-50%" }}
+            animate={{ y: 0, x: "-50%" }}
+            exit={{ y: 100, x: "-50%" }}
+            className="fixed bottom-8 left-1/2 z-50 w-[calc(100%-2rem)] max-w-lg"
+          >
+            <div className="bg-zinc-950/90 border border-primary/30 px-6 py-4 rounded-3xl shadow-[0_20px_50px_-15px_rgba(var(--primary-rgb),0.3)] flex items-center justify-between gap-4 backdrop-blur-2xl">
+               <div className="flex flex-col">
+                  <span className="text-[10px] font-black uppercase text-primary tracking-[0.2em] mb-0.5">Modo Comparativo</span>
+                  <span className="text-xs font-bold text-zinc-300">
+                    {selectedIds.length === 2 
+                      ? "¡Listos para comparar!" 
+                      : `Selecciona ${2 - selectedIds.length} más`}
+                  </span>
+               </div>
+               <div className="flex items-center gap-3">
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="text-[10px] font-black uppercase tracking-widest text-zinc-500 hover:text-white"
+                    onClick={() => setSelectedIds([])}
+                  >
+                    Limpiar
+                  </Button>
+                  <Button 
+                    size="sm" 
+                    className="bg-primary hover:bg-primary/90 text-white font-black text-[10px] uppercase tracking-widest h-10 px-6 rounded-xl"
+                    disabled={selectedIds.length !== 2}
+                    onClick={handleCompare}
+                  >
+                    Ver Comparativa
+                  </Button>
+               </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <ConfirmDeleteModal 
         isOpen={deleteConfirmOpen}

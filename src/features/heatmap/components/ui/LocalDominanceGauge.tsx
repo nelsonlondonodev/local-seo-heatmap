@@ -17,7 +17,6 @@ export function LocalDominanceGauge({ points }: LocalDominanceGaugeProps) {
   const top3 = points.filter(p => p.rank !== null && p.rank >= 1 && p.rank <= 3).length;
   const top10 = points.filter(p => p.rank !== null && p.rank >= 4 && p.rank <= 10).length;
   const visible = points.filter(p => p.rank !== null && p.rank >= 11 && p.rank <= 20).length;
-  const nonVisible = points.filter(p => p.rank === null || p.rank > 20).length;
 
   const score = ((top3 * 1.0 + top10 * 0.5 + visible * 0.2) / totalPoints) * 100;
   
@@ -35,7 +34,6 @@ export function LocalDominanceGauge({ points }: LocalDominanceGaugeProps) {
   const radius = (size - strokeWidth) / 2;
   const circumference = radius * 2 * Math.PI;
   const arcLength = circumference * 0.75; // 75% circle for the gauge
-  const offset = circumference - arcLength;
   const fillAmount = (score / 100) * arcLength;
 
   return (

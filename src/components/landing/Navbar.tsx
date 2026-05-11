@@ -5,7 +5,7 @@ import { useAuth } from '@/features/auth';
 import { Logo } from '../shared/Logo';
 
 export function Navbar() {
-  const { config } = useBranding();
+  useBranding();
   const { user } = useAuth();
 
   return (

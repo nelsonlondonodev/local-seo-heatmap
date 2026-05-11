@@ -57,7 +57,6 @@ export function SalesStrategyHub({ heatmap, competitors, itemVariants }: SalesSt
   // Intelligence Logic
   const leader = competitors[0];
   const totalCompetitors = competitors.length;
-  const isWeakened = competitors.some(c => c.rank === 1 && c.reviews_count < 20);
 
   return (
     <motion.div 
