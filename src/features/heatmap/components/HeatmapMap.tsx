@@ -127,6 +127,37 @@ function MapEvents({ onMapClick }: { onMapClick?: (lat: number, lng: number) => 
   return null;
 }
 
+/**
+ * Animated Pulse Marker for the Center
+ */
+function CenterMarker({ position, businessName }: { position: [number, number], businessName?: string }) {
+  const icon = L.divIcon({
+    className: 'custom-center-marker',
+    iconSize: [20, 20],
+    iconAnchor: [10, 10],
+    html: `
+      <div class="relative flex items-center justify-center">
+        <div class="absolute h-10 w-10 animate-ping rounded-full bg-primary/40 opacity-75"></div>
+        <div class="relative h-4 w-4 rounded-full bg-primary border-2 border-white shadow-lg shadow-primary/50"></div>
+      </div>
+    `
+  });
+
+  return (
+    <Marker position={position} icon={icon}>
+      <Tooltip permanent direction="top" offset={[0, -20]} opacity={1}>
+        <div className="flex flex-col items-center gap-1 min-w-[140px] p-2 bg-zinc-900/90 backdrop-blur-md border border-primary/30 rounded-xl shadow-2xl">
+          <div className="flex items-center gap-2 font-black text-[10px] text-primary uppercase tracking-widest leading-none">
+            <div className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
+            {businessName || 'Punto de Origen'}
+          </div>
+          <div className="h-0.5 w-full rounded-full bg-gradient-to-r from-transparent via-primary/30 to-transparent mt-1" />
+        </div>
+      </Tooltip>
+    </Marker>
+  );
+}
+
 export function HeatmapMap({ center, zoom, points, businessName, radiusKm, onMapClick }: HeatmapMapProps) {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -150,7 +181,7 @@ export function HeatmapMap({ center, zoom, points, businessName, radiusKm, onMap
     <div 
       ref={containerRef}
       className={cn(
-        "relative h-full w-full overflow-hidden rounded-2xl border border-zinc-800 bg-background transition-all duration-300 shadow-2xl",
+        "relative h-full w-full overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-950 transition-all duration-300 shadow-2xl",
         isFullscreen ? "rounded-none" : ""
       )}
     >
@@ -175,7 +206,7 @@ export function HeatmapMap({ center, zoom, points, businessName, radiusKm, onMap
       <MapContainer
         center={center}
         zoom={zoom}
-        className="h-full w-full grayscale-[0.2] contrast-[1.1]"
+        className="h-full w-full grayscale-[0.1] contrast-[1.1]"
         scrollWheelZoom={true}
         zoomControl={false}
       >
@@ -190,17 +221,7 @@ export function HeatmapMap({ center, zoom, points, businessName, radiusKm, onMap
         <CoverageCircle center={center} radiusKm={radiusKm} />
 
         {/* Center marker indicating current selection */}
-        <Marker position={center} icon={DefaultIcon}>
-          <Tooltip permanent direction="top" offset={[0, -40]} opacity={1}>
-            <div className="flex flex-col items-center gap-1 min-w-[140px] p-1">
-              <div className="flex items-center gap-1.5 font-black text-[10px] text-primary uppercase tracking-widest">
-                <MapPin className="h-3 w-3 fill-primary/20" />
-                {businessName || 'Punto de Origen'}
-              </div>
-              <div className="h-0.5 w-full rounded-full bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
-            </div>
-          </Tooltip>
-        </Marker>
+        <CenterMarker position={center} businessName={businessName} />
 
         {/* Dynamic points grid with rank numbers */}
         {points
@@ -216,6 +237,3 @@ export function HeatmapMap({ center, zoom, points, businessName, radiusKm, onMap
     </div>
   );
 }
-
-
-

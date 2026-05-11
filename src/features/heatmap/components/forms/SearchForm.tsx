@@ -46,24 +46,25 @@ function DensityButton({
       type="button"
       onClick={onClick}
       className={cn(
-        "flex flex-col items-center justify-center rounded-xl border p-1.5 transition-all active:scale-95 gap-0.5 h-full min-h-[72px]",
+        "flex items-center p-2.5 rounded-xl border transition-all active:scale-95 gap-3 h-12 w-full",
         isActive
-          ? "border-primary bg-primary/10 text-primary ring-1 ring-primary shadow-sm"
-          : "border-border bg-white/5 hover:border-primary/40 text-muted-foreground"
+          ? "border-primary bg-primary/10 text-primary ring-1 ring-primary shadow-[0_0_15px_-3px_rgba(59,130,246,0.2)]"
+          : "border-zinc-800 bg-white/5 hover:border-zinc-700 text-muted-foreground"
       )}
     >
       <div className={cn(
-        "flex h-6 w-6 items-center justify-center rounded-lg mb-0.5 transition-colors",
+        "flex h-7 w-7 shrink-0 items-center justify-center rounded-lg transition-colors",
         isActive ? "bg-primary/20" : "bg-zinc-800"
       )}>
-        <Icon className="h-3.5 w-3.5" />
+        <Icon className="h-4 w-4" />
       </div>
-      <span className="text-[9px] font-black leading-tight">{label}</span>
-      <span className="text-[7px] uppercase tracking-tighter opacity-60 font-bold leading-none">{description}</span>
+      <div className="flex flex-col items-start leading-none gap-1">
+        <span className="text-[11px] font-black tracking-tight">{label}</span>
+        <span className="text-[8px] uppercase tracking-widest opacity-50 font-bold">{description}</span>
+      </div>
     </button>
   );
 }
-
 
 export function SearchForm({ heatmap }: SearchFormProps) {
   return (
@@ -85,7 +86,7 @@ export function SearchForm({ heatmap }: SearchFormProps) {
 
       {/* 2. What: Keyword */}
       <div className="space-y-2">
-        <Label htmlFor="keyword" className="text-xs font-bold text-zinc-400">Palabra clave de búsqueda</Label>
+        <Label htmlFor="keyword" className="text-xs font-black uppercase text-zinc-500 tracking-widest">Palabra clave de búsqueda</Label>
         <div className="relative group">
           <div className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors">
             <Search className="h-4 w-4" />
@@ -93,27 +94,27 @@ export function SearchForm({ heatmap }: SearchFormProps) {
           <Input
             id="keyword"
             placeholder="ej: peluquería cerca de mí"
-            className="pl-9 h-11 bg-white/5 border-zinc-800 transition-all focus:ring-primary/20 rounded-xl"
+            className="pl-9 h-12 bg-zinc-900/50 border-zinc-800 transition-all focus:ring-primary/20 rounded-xl focus:border-primary/50"
             value={heatmap.keyword}
             onChange={(e) => heatmap.setKeyword(e.target.value)}
           />
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-5">
+      <div className="space-y-5">
         {/* 3. Where: Radius */}
         <div className="space-y-2">
-          <Label className="text-xs font-bold text-zinc-400">Radio (km)</Label>
+          <Label className="text-xs font-black uppercase text-zinc-500 tracking-widest">Radio de Análisis (km)</Label>
           <Select
             value={String(heatmap.radiusKm)}
             onValueChange={(v) => heatmap.setRadiusKm(Number(v))}
           >
-            <SelectTrigger className="h-11 bg-white/5 border-zinc-800 rounded-xl hover:border-primary/40 transition-colors">
+            <SelectTrigger className="h-12 bg-zinc-900/50 border-zinc-800 rounded-xl hover:border-zinc-700 transition-colors focus:ring-primary/20">
               <SelectValue placeholder="Radio" />
             </SelectTrigger>
-            <SelectContent className="bg-zinc-950 border-zinc-800">
+            <SelectContent className="bg-zinc-900/95 backdrop-blur-xl border-zinc-700/50 shadow-2xl">
               {RADIUS_OPTIONS.map((radius) => (
-                <SelectItem key={radius} value={String(radius)} className="focus:bg-primary/20 focus:text-primary font-bold">
+                <SelectItem key={radius} value={String(radius)} className="focus:bg-primary/20 focus:text-primary font-bold py-3 cursor-pointer">
                   {radius} km
                 </SelectItem>
               ))}
@@ -123,8 +124,8 @@ export function SearchForm({ heatmap }: SearchFormProps) {
 
         {/* 4. Density: Grid Size */}
         <div className="space-y-2">
-          <Label className="text-xs font-bold text-zinc-400 uppercase tracking-wider">Densidad Grid</Label>
-          <div className="grid grid-cols-3 gap-2">
+          <Label className="text-xs font-black uppercase text-zinc-500 tracking-widest">Densidad de Puntos (Grid)</Label>
+          <div className="grid grid-cols-3 gap-3">
             {GRID_OPTIONS.map((option) => (
               <DensityButton
                 key={option.value}
@@ -138,25 +139,26 @@ export function SearchForm({ heatmap }: SearchFormProps) {
       </div>
 
       {/* 5. Location Reference */}
-      <div className="space-y-3 pt-4 border-t border-zinc-800/50">
-        <div className="flex items-center justify-between">
-          <Label className="text-[10px] uppercase font-black text-muted-foreground tracking-widest">Coordenadas Centro</Label>
+      <div className="space-y-2 pt-4 border-t border-zinc-800/50">
+        <Label className="text-[10px] uppercase font-black text-zinc-500 tracking-widest">Coordenadas del Centro</Label>
+        <div className="relative group overflow-hidden rounded-xl border border-zinc-800 bg-zinc-950/50 p-4 shadow-inner">
+          <p className="text-xs font-bold font-mono text-zinc-400">
+            {heatmap.center[0].toFixed(6)}, {heatmap.center[1].toFixed(6)}
+          </p>
           <button 
             type="button"
             onClick={heatmap.handleResetCenter}
-            className="text-[10px] font-black text-primary hover:underline flex items-center gap-1 uppercase tracking-tighter"
+            className="absolute right-2 top-1/2 -translate-y-1/2 h-9 w-9 flex items-center justify-center rounded-lg bg-zinc-800 hover:bg-zinc-700 text-primary transition-all shadow-sm border border-zinc-700/50 active:scale-95"
+            title="Resetear al centro original"
           >
-            <Crosshair className="h-3 w-3" /> Resetear
+            <Crosshair className="h-4 w-4" />
           </button>
-        </div>
-        <div className="rounded-xl bg-zinc-900/50 border border-zinc-800 p-3 text-center shadow-inner">
-          <p className="text-[11px] font-bold font-mono text-zinc-400">
-            {heatmap.center[0].toFixed(6)}, {heatmap.center[1].toFixed(6)}
-          </p>
         </div>
       </div>
 
-      <CostIndicator estimatedCost={heatmap.estimatedCost} />
+      <div className="pt-2">
+        <CostIndicator estimatedCost={heatmap.estimatedCost} />
+      </div>
     </div>
   );
 }
