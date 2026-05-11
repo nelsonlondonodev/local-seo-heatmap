@@ -9,5 +9,12 @@ export const registerContent = {
   badge: 'Comienza hoy',
   title: 'La herramienta que tu',
   titleAccent: 'agencia necesita.',
-  description: 'Únete a más de 500 agencias y empieza a dominar los rankings locales.'
+  description: 'Únete a más de 500 agencias y empieza a dominar los rankings locales.',
+  benefits: [
+    'Escaneos rápidos en vivo',
+    'Mapa de calor interactivo',
+    'Historial de análisis',
+    'Sin tarjeta de crédito'
+  ]
 };
+
