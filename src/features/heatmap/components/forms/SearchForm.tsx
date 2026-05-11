@@ -46,23 +46,24 @@ function DensityButton({
       type="button"
       onClick={onClick}
       className={cn(
-        "flex flex-col items-center justify-center rounded-xl border p-2 transition-all active:scale-95 gap-1 h-full",
+        "flex flex-col items-center justify-center rounded-xl border p-1.5 transition-all active:scale-95 gap-0.5 h-full min-h-[72px]",
         isActive
           ? "border-primary bg-primary/10 text-primary ring-1 ring-primary shadow-sm"
           : "border-border bg-white/5 hover:border-primary/40 text-muted-foreground"
       )}
     >
       <div className={cn(
-        "flex h-7 w-7 items-center justify-center rounded-lg mb-0.5 transition-colors",
+        "flex h-6 w-6 items-center justify-center rounded-lg mb-0.5 transition-colors",
         isActive ? "bg-primary/20" : "bg-zinc-800"
       )}>
-        <Icon className="h-4 w-4" />
+        <Icon className="h-3.5 w-3.5" />
       </div>
-      <span className="text-[10px] font-black">{label}</span>
-      <span className="text-[8px] uppercase tracking-tighter opacity-60 font-bold">{description}</span>
+      <span className="text-[9px] font-black leading-tight">{label}</span>
+      <span className="text-[7px] uppercase tracking-tighter opacity-60 font-bold leading-none">{description}</span>
     </button>
   );
 }
+
 
 export function SearchForm({ heatmap }: SearchFormProps) {
   return (
