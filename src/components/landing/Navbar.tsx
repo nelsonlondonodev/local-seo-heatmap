@@ -1,8 +1,8 @@
-import { Map } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useBranding } from '@/features/branding';
 import { useAuth } from '@/features/auth';
+import { Logo } from '../shared/Logo';
 
 export function Navbar() {
   const { config } = useBranding();
@@ -11,12 +11,7 @@ export function Navbar() {
   return (
     <nav className="fixed top-0 z-50 w-full border-b border-white/5 glass-morphism">
       <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6">
-        <Link to="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity group">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary shadow-[0_0_20px_rgba(var(--primary),0.5)] group-hover:shadow-primary/40 transition-all">
-            <Map className="h-6 w-6 text-white" />
-          </div>
-          <span className="text-2xl font-black tracking-tighter text-gradient">{config.name}</span>
-        </Link>
+        <Logo textClassName="text-gradient" />
         <div className="hidden lg:flex items-center gap-10 text-sm font-bold text-slate-400">
           <a href="#features" className="hover:text-primary transition-colors">Funciones</a>
           <a href="#pricing" className="hover:text-primary transition-colors">Precios</a>

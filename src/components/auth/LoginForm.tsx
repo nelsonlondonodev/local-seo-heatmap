@@ -5,7 +5,7 @@ import { Eye, EyeOff, Loader2, Mail, Lock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/features/auth';
 import { AuthInput } from './AuthInput';
-import { AuthBrand } from './AuthBrand';
+
 import { AuthSocial } from './AuthSocial';
 
 interface LoginFormProps {

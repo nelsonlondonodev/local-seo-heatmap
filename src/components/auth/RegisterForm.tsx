@@ -5,7 +5,7 @@ import { Eye, EyeOff, Loader2, Mail, Lock, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/features/auth';
 import { AuthInput } from './AuthInput';
-import { AuthBrand } from './AuthBrand';
+
 import { AuthSocial } from './AuthSocial';
 import { AuthSuccess } from './AuthSuccess';
 import { toast } from 'sonner';
