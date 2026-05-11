@@ -29,11 +29,11 @@ export function AuthInput({
 }: AuthInputProps) {
   return (
     <div className="space-y-2">
-      <Label htmlFor={id} className="text-xs font-black uppercase tracking-widest text-slate-500 ml-1">
+      <Label htmlFor={id} className="text-xs font-black uppercase tracking-widest text-zinc-400 ml-1">
         {label}
       </Label>
       <div className="relative">
-        <Icon className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
+        <Icon className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400" />
         <Input
           id={id}
           type={type}

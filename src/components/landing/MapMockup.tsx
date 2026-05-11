@@ -28,12 +28,12 @@ function HeatmapCell({ color, index }: HeatmapCellProps) {
         stiffness: 120,
         damping: 12
       }}
-      className={`relative flex h-10 w-10 items-center justify-center rounded-xl text-[10px] font-black shadow-lg sm:h-14 sm:w-14 sm:text-sm ${
+      className={`relative flex h-10 w-10 items-center justify-center rounded-xl text-[10px] font-bold shadow-lg sm:h-14 sm:w-14 sm:text-sm ${
         isLight ? 'text-slate-900' : 'text-white'
       }`}
       style={{ 
         backgroundColor: color,
-        boxShadow: `0 8px 16px -4px ${color}66`
+        boxShadow: `0 4px 12px -2px ${color}44`
       }}
     >
       <div className="absolute inset-0 rounded-xl bg-white/10 opacity-0 hover:opacity-100 transition-opacity cursor-crosshair" />
@@ -46,8 +46,8 @@ export function MapMockup() {
   return (
     <div className="relative w-full h-full bg-transparent overflow-hidden rounded-3xl">
       {/* Decoración de fondo */}
-      <div className="absolute inset-0 bg-primary/5 blur-[120px] rounded-full" />
-      <div className="absolute inset-0 opacity-10 bg-grid-pattern" />
+      <div className="absolute inset-0 bg-primary/5 blur-[80px] rounded-full" />
+      <div className="absolute inset-0 opacity-5 bg-grid-pattern" />
       
       {/* UI Decorativa */}
       <div className="absolute top-8 left-8 p-4 glass-morphism rounded-2xl border border-white/10 hidden md:block">

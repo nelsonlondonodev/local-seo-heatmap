@@ -48,7 +48,7 @@ export function LoginForm({ from }: LoginFormProps) {
           transition={{ duration: 0.6 }}
         >
           <h1 className="text-4xl font-black tracking-tighter text-white mb-2 italic lg:text-5xl">Bienvenido.</h1>
-          <p className="text-slate-400 font-bold mb-10">Ingresa tus credenciales para acceder.</p>
+          <p className="text-zinc-300 font-bold mb-10">Ingresa tus credenciales para acceder.</p>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             {error && (
@@ -109,7 +109,7 @@ export function LoginForm({ from }: LoginFormProps) {
 
           <div className="relative my-10">
             <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-white/5"></div></div>
-            <div className="relative flex justify-center text-[10px] uppercase tracking-widest font-black text-slate-500">
+            <div className="relative flex justify-center text-[10px] uppercase tracking-widest font-black text-zinc-400">
               <span className="bg-[#030712] px-4">O continúa con</span>
             </div>
           </div>
@@ -128,7 +128,7 @@ export function LoginForm({ from }: LoginFormProps) {
             Google
           </Button>
 
-          <p className="mt-10 text-center text-sm font-bold text-slate-500">
+          <p className="mt-10 text-center text-sm font-bold text-zinc-400">
             ¿Nuevo aquí?{' '}
             <Link to="/register" className="text-primary hover:underline font-black">
               Crea tu cuenta gratis

@@ -34,14 +34,14 @@ export function Features() {
               className={`relative p-10 rounded-[3rem] border group transition-all duration-500 overflow-hidden ${f.className} hover:border-primary/50`}
             >
               <div className="relative z-20 h-full flex flex-col">
-                <div className="mb-6 p-4 rounded-2xl bg-white/5 w-fit border border-white/10 group-hover:bg-primary group-hover:text-white transition-all">
+                <div className="mb-6 p-4 rounded-2xl bg-white/5 w-fit border border-white/10 group-hover:bg-primary group-hover:text-white transition-all shadow-inner">
                   <f.icon className="h-7 w-7" />
                 </div>
-                <h3 className="text-2xl font-black mb-4 text-white">{f.title}</h3>
-                <p className="text-slate-400 font-bold leading-relaxed pr-10">{f.description}</p>
+                <h3 className="text-2xl font-black mb-4 text-white tracking-tight">{f.title}</h3>
+                <p className="text-zinc-300 font-medium leading-relaxed pr-10">{f.description}</p>
               </div>
               {f.title === 'Mapas de Calor 7×7' && (
-                <div className="absolute inset-0 top-32 lg:top-40 scale-125 opacity-40 group-hover:opacity-80 transition-opacity">
+                <div className="absolute -bottom-20 -right-20 w-[120%] h-[120%] opacity-15 group-hover:opacity-30 transition-all duration-1000 pointer-events-none z-0">
                   <MapMockup />
                 </div>
               )}
