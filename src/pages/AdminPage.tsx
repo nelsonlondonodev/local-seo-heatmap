@@ -54,8 +54,10 @@ export function AdminPage() {
     <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
       <div className="flex items-center justify-between space-y-2">
         <div>
-          <h2 className="text-3xl font-bold tracking-tight text-brand-primary flex items-center gap-2">
-            <ShieldAlert className="h-8 w-8 text-amber-500" />
+          <h2 className="text-3xl font-semibold tracking-tight text-zinc-950 dark:text-white flex items-center gap-3">
+            <div className="p-2 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl">
+              <ShieldAlert className="h-6 w-6 text-zinc-950 dark:text-white" strokeWidth={1.5} />
+            </div>
             Panel de Administración Global
           </h2>
           <p className="text-muted-foreground mt-2">
@@ -70,89 +72,88 @@ export function AdminPage() {
         animate={{ opacity: 1, y: 0 }}
         className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mt-6"
       >
-        <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
+        <Card className="border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 shadow-none rounded-xl">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Usuarios Totales</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-semibold text-zinc-950 dark:text-white">Usuarios Totales</CardTitle>
+            <Users className="h-4 w-4 text-zinc-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
+            <div className="text-2xl font-bold text-zinc-950 dark:text-white">
               {isLoadingMetrics ? <Loader2 className="h-4 w-4 animate-spin" /> : metrics?.users || 0}
             </div>
           </CardContent>
         </Card>
 
-        <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
+        <Card className="border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 shadow-none rounded-xl">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Agencias White Label</CardTitle>
-            <Building2 className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-semibold text-zinc-950 dark:text-white">Agencias White Label</CardTitle>
+            <Building2 className="h-4 w-4 text-zinc-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
+            <div className="text-2xl font-bold text-zinc-950 dark:text-white">
               {isLoadingMetrics ? <Loader2 className="h-4 w-4 animate-spin" /> : metrics?.agencies || 0}
             </div>
           </CardContent>
         </Card>
 
-        <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
+        <Card className="border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 shadow-none rounded-xl">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Mapas Generados</CardTitle>
-            <Map className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-semibold text-zinc-950 dark:text-white">Mapas Generados</CardTitle>
+            <Map className="h-4 w-4 text-zinc-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
+            <div className="text-2xl font-bold text-zinc-950 dark:text-white">
               {isLoadingMetrics ? <Loader2 className="h-4 w-4 animate-spin" /> : metrics?.heatmaps || 0}
             </div>
           </CardContent>
         </Card>
 
-        <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
+        <Card className="border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 shadow-none rounded-xl">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Estado del Sistema</CardTitle>
-            <ShieldAlert className="h-4 w-4 text-emerald-500" />
+            <CardTitle className="text-sm font-semibold text-zinc-950 dark:text-white">Estado del Sistema</CardTitle>
+            <ShieldAlert className="h-4 w-4 text-emerald-600 dark:text-emerald-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-emerald-500">Óptimo</div>
-            <p className="text-xs text-muted-foreground">APIs conectadas</p>
+            <div className="text-2xl font-bold text-emerald-600 dark:text-emerald-500">Óptimo</div>
+            <p className="text-xs text-zinc-500 font-medium">APIs conectadas</p>
           </CardContent>
         </Card>
       </motion.div>
       
-      {/* Users Table */}
       <div className="mt-6">
-        <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
+        <Card className="border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 shadow-none rounded-xl">
           <CardHeader>
-            <CardTitle>Gestión de Usuarios</CardTitle>
+            <CardTitle className="text-xl text-zinc-950 dark:text-white">Gestión de Usuarios</CardTitle>
           </CardHeader>
           <CardContent>
             {isLoadingUsers ? (
               <div className="flex justify-center p-8">
-                <Loader2 className="h-8 w-8 animate-spin text-brand-primary" />
+                <Loader2 className="h-8 w-8 animate-spin text-zinc-500" />
               </div>
             ) : (
-              <div className="rounded-md border">
+              <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 overflow-hidden">
                 <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Usuario</TableHead>
-                      <TableHead>Email</TableHead>
-                      <TableHead>Plan</TableHead>
-                      <TableHead>Rol Actual</TableHead>
-                      <TableHead className="text-right">Acciones</TableHead>
+                  <TableHeader className="bg-zinc-50 dark:bg-zinc-900">
+                    <TableRow className="border-zinc-200 dark:border-zinc-800 hover:bg-transparent">
+                      <TableHead className="font-semibold text-zinc-950 dark:text-white">Usuario</TableHead>
+                      <TableHead className="font-semibold text-zinc-950 dark:text-white">Email</TableHead>
+                      <TableHead className="font-semibold text-zinc-950 dark:text-white">Plan</TableHead>
+                      <TableHead className="font-semibold text-zinc-950 dark:text-white">Rol Actual</TableHead>
+                      <TableHead className="text-right font-semibold text-zinc-950 dark:text-white">Acciones</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {users?.map((user) => (
-                      <TableRow key={user.id}>
-                        <TableCell className="font-medium">{user.full_name || 'Sin Nombre'}</TableCell>
-                        <TableCell>{user.email}</TableCell>
+                      <TableRow key={user.id} className="border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-900/50">
+                        <TableCell className="font-medium text-zinc-950 dark:text-white">{user.full_name || 'Sin Nombre'}</TableCell>
+                        <TableCell className="text-zinc-500">{user.email}</TableCell>
                         <TableCell>
-                          <Badge variant="outline" className="uppercase text-[10px]">
+                          <Badge variant="outline" className="uppercase text-[10px] font-semibold bg-white dark:bg-zinc-950 text-zinc-950 dark:text-white border-zinc-200 dark:border-zinc-800 shadow-none">
                             {user.plan || 'free'}
                           </Badge>
                         </TableCell>
                         <TableCell>
-                          <Badge className="uppercase text-[10px]">
+                          <Badge className="uppercase text-[10px] bg-zinc-100 dark:bg-zinc-800 text-zinc-950 dark:text-white hover:bg-zinc-200 dark:hover:bg-zinc-700 shadow-none font-semibold">
                             {user.role || 'client'}
                           </Badge>
                         </TableCell>
@@ -162,12 +163,12 @@ export function AdminPage() {
                             onValueChange={(value) => handleRoleChange(user.id, value as UserRole)}
                             disabled={user.id === currentUser?.id}
                           >
-                            <SelectTrigger className="w-[140px] ml-auto h-8 text-xs">
+                            <SelectTrigger className="w-[140px] ml-auto h-8 text-xs bg-white dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800 shadow-none focus:ring-zinc-950 dark:focus:ring-white rounded-md">
                               <SelectValue placeholder="Cambiar rol" />
                             </SelectTrigger>
-                            <SelectContent>
+                            <SelectContent className="bg-white dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800 shadow-xl rounded-xl">
                               {ROLES.map((role) => (
-                                <SelectItem key={role.value} value={role.value} className="text-xs">
+                                <SelectItem key={role.value} value={role.value} className="text-xs hover:bg-zinc-50 dark:hover:bg-zinc-900 cursor-pointer focus:bg-zinc-50 dark:focus:bg-zinc-900">
                                   {role.label}
                                 </SelectItem>
                               ))}
