@@ -19,16 +19,15 @@ export function StatRow({
   return (
     <div className={cn("flex gap-3", className)}>
       <div className={cn(
-        "flex h-10 w-10 shrink-0 items-center justify-center rounded-lg",
-        colorClass
+        "flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 text-zinc-950 dark:text-white"
       )}>
-        <Icon className="h-5 w-5" />
+        <Icon className="h-4 w-4" strokeWidth={1.5} />
       </div>
       <div className="min-w-0 flex-1">
-        <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider mb-0.5">
+        <p className="text-[10px] uppercase font-semibold text-zinc-500 tracking-wider mb-0.5">
           {label}
         </p>
-        <p className="font-semibold line-clamp-2 leading-snug">
+        <p className="text-sm font-medium text-zinc-950 dark:text-white line-clamp-2 leading-snug">
           {value}
         </p>
       </div>

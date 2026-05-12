@@ -33,14 +33,14 @@ function InsightPill({
   type?: 'info' | 'warning' | 'success';
 }) {
   const styles = {
-    info: "bg-blue-500/5 border-blue-500/20 text-blue-400",
-    warning: "bg-rose-500/5 border-rose-500/20 text-rose-400",
-    success: "bg-emerald-500/5 border-emerald-500/20 text-emerald-400"
+    info: "border border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 bg-white dark:bg-zinc-950",
+    warning: "border border-amber-200 dark:border-amber-900/50 text-amber-600 dark:text-amber-500 bg-white dark:bg-zinc-950",
+    success: "border border-emerald-200 dark:border-emerald-900/50 text-emerald-600 dark:text-emerald-500 bg-white dark:bg-zinc-950"
   };
 
   return (
-    <div className={cn("flex items-start gap-3 p-4 rounded-2xl border backdrop-blur-sm", styles[type])}>
-      <div className="h-8 w-8 rounded-lg bg-current opacity-20 flex items-center justify-center shrink-0">
+    <div className={cn("flex items-start gap-3 p-4 rounded-xl shadow-none", styles[type])}>
+      <div className="h-8 w-8 rounded-lg bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 flex items-center justify-center shrink-0 text-zinc-950 dark:text-white">
         <Icon className="h-4 w-4" />
       </div>
       <div>
@@ -65,20 +65,20 @@ export function SalesStrategyHub({ heatmap, competitors, itemVariants }: SalesSt
     >
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center shadow-inner border border-primary/20">
-            <Trophy className="h-7 w-7 text-primary" />
+          <div className="h-12 w-12 rounded-xl bg-white dark:bg-zinc-950 flex items-center justify-center border border-zinc-200 dark:border-zinc-800">
+            <Trophy className="h-6 w-6 text-zinc-950 dark:text-white" strokeWidth={1.5} />
           </div>
           <div>
-            <h2 className="text-3xl font-black tracking-tighter text-white uppercase italic">
-              Centro de Estrategia Dorado
+            <h2 className="text-2xl font-semibold tracking-tight text-zinc-950 dark:text-white">
+              Centro de Estrategia
             </h2>
-            <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-[0.2em]">
+            <p className="text-[10px] text-zinc-500 font-semibold uppercase tracking-[0.2em] mt-0.5">
               Inteligencia competitiva para cerrar a {businessName}
             </p>
           </div>
         </div>
-        <Badge className="bg-emerald-500/10 text-emerald-500 border-emerald-500/20 px-4 py-1.5 font-black text-[10px] tracking-widest shadow-[0_0_20px_-5px_rgba(16,185,129,0.3)]">
-          MODO CIERRE ACTIVADO ⚡
+        <Badge variant="outline" className="bg-zinc-50 dark:bg-zinc-900 text-zinc-950 dark:text-white border-zinc-200 dark:border-zinc-800 px-4 py-1.5 font-bold text-[10px] tracking-widest shadow-none">
+          MODO CIERRE ACTIVADO
         </Badge>
       </div>
 
@@ -107,7 +107,7 @@ export function SalesStrategyHub({ heatmap, competitors, itemVariants }: SalesSt
       <div className="grid gap-6 lg:grid-cols-12">
         {/* Competitive Intelligence (Table) */}
         <div className="lg:col-span-7 xl:col-span-8">
-          <Card className="bg-zinc-950/40 border-zinc-800 shadow-2xl overflow-hidden">
+          <Card className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 shadow-none overflow-hidden rounded-xl">
             <CompetitorsTable 
               competitors={competitors}
               targetBusinessName={heatmap.business_name}
@@ -119,9 +119,9 @@ export function SalesStrategyHub({ heatmap, competitors, itemVariants }: SalesSt
 
         {/* AI Sales Assistant (Toolkit) */}
         <div className="lg:col-span-5 xl:col-span-4 space-y-4">
-          <div className="bg-primary/5 rounded-2xl p-1 border border-primary/20 shadow-xl backdrop-blur-sm">
+          <div className="bg-white dark:bg-zinc-950 rounded-xl p-1 border border-zinc-200 dark:border-zinc-800 shadow-none">
             <div className="p-4 pb-2">
-              <h3 className="text-[11px] font-black uppercase text-primary tracking-[0.2em] flex items-center gap-2">
+              <h3 className="text-[11px] font-semibold uppercase text-zinc-500 tracking-[0.2em] flex items-center gap-2">
                 <Sparkles className="h-4 w-4" />
                 Kit de Persuasión IA
               </h3>
@@ -129,18 +129,18 @@ export function SalesStrategyHub({ heatmap, competitors, itemVariants }: SalesSt
             
             <Tabs defaultValue="posts" className="w-full">
               <div className="px-3">
-                <TabsList className="grid w-full grid-cols-3 mb-4 bg-zinc-950/50 p-1 border border-zinc-800">
-                  <TabsTrigger value="posts" className="flex gap-2 items-center rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground transition-all h-8">
+                <TabsList className="grid w-full grid-cols-3 mb-4 bg-zinc-50 dark:bg-zinc-900 p-1 border border-zinc-200 dark:border-zinc-800 rounded-lg">
+                  <TabsTrigger value="posts" className="flex gap-2 items-center rounded-md data-[state=active]:bg-white dark:data-[state=active]:bg-zinc-950 data-[state=active]:text-zinc-950 dark:data-[state=active]:text-white transition-all h-8 shadow-none border border-transparent data-[state=active]:border-zinc-200 dark:data-[state=active]:border-zinc-800">
                     <Megaphone className="h-3.5 w-3.5" />
-                    <span className="text-[9px] font-black uppercase">Posts</span>
+                    <span className="text-[9px] font-bold uppercase">Posts</span>
                   </TabsTrigger>
-                  <TabsTrigger value="reviews" className="flex gap-2 items-center rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground transition-all h-8">
+                  <TabsTrigger value="reviews" className="flex gap-2 items-center rounded-md data-[state=active]:bg-white dark:data-[state=active]:bg-zinc-950 data-[state=active]:text-zinc-950 dark:data-[state=active]:text-white transition-all h-8 shadow-none border border-transparent data-[state=active]:border-zinc-200 dark:data-[state=active]:border-zinc-800">
                     <MessageSquare className="h-3.5 w-3.5" />
-                    <span className="text-[9px] font-black uppercase">Reseñas</span>
+                    <span className="text-[9px] font-bold uppercase">Reseñas</span>
                   </TabsTrigger>
-                  <TabsTrigger value="bio" className="flex gap-2 items-center rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground transition-all h-8">
+                  <TabsTrigger value="bio" className="flex gap-2 items-center rounded-md data-[state=active]:bg-white dark:data-[state=active]:bg-zinc-950 data-[state=active]:text-zinc-950 dark:data-[state=active]:text-white transition-all h-8 shadow-none border border-transparent data-[state=active]:border-zinc-200 dark:data-[state=active]:border-zinc-800">
                     <FileText className="h-3.5 w-3.5" />
-                    <span className="text-[9px] font-black uppercase">BIO</span>
+                    <span className="text-[9px] font-bold uppercase">BIO</span>
                   </TabsTrigger>
                 </TabsList>
               </div>
@@ -167,9 +167,9 @@ export function SalesStrategyHub({ heatmap, competitors, itemVariants }: SalesSt
             </Tabs>
           </div>
 
-          <div className="rounded-2xl border border-zinc-800 bg-zinc-950 p-5 shadow-inner">
-            <p className="text-[10px] leading-relaxed text-zinc-400 font-medium italic">
-              <strong className="text-primary not-italic">Tip de Cierre:</strong> Utiliza el "Punto Ciego" para generar urgencia. Muestra cómo sus clientes están terminando en la competencia por falta de optimización local.
+          <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 p-5 shadow-none">
+            <p className="text-[10px] leading-relaxed text-zinc-500 dark:text-zinc-400 font-medium italic">
+              <strong className="text-zinc-950 dark:text-white not-italic font-semibold">Tip de Cierre:</strong> Utiliza el "Punto Ciego" para generar urgencia. Muestra cómo sus clientes están terminando en la competencia por falta de optimización local.
             </p>
           </div>
         </div>

@@ -204,10 +204,10 @@ export function HeatmapResultPage() {
           </Card>
 
           {/* Google Ads Intelligence */}
-          <Card className={`${isTargetInAds ? 'border-amber-500/30 bg-amber-500/5' : 'border-border'}`}>
+          <Card className={`${isTargetInAds ? 'border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 shadow-none' : 'border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 shadow-none'}`}>
             <CardHeader className="pb-3">
               <CardTitle className="flex items-center gap-2 text-md">
-                <Megaphone className={`h-4 w-4 ${isTargetInAds ? 'text-amber-500' : 'text-muted-foreground'}`} />
+                <Megaphone className={`h-4 w-4 ${isTargetInAds ? 'text-zinc-950 dark:text-white' : 'text-zinc-400'}`} />
                 Inteligencia Google Ads
               </CardTitle>
             </CardHeader>
@@ -229,13 +229,13 @@ export function HeatmapResultPage() {
               </div>
 
               {(advertisers || []).length > 0 && (
-                <div className="pt-3 border-t border-border/50">
-                  <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider mb-2">Competencia con Ads ({(advertisers || []).length})</p>
+                <div className="pt-3 border-t border-zinc-200 dark:border-zinc-800">
+                  <p className="text-[10px] uppercase font-bold text-zinc-500 tracking-wider mb-2">Competencia con Ads ({(advertisers || []).length})</p>
                   <div className="space-y-1.5 max-h-[120px] overflow-y-auto pr-1">
                     {(advertisers || []).map((ad, idx) => (
-                      <div key={idx} className="flex items-center gap-2 text-[11px] font-medium bg-secondary/20 p-1.5 rounded border border-transparent hover:border-amber-500/20 transition-colors">
-                        <div className="h-1.5 w-1.5 rounded-full bg-amber-500" />
-                        <span className="truncate">{ad}</span>
+                      <div key={idx} className="flex items-center gap-2 text-[11px] font-medium bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 p-2 rounded-md hover:border-zinc-300 dark:hover:border-zinc-700 transition-colors">
+                        <div className="h-1.5 w-1.5 rounded-full bg-zinc-950 dark:bg-white" />
+                        <span className="truncate text-zinc-700 dark:text-zinc-300">{ad}</span>
                       </div>
                     ))}
                   </div>
@@ -253,24 +253,24 @@ export function HeatmapResultPage() {
             />
 
             <div className="grid grid-cols-2 gap-4">
-              <Card className="bg-primary/5 border-primary/20 shadow-sm overflow-hidden">
+              <Card className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 shadow-none overflow-hidden">
                 <CardContent className="p-4 flex flex-col items-center justify-center relative">
-                  <div className="absolute top-0 right-0 p-1">
-                    <Trophy className="h-3 w-3 text-primary/30" />
+                  <div className="absolute top-0 right-0 p-2">
+                    <Trophy className="h-3 w-3 text-zinc-300 dark:text-zinc-700" />
                   </div>
-                  <p className="text-[9px] uppercase font-black text-muted-foreground tracking-widest mb-1">Mejor Rango</p>
-                  <div className="text-3xl font-black" style={{ color: getRankColor(summary.bestRank) }}>
+                  <p className="text-[9px] uppercase font-semibold text-zinc-500 tracking-widest mb-1">Mejor Rango</p>
+                  <div className="text-3xl font-semibold tracking-tight text-zinc-950 dark:text-white">
                     #{summary.bestRank || '-'}
                   </div>
                 </CardContent>
               </Card>
-              <Card className="bg-primary/5 border-primary/20 shadow-sm overflow-hidden">
+              <Card className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 shadow-none overflow-hidden">
                 <CardContent className="p-4 flex flex-col items-center justify-center relative">
-                  <div className="absolute top-0 right-0 p-1">
-                    <Target className="h-3 w-3 text-primary/30" />
+                  <div className="absolute top-0 right-0 p-2">
+                    <Target className="h-3 w-3 text-zinc-300 dark:text-zinc-700" />
                   </div>
-                  <p className="text-[9px] uppercase font-black text-muted-foreground tracking-widest mb-1">Promedio Gral</p>
-                  <div className="text-3xl font-black" style={{ color: getRankColor(Math.round(summary.avgRank)) }}>
+                  <p className="text-[9px] uppercase font-semibold text-zinc-500 tracking-widest mb-1">Promedio Gral</p>
+                  <div className="text-3xl font-semibold tracking-tight text-zinc-950 dark:text-white">
                     #{summary.avgRank ? summary.avgRank.toFixed(1) : '-'}
                   </div>
                 </CardContent>
