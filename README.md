@@ -1,6 +1,8 @@
-# MapRanker Pro 🗺️
+# LocalRank Pro 🗺️
 
-**Herramienta SaaS de SEO Local con Mapa de Calor interactivo** — Permite a negocios locales visualizar su posicionamiento en Google Maps a través de una cuadrícula geolocalizada con ranking por colores.
+**El Problema:** Muchos negocios locales pierden miles de dólares mensuales porque son "invisibles" en Google Maps. Carecen de herramientas para entender en qué calles específicas su competencia les está robando clientes, y las agencias de marketing sufren para demostrar el valor real de sus servicios de SEO Local con reportes técnicos aburridos.
+
+**La Solución (LocalRank Pro):** Una plataforma SaaS de Inteligencia SEO Local que audita el posicionamiento geolocalizado de cualquier negocio y lo convierte en un mapa de calor visual e interactivo. Transforma métricas complejas en "Argumentos de Cierre" persuasivos (visibilidad, puntos ciegos, ROI) permitiendo a consultores y agencias auditar, prospectar y cerrar clientes de forma contundente.
 
 ## 📋 Tabla de Contenidos
 
@@ -523,6 +525,24 @@ Hito alcanzado en la profesionalización de los reportes ejecutivos y la gestió
 4.  **⚖️ Modo Comparativo Ejecutivo**: Nueva interfaz de selección múltiple con una barra de herramientas flotante ("Floating Compare Bar") para elegir y contrastar dos análisis históricos ("Antes vs. Después").
 5.  **💅 Premium SaaS Aesthetics**: Refactorización estética total del panel de resultados e historial utilizando una base `zinc-950`, tipografía italiana en negrita (`black italic`) y efectos de cristalería (glassmorphism) avanzados.
 6.  **🛡️ Surgical Stability Fixes**: Resolución de errores de compilación críticos (Strict TS) y adición formal del componente `Checkbox` mediante el CLI de `shadcn`, garantizando un build de producción impecable.
+
+---
+
+## 🚀 Neo-Minimalist UI/UX Refactor (v2.3.0 - Cal.com / Linear Aesthetic)
+
+Hito enfocado en erradicar el ruido visual y consolidar una estética premium, seria y 100% orientada a datos:
+
+1.  **Patrón Estético Establecido (Nuestro Nuevo Estándar):**
+    *   **Monocromatismo:** Uso predominante de la escala de grises (`zinc-50` a `zinc-950`) y blanco/negro puro para contrastes altos. Se prohíbe el uso de fondos coloridos saturados (azules, esmeraldas, ámbar) en los contenedores.
+    *   **Sin Sombras, Sin Blur:** Transición de diseños "glassmorphism" ruidosos a componentes planos, delimitados por un borde sutil (`border-zinc-200` light / `border-zinc-800` dark) y esquinas redondeadas (`rounded-xl` o `rounded-md`).
+    *   **Color Funcional, No Decorativo:** El color se reserva *únicamente* para los datos geográficos del mapa de calor, avatares, o pequeños estados críticos. Los iconos pasan a ser grises, blancos o negros.
+2.  **🧹 Limpieza Profunda del Sistema:**
+    *   Refactorización total del **Sidebar** y **Menú de Usuario**: Reemplazo de insignias de color llamativas por variantes "outline" monocromáticas.
+    *   **Página de Resultados & Dashboard:** Componentes como `StatRow` y el módulo de `SalesStrategyHub` fueron limpiados, erradicando gradientes y cajas con opacidad colorida.
+    *   **Tablas Premium (`CompetitorsTable`, `AdminPage`):** Eliminación de medallas de oro, plata y bronce. Implementación de un sistema de posición sobrio con barras de progreso en blanco/negro, inspirado en paneles financieros.
+    *   **Configuraciones Modulares:** Las pestañas de `SettingsPage` actúan ahora como botones limpios integrados perfectamente en un panel ligero, elevando la experiencia de usuario.
+
+Con esta fase, el SaaS garantiza una presencia visual impecable que transmite confianza, claridad absoluta y un alto valor percibido (Premium Enterprise).
 
 ---
 
