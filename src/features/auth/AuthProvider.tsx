@@ -59,7 +59,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
   }, []);
 
-  // 3. CORE SESSION HANDLER
+  // 3. CORE SESSION HANDLER (Stabilized with useCallback)
   const handleSession = useCallback(async (session: Session | null, event: string) => {
     logger.debug(`[AUTH_EVENT] ${event}`, { userId: session?.user?.id });      
     const currentUser = stateRef.current.user;
@@ -98,10 +98,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   // 4. SECURITY HOOKS
+  // Stabilization: Map callbacks to stable references to prevent infinite loops
+  const onRecovered = useCallback((session: any) => handleSession(session, 'INITIAL_WAKEUP_RECOVERED'), [handleSession]);
+  const onInitialWakeup = useCallback((session: any) => handleSession(session, 'INITIAL_WAKEUP'), [handleSession]);
+
   useSessionSync({
     signOut,
-    onRecovered: (session) => handleSession(session, 'INITIAL_WAKEUP_RECOVERED'),
-    onInitialWakeup: (session) => handleSession(session, 'INITIAL_WAKEUP')
+    onRecovered,
+    onInitialWakeup
   });
 
   useInactivityTimer({
@@ -109,7 +113,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     signOut
   });
 
-  // 5. AUTH STATE LISTENERS (Token refresh, sign-in, sign-out)
+  // 5. AUTH STATE LISTENERS
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { logger } from '@/lib/logger';
 import { AUTH_CONFIG } from '../constants';
 
@@ -9,14 +9,17 @@ interface UseInactivityTimerProps {
 
 /**
  * Hook to monitor user activity and automatically sign out after a period of inactivity.
+ * Uses a Ref for lastActivity to avoid unnecessary re-renders and effect churn.
  */
 export function useInactivityTimer({ hasSession, signOut }: UseInactivityTimerProps) {
-  const [lastActivity, setLastActivity] = useState(Date.now());
+  const lastActivityRef = useRef(Date.now());
 
   useEffect(() => {
     if (!hasSession) return;
 
-    const handleActivity = () => setLastActivity(Date.now());
+    const handleActivity = () => {
+      lastActivityRef.current = Date.now();
+    };
     
     // Listen for common interaction events
     const events = ['mousemove', 'keydown', 'scroll', 'click'];
@@ -25,7 +28,7 @@ export function useInactivityTimer({ hasSession, signOut }: UseInactivityTimerPr
     // Periodically check for inactivity
     const interval = setInterval(() => {
       const now = Date.now();
-      const elapsed = now - lastActivity;
+      const elapsed = now - lastActivityRef.current;
 
       if (elapsed > AUTH_CONFIG.INACTIVITY_TIMEOUT) {
         logger.warn('[AUTH_SECURITY] Session expired due to inactivity.');
@@ -37,5 +40,5 @@ export function useInactivityTimer({ hasSession, signOut }: UseInactivityTimerPr
       events.forEach(event => window.removeEventListener(event, handleActivity));
       clearInterval(interval);
     };
-  }, [hasSession, lastActivity, signOut]);
+  }, [hasSession, signOut]); // lastActivityRef removed from dependencies
 }
