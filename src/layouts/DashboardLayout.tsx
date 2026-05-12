@@ -71,45 +71,41 @@ export function DashboardLayout() {
         </main>
       </div>
 
-      {/* Premium Logout Confirmation Modal */}
+      {/* Premium Minimalist Logout Confirmation Modal */}
       <Dialog open={isLogoutOpen} onOpenChange={setIsLogoutOpen}>
-        <DialogContent className="sm:max-w-[420px] p-8 border-none shadow-2xl rounded-3xl overflow-hidden backdrop-blur-sm">
-          <div className="absolute inset-0 bg-gradient-to-br from-destructive/5 via-transparent to-primary/5 pointer-events-none" />
-          
-          <DialogHeader className="relative z-10 flex flex-col items-center">
+        <DialogContent className="sm:max-w-[400px] p-8 border border-zinc-200 dark:border-zinc-800 shadow-xl rounded-xl overflow-hidden bg-white dark:bg-zinc-950">
+          <DialogHeader className="flex flex-col items-center">
             <motion.div 
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={{ type: "spring", stiffness: 300, damping: 20 }}
-              className="mb-6 flex h-20 w-20 items-center justify-center rounded-2xl bg-destructive/10 text-destructive shadow-inner"
+              className="mb-4 flex h-16 w-16 items-center justify-center rounded-full border border-zinc-100 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 text-zinc-950 dark:text-white"
             >
-              <LogOut className="h-10 w-10 stroke-[1.5]" />
+              <LogOut className="h-6 w-6 stroke-[1.5]" />
             </motion.div>
             
-            <DialogTitle className="text-center text-2xl font-bold tracking-tight text-foreground">
-              ¿Cerrar sesión?
+            <DialogTitle className="text-center text-xl font-semibold tracking-tight text-zinc-950 dark:text-white">
+              Cerrar sesión
             </DialogTitle>
             
-            <DialogDescription className="text-center text-base text-muted-foreground pt-3 px-2 leading-relaxed">
-              ¿Estás seguro de que deseas salir de <span className="font-semibold text-foreground">{config.name}</span>? 
-              Se cerrará tu acceso actual de forma segura.
+            <DialogDescription className="text-center text-sm text-zinc-500 dark:text-zinc-400 pt-2 px-2 leading-relaxed">
+              ¿Estás seguro de que deseas salir de <span className="font-medium text-zinc-950 dark:text-white">{config.name}</span>? 
             </DialogDescription>
           </DialogHeader>
 
-          <DialogFooter className="relative z-10 mt-10 grid grid-cols-2 gap-4">
+          <DialogFooter className="mt-8 grid grid-cols-2 gap-3">
             <Button 
               variant="outline" 
               onClick={() => setIsLogoutOpen(false)}
-              className="rounded-2xl h-12 font-bold text-base border-2 hover:bg-muted transition-all active:scale-95"
+              className="rounded-md h-10 font-semibold text-sm border-zinc-200 dark:border-zinc-800 text-zinc-950 dark:text-white hover:bg-zinc-50 dark:hover:bg-zinc-900 shadow-none transition-colors"
             >
               Cancelar
             </Button>
             <Button 
-              variant="destructive" 
               onClick={handleSignOut}
-              className="rounded-2xl h-12 font-bold text-base bg-destructive hover:bg-destructive/90 text-destructive-foreground shadow-lg shadow-destructive/25 border-none transition-all active:scale-95 flex items-center justify-center gap-2"
+              className="rounded-md h-10 font-semibold text-sm bg-zinc-950 dark:bg-white text-white dark:text-zinc-950 hover:bg-zinc-800 dark:hover:bg-zinc-200 shadow-none transition-colors"
             >
-              Cerrar sesión
+              Confirmar
             </Button>
           </DialogFooter>
         </DialogContent>
