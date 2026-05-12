@@ -1,23 +1,16 @@
-import { useEffect, useState, useCallback, useMemo, useRef, type ReactNode } from 'react';
-import type { Session, User } from '@supabase/supabase-js';
-import { supabase } from '@/lib/supabase';
+import { useEffect, useState, useMemo, useRef, useCallback, type ReactNode } from 'react';
 import { logger } from '@/lib/logger';
 import { AuthContext } from './hooks/useAuth';
-import { profileService, type UserProfile } from '@/services/profileService';
-import { AUTH_CONFIG } from './constants';
 import { useSessionSync } from './hooks/useSessionSync';
 import { useInactivityTimer } from './hooks/useInactivityTimer';
-
-interface AuthState {
-  user: User | null;
-  profile: UserProfile | null;
-  session: Session | null;
-  isLoading: boolean;
-}
+import { useAuthActions } from './hooks/useAuthActions';
+import { useAuthLifecycle } from './hooks/useAuthLifecycle';
+import type { AuthState } from './types';
 
 /**
- * AUTO-HEALING AUTH PROVIDER.
- * Detects missing profiles and creates them on-the-fly to ensure stability.
+ * PREMIUM AUTH PROVIDER
+ * Orchestrates authentication state, security policies, and user profiles.
+ * Atomized into specialized hooks for maximum maintainability.
  */
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [authState, setAuthState] = useState<AuthState>({
@@ -27,124 +20,35 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     isLoading: true,
   });
 
-  // 1. STATE REF FOR ATOMIC CHECKS (Internal consistency)
+  // 1. PERSISTENT STATE REFERENCE
   const stateRef = useRef(authState);
   useEffect(() => {
     stateRef.current = authState;
   }, [authState]);
 
-  // 2. AUTH ACTIONS
-  const signIn = useCallback(async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) throw error;
-  }, []);
+  // 2. AUTHENTICATION ACTIONS (signIn, signUp, signOut, Google)
+  const { signIn, signUp, signOut, signInWithGoogle } = useAuthActions({ setAuthState });
 
-  const signUp = useCallback(async (email: string, password: string, fullName: string) => {
-    const { error } = await supabase.auth.signUp({
-      email, password, options: { data: { full_name: fullName } },
-    });
-    if (error) throw error;
-  }, []);
+  // 3. LIFECYCLE & PROFILE SYNC
+  const { handleSession } = useAuthLifecycle({ stateRef, setAuthState });
 
-  const signOut = useCallback(async () => {
-    await supabase.auth.signOut();
-    setAuthState({ user: null, session: null, profile: null, isLoading: false });
-    sessionStorage.removeItem(AUTH_CONFIG.VOLATILE_SESSION_KEY);
-  }, []);
-
-  const signInWithGoogle = useCallback(async () => {
-    await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: { redirectTo: `${window.location.origin}/dashboard` },
-    });
-  }, []);
-
-  // 3. CORE SESSION HANDLER (Stabilized with useCallback)
-  const handleSession = useCallback(async (session: Session | null, event: string) => {
-    logger.debug(`[AUTH_EVENT] ${event}`, { userId: session?.user?.id });      
-    const currentUser = stateRef.current.user;
-    const currentProfile = stateRef.current.profile;
-
-    try {
-      if (session) {
-        if (session.user.id === currentUser?.id && currentProfile && !stateRef.current.isLoading) {
-          setAuthState(prev => ({ ...prev, user: session.user!, session }));
-          return;
-        }
-
-        let profile = await profileService.getProfile(session.user.id);
-        
-        if (!profile) {
-           profile = await profileService.createInitialProfile(
-             session.user.id, 
-             session.user.email || '', 
-             session.user.user_metadata?.full_name || 'Nuevo Usuario'
-           );
-        }
-
-        setAuthState({
-          user: session.user,
-          session,
-          profile,
-          isLoading: false,
-        });
-      } else {
-        setAuthState({ user: null, session: null, profile: null, isLoading: false });
-      }
-    } catch (err) {
-      logger.error('[AUTH] Critical session handler failure:', err);
-      setAuthState(prev => ({ ...prev, isLoading: false }));
-    }
-  }, []);
-
-  // 4. SECURITY HOOKS
-  // Stabilization: Map callbacks to stable references to prevent infinite loops
+  // 4. SECURITY & SESSION POLICIES
   const onRecovered = useCallback((session: any) => handleSession(session, 'INITIAL_WAKEUP_RECOVERED'), [handleSession]);
   const onInitialWakeup = useCallback((session: any) => handleSession(session, 'INITIAL_WAKEUP'), [handleSession]);
 
-  useSessionSync({
-    signOut,
-    onRecovered,
-    onInitialWakeup
-  });
+  useSessionSync({ signOut, onRecovered, onInitialWakeup });
+  
+  useInactivityTimer({ hasSession: !!authState.session, signOut });
 
-  useInactivityTimer({
-    hasSession: !!authState.session,
-    signOut
-  });
-
-  // 5. AUTH STATE LISTENERS
-  useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
-        sessionStorage.setItem(AUTH_CONFIG.VOLATILE_SESSION_KEY, 'true');
-      }
-      if (event === 'SIGNED_OUT') {
-        sessionStorage.removeItem(AUTH_CONFIG.VOLATILE_SESSION_KEY);
-      }
-      handleSession(session, event);
-    });
-
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, [handleSession]);
-
-  // 6. SAFETY PANIC TIMER
+  // 5. SAFETY TIMEOUT (Unblocks UI in case of auth failure)
   useEffect(() => {
     const timer = setTimeout(() => {
-      setAuthState(prev => {
-        if (prev.isLoading) {
-          logger.warn('[AUTH_PANIC] Safety timeout triggered.');
-          return { ...prev, isLoading: false };
-        }
-        return prev;
-      });
-    }, 5000); 
-
+      setAuthState(prev => prev.isLoading ? { ...prev, isLoading: false } : prev);
+    }, 5000);
     return () => clearTimeout(timer);
   }, []);
 
+  // 6. CONTEXT VALUE MEMOIZATION
   const value = useMemo(() => ({
     ...authState,
     role: authState.profile?.role || null,

@@ -1,5 +1,12 @@
 import type { Session, User } from '@supabase/supabase-js';
 
+export interface AuthState {
+  user: User | null;
+  profile: UserProfile | null;
+  session: Session | null;
+  isLoading: boolean;
+}
+
 export type UserRole = 'super-admin' | 'owner' | 'admin' | 'staff' | 'client';
 
 export interface UserProfile {
