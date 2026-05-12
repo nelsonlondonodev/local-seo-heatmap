@@ -113,74 +113,74 @@ export function HistoryPage() {
             return (
               <motion.div key={entry.id} variants={fadeInUp} className="group">
                 <Card className={cn(
-                  "relative transition-all duration-300 border-zinc-800 bg-zinc-950/40 backdrop-blur-sm hover:bg-zinc-900/60 hover:border-primary/40 overflow-hidden",
-                  isSelected ? "ring-2 ring-primary border-primary bg-primary/5" : ""
+                  "relative transition-colors duration-200 border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 hover:border-zinc-300 dark:hover:border-zinc-700 overflow-hidden shadow-none rounded-xl",
+                  isSelected ? "ring-1 ring-zinc-950 dark:ring-white border-zinc-950 dark:border-white bg-zinc-50 dark:bg-zinc-900" : ""
                 )}>
                   <CardContent className="p-0">
                     <div className="flex items-stretch">
                       {/* Selection Strip */}
-                      <div className="flex items-center justify-center px-5 border-r border-zinc-800/50 bg-zinc-950/20">
+                      <div className="flex items-center justify-center px-4 border-r border-zinc-100 dark:border-zinc-800/50">
                         <Checkbox 
                           checked={isSelected} 
                           onCheckedChange={() => toggleSelection(entry.id)}
-                          className="h-5 w-5 border-zinc-700 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
+                          className="h-4 w-4 rounded-sm border-zinc-300 dark:border-zinc-600 data-[state=checked]:bg-zinc-950 dark:data-[state=checked]:bg-white data-[state=checked]:text-white dark:data-[state=checked]:text-black"
                         />
                       </div>
 
-                      <div className="flex flex-1 flex-col sm:flex-row items-center gap-6 p-5">
+                      <div className="flex flex-1 flex-col sm:flex-row items-center gap-6 p-4">
                         {/* Thumbnail View */}
-                        <div className="shrink-0 cursor-pointer" onClick={() => handleViewDetails(entry)}>
+                        <div className="shrink-0 cursor-pointer overflow-hidden rounded-md border border-zinc-100 dark:border-zinc-800" onClick={() => handleViewDetails(entry)}>
                           <HeatmapThumbnail points={points} gridSize={entry.grid_size} />
                         </div>
 
-                        <div className="flex-1 space-y-3 min-w-0 w-full">
+                        <div className="flex-1 space-y-2 min-w-0 w-full">
                           <div className="flex items-center justify-between gap-4">
-                            <div className="flex items-center gap-2 cursor-pointer group-hover:text-primary transition-colors" onClick={() => handleViewDetails(entry)}>
-                              <Search className="h-4 w-4 text-primary" />
-                              <span className="font-black text-lg tracking-tight truncate uppercase italic">{entry.keyword}</span>
+                            <div className="flex items-center gap-2 cursor-pointer group-hover:opacity-70 transition-opacity" onClick={() => handleViewDetails(entry)}>
+                              <Search className="h-3.5 w-3.5 text-zinc-400" />
+                              <span className="font-semibold text-base tracking-tight truncate text-zinc-950 dark:text-white">{entry.keyword}</span>
                             </div>
-                            <div className="flex items-center gap-1 shrink-0">
-                              <Badge variant={getRankVariant(summary.bestRank)} className="font-black text-[10px] h-6 px-2 min-w-[3rem] justify-center">
-                                #{summary.bestRank || '-'}
+                            <div className="flex items-center gap-1.5 shrink-0">
+                              <Badge variant="outline" className="font-medium text-[10px] h-6 px-2 min-w-[3rem] justify-center bg-zinc-50 text-zinc-600 border-zinc-200 dark:bg-zinc-900 dark:text-zinc-400 dark:border-zinc-800">
+                                Best #{summary.bestRank || '-'}
                               </Badge>
-                              <Badge variant={getRankVariant(Math.round(summary.avgRank || 0))} className="font-black text-[10px] h-6 px-2 min-w-[3.5rem] justify-center">
-                                #{summary.avgRank?.toFixed(1) || '-'}
+                              <Badge variant="outline" className="font-medium text-[10px] h-6 px-2 min-w-[3.5rem] justify-center bg-white text-zinc-950 border-zinc-300 dark:bg-zinc-950 dark:text-white dark:border-zinc-700">
+                                Avg #{summary.avgRank?.toFixed(1) || '-'}
                               </Badge>
                             </div>
                           </div>
 
-                          <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-[10px] font-black uppercase tracking-widest text-zinc-500">
-                            <span className="flex items-center gap-2">
-                              <MapPin className="h-3.5 w-3.5 text-zinc-700" />
+                          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs font-medium text-zinc-500 dark:text-zinc-400">
+                            <span className="flex items-center gap-1.5">
+                              <MapPin className="h-3 w-3" />
                               {entry.business_name}
                             </span>
-                            <span className="flex items-center gap-2">
-                              <Calendar className="h-3.5 w-3.5 text-zinc-700" />
+                            <span className="flex items-center gap-1.5">
+                              <Calendar className="h-3 w-3" />
                               {new Date(entry.created_at).toLocaleDateString('es-ES', { 
                                 day: '2-digit', month: 'short', year: 'numeric'
                               })}
                             </span>
                           </div>
 
-                          <div className="flex items-center gap-2">
+                          <div className="flex items-center gap-2 pt-1">
                             {entry.prospect_name && (
-                              <Badge className="bg-primary/10 text-primary border-primary/20 text-[9px] font-black uppercase tracking-widest px-2 h-5">
+                              <Badge variant="outline" className="text-[10px] font-medium px-2 h-5 text-zinc-600 border-zinc-200 dark:text-zinc-400 dark:border-zinc-800">
                                 Lead: {entry.prospect_name}
                               </Badge>
                             )}
                             {advertisers.length > 0 && (
-                              <Badge className="bg-amber-500/10 text-amber-500 border-amber-500/20 text-[9px] font-black uppercase tracking-widest px-2 h-5">
-                                {advertisers.length} Ads Detectados
+                              <Badge variant="outline" className="text-[10px] font-medium px-2 h-5 text-zinc-600 border-zinc-200 dark:text-zinc-400 dark:border-zinc-800">
+                                {advertisers.length} Ads
                               </Badge>
                             )}
                           </div>
                         </div>
                         
-                        <div className="flex items-center gap-2 shrink-0 w-full sm:w-auto pt-4 sm:pt-0 border-t sm:border-0 border-zinc-800/50">
+                        <div className="flex items-center gap-2 shrink-0 w-full sm:w-auto pt-4 sm:pt-0 border-t sm:border-0 border-zinc-100 dark:border-zinc-800/50">
                           <Button 
-                            variant="secondary" 
+                            variant="outline" 
                             size="sm" 
-                            className="flex-1 sm:flex-none h-10 px-5 font-black text-[10px] uppercase tracking-widest shadow-lg"
+                            className="flex-1 sm:flex-none h-9 px-4 font-medium text-xs shadow-none border-zinc-200 text-zinc-950 hover:bg-zinc-50 dark:border-zinc-800 dark:text-white dark:hover:bg-zinc-900"
                             onClick={() => handleViewDetails(entry)}
                           >
                             Resultados
@@ -190,9 +190,9 @@ export function HistoryPage() {
                             size="icon" 
                             disabled={isDeleting}
                             onClick={() => handleDelete(entry.id)}
-                            className="h-10 w-10 text-zinc-600 hover:text-rose-500 hover:bg-rose-500/10 transition-colors"
+                            className="h-9 w-9 text-zinc-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors"
                           >
-                            <Trash2 className="h-4 w-4" />
+                            <Trash2 className="h-3.5 w-3.5" />
                           </Button>
                         </div>
                       </div>
