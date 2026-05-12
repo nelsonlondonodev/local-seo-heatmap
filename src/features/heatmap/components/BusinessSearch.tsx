@@ -95,11 +95,11 @@ export function BusinessSearch({ onSelect, onClear, initialValue = '', selectedP
           </button>
         </div>
         
-        <Card className="border-primary/20 bg-primary/5 group transition-all hover:bg-primary/[0.08] overflow-hidden relative">
+        <Card className="border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 group transition-all hover:border-zinc-300 dark:hover:border-zinc-700 overflow-hidden relative shadow-none rounded-xl">
           <CardContent className="p-4">
             <div className="flex gap-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary transition-transform group-hover:scale-105">
-                <Building2 className="h-6 w-6" />
+              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-zinc-50 dark:bg-zinc-900 text-zinc-950 dark:text-white border border-zinc-100 dark:border-zinc-800 transition-transform group-hover:scale-105">
+                <Building2 className="h-5 w-5" strokeWidth={1.5} />
               </div>
               <div className="flex-1 space-y-1">
                 <h3 className="font-bold text-sm leading-tight">{name}</h3>
@@ -128,9 +128,9 @@ export function BusinessSearch({ onSelect, onClear, initialValue = '', selectedP
   // UI Para el ESTADO DE BÚSQUEDA
   return (
     <div className="relative space-y-2" ref={containerRef}>
-      <label className="text-sm font-medium leading-none">Nombre del negocio</label>
+      <label className="text-xs font-semibold uppercase text-zinc-500 tracking-widest leading-none">Nombre del negocio</label>
       <div className="relative group">
-        <div className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-primary">
+        <div className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 transition-colors group-focus-within:text-zinc-950 dark:group-focus-within:text-white">
           {isSearching ? (
             <Loader2 className="h-4 w-4 animate-spin" />
           ) : (
@@ -139,7 +139,7 @@ export function BusinessSearch({ onSelect, onClear, initialValue = '', selectedP
         </div>
         <Input
           placeholder="Escribe el nombre del negocio..."
-          className="pl-9 pr-4 transition-all focus:ring-primary/20 focus:border-primary"
+          className="pl-9 pr-4 h-12 bg-white dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800 transition-all focus:ring-zinc-950 dark:focus:ring-white rounded-xl focus:border-zinc-950 dark:focus:border-white shadow-none text-zinc-950 dark:text-white placeholder:text-zinc-400"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onFocus={() => query.trim().length >= 3 && setIsOpen(suggestions.length > 0)}
@@ -152,10 +152,10 @@ export function BusinessSearch({ onSelect, onClear, initialValue = '', selectedP
             initial={{ opacity: 0, y: -10, scale: 0.98 }}
             animate={{ opacity: 1, y: 4, scale: 1 }}
             exit={{ opacity: 0, y: -10, scale: 0.98 }}
-            className="absolute left-0 right-0 top-full z-50 overflow-hidden rounded-xl border border-border bg-popover text-popover-foreground shadow-xl backdrop-blur-md"
+            className="absolute left-0 right-0 top-full z-50 overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 shadow-xl backdrop-blur-md"
           >
-            <div className="max-h-[300px] overflow-auto p-1.5 scrollbar-thin scrollbar-thumb-primary/10">
-              <div className="px-2 py-1.5 text-[10px] uppercase font-bold text-muted-foreground tracking-wider">
+            <div className="max-h-[300px] overflow-auto p-1.5 scrollbar-thin scrollbar-thumb-zinc-200 dark:scrollbar-thumb-zinc-800">
+              <div className="px-2 py-1.5 text-[10px] uppercase font-bold text-zinc-400 tracking-wider">
                 Resultados Sugeridos
               </div>
               <div className="space-y-1">
@@ -163,14 +163,14 @@ export function BusinessSearch({ onSelect, onClear, initialValue = '', selectedP
                   <button
                     key={place.placeId}
                     onClick={() => handleSelect(place)}
-                    className="flex w-full items-start gap-3 rounded-lg p-3 text-left transition-all hover:bg-primary/5 hover:bg-accent focus:bg-accent focus:outline-none"
+                    className="flex w-full items-start gap-3 rounded-lg p-3 text-left transition-all hover:bg-zinc-50 dark:hover:bg-zinc-900 focus:bg-zinc-50 dark:focus:bg-zinc-900 focus:outline-none"
                   >
-                    <div className="flex h-8 w-8 items-center justify-center rounded-md bg-secondary text-secondary-foreground flex-shrink-0">
-                      <Building2 className="h-4 w-4" />
+                    <div className="flex h-8 w-8 items-center justify-center rounded-md bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-zinc-500 flex-shrink-0">
+                      <Building2 className="h-4 w-4" strokeWidth={1.5} />
                     </div>
                     <div className="min-w-0 flex-1">
-                      <div className="font-semibold text-sm line-clamp-1">{place.name}</div>
-                      <div className="text-xs text-muted-foreground line-clamp-1">{place.address}</div>
+                      <div className="font-semibold text-sm line-clamp-1 text-zinc-950 dark:text-white">{place.name}</div>
+                      <div className="text-xs text-zinc-500 line-clamp-1">{place.address}</div>
                     </div>
                   </button>
                 ))}

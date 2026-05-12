@@ -24,7 +24,7 @@ export function AnalysisTab({ heatmap }: AnalysisTabProps) {
       <CardContent className="space-y-5">
         <SearchForm heatmap={heatmap} />
         <Button 
-          className="w-full gap-2 h-11 text-base font-bold shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-all hover:-translate-y-0.5" 
+          className="w-full gap-2 h-11 text-sm font-semibold shadow-none bg-zinc-950 text-white hover:bg-zinc-800 dark:bg-white dark:text-zinc-950 dark:hover:bg-zinc-200 transition-colors rounded-md" 
           disabled={!heatmap.isFormValid || heatmap.isLoading}
           onClick={() => heatmap.setIsConfirmModalOpen(true)}
         >
