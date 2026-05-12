@@ -12,28 +12,25 @@ interface StatCardProps {
   label: string;
   value: string | number;
   icon: LucideIcon;
-  color: string;
-  bg: string;
   index: number;
 }
 
-function StatCard({ label, value, icon: Icon, color, bg, index }: StatCardProps) {
+function StatCard({ label, value, icon: Icon, index }: StatCardProps) {
   return (
     <motion.div
       variants={fadeInUp}
       transition={{ delay: index * 0.1 }}
     >
-      <Card className="border-none bg-white/5 backdrop-blur-sm shadow-xl hover:bg-white/10 transition-colors group cursor-default overflow-hidden relative">
-        <div className={cn("absolute top-0 left-0 w-1 h-full opacity-0 group-hover:opacity-100 transition-opacity", bg.replace('/10', ''))} />
-        <CardContent className="p-6">
+      <Card className="border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 shadow-none hover:border-zinc-300 dark:hover:border-zinc-700 transition-colors group cursor-default rounded-xl overflow-hidden">
+        <CardContent className="p-6 flex flex-col gap-4">
           <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-muted-foreground group-hover:text-zinc-300 transition-colors">{label}</p>
-              <h3 className="text-2xl font-black mt-1 group-hover:scale-105 origin-left transition-transform duration-300">{value}</h3>
+            <p className="text-sm font-medium text-zinc-500 dark:text-zinc-400">{label}</p>
+            <div className="text-zinc-400 dark:text-zinc-500 group-hover:text-zinc-950 dark:group-hover:text-white transition-colors">
+              <Icon className="h-4 w-4" strokeWidth={2} />
             </div>
-            <div className={cn("p-3 rounded-2xl transition-transform duration-300 shadow-lg shadow-black/20 group-hover:rotate-12", bg, color)}>
-              <Icon className="h-5 w-5" />
-            </div>
+          </div>
+          <div>
+            <h3 className="text-3xl font-semibold tracking-tight text-zinc-950 dark:text-white">{value}</h3>
           </div>
         </CardContent>
       </Card>
@@ -61,29 +58,21 @@ export function DashboardOverview() {
         label: 'Análisis Realizados',
         value: total,
         icon: History,
-        color: 'text-blue-400',
-        bg: 'bg-blue-400/10'
       },
       {
         label: 'Ranking Promedio',
         value: `#${avgRank}`,
         icon: TrendingUp,
-        color: 'text-emerald-400',
-        bg: 'bg-emerald-400/10'
       },
       {
         label: 'Leads Generados',
         value: prospecting,
         icon: Target,
-        color: 'text-primary',
-        bg: 'bg-primary/10'
       },
       {
         label: 'Estado del Servicio',
         value: 'Activo',
         icon: ShieldCheck,
-        color: 'text-amber-400',
-        bg: 'bg-amber-400/10'
       }
     ];
   }, [history]);
