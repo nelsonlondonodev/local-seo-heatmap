@@ -88,16 +88,16 @@ export function Sidebar({ isOpen, onClose, onLogoutClick }: SidebarProps) {
                   key={item.path}
                   to={item.path}
                   onClick={onClose}
-                  className={`group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all ${
+                  className={`group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-all ${
                     isActive
-                      ? 'bg-brand-primary text-primary-foreground shadow-sm'
-                      : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
+                      ? 'bg-zinc-100 dark:bg-zinc-900 text-zinc-950 dark:text-white font-semibold'
+                      : 'text-zinc-500 font-medium hover:bg-zinc-50 dark:hover:bg-zinc-900/50 hover:text-zinc-950 dark:hover:text-white'
                   }`}
                 >
-                  <item.icon className="h-4 w-4" />
+                  <item.icon className="h-4 w-4" strokeWidth={isActive ? 2.5 : 2} />
                   {item.label}
                   {isActive && (
-                    <ChevronRight className="ml-auto h-4 w-4" />
+                    <ChevronRight className="ml-auto h-4 w-4 text-zinc-400 dark:text-zinc-600" />
                   )}
                 </Link>
               );
