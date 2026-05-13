@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { Link } from 'react-router-dom';
 import { AuthBrand } from './AuthBrand';
 
 interface AuthLayoutProps {
@@ -7,11 +8,14 @@ interface AuthLayoutProps {
 
 export function AuthLayout({ children }: AuthLayoutProps) {
   return (
-    <div className="flex min-h-screen bg-[#030712] selection:bg-primary/30 relative overflow-x-hidden">
-      {/* Persistent Logo */}
-      <div className="absolute top-8 left-8 z-50">
+    <div className="flex min-h-screen bg-zinc-950 selection:bg-white/10 relative overflow-y-auto overflow-x-hidden">
+      {/* Persistent Logo - Clickable to Home */}
+      <Link 
+        to="/" 
+        className="absolute top-8 left-8 z-50 hover:opacity-70 transition-opacity"
+      >
         <AuthBrand />
-      </div>
+      </Link>
 
       {children}
     </div>

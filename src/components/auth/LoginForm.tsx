@@ -5,19 +5,19 @@ import { Eye, EyeOff, Loader2, Mail, Lock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/features/auth';
 import { AuthInput } from './AuthInput';
-
 import { AuthSocial } from './AuthSocial';
+import { cn } from '@/lib/utils';
 
 interface LoginFormProps {
   from: string;
 }
 
 const containerVariants = {
-  hidden: { opacity: 0, x: 20 },
+  hidden: { opacity: 0, y: 10 },
   visible: { 
     opacity: 1, 
-    x: 0,
-    transition: { duration: 0.6 }
+    y: 0,
+    transition: { duration: 0.5, ease: "easeOut" }
   }
 };
 
@@ -46,72 +46,79 @@ export function LoginForm({ from }: LoginFormProps) {
   };
 
   return (
-    <div className="flex w-full flex-col justify-center px-8 lg:w-1/2">
-      <div className="mx-auto w-full max-w-md">
-
-
+    <div className="flex w-full flex-col justify-center px-6 lg:px-12 lg:w-1/2 bg-zinc-950">
+      <div className="mx-auto w-full max-sm:max-w-sm max-w-sm">
         <motion.div
           variants={containerVariants}
           initial="hidden"
           animate="visible"
         >
-          <h1 className="text-4xl font-black tracking-tighter text-white mb-2 italic lg:text-5xl">Bienvenido.</h1>
-          <p className="text-zinc-300 font-bold mb-10">Ingresa tus credenciales para acceder.</p>
+          <h1 className="text-4xl font-bold tracking-tighter text-white mb-3">
+            Bienvenido
+          </h1>
+          <p className="text-zinc-500 font-medium mb-10 text-sm">
+            Ingresa tus credenciales para acceder a tu panel.
+          </p>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             {error && (
               <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="rounded-2xl bg-destructive/10 p-4 text-sm text-destructive font-black border border-destructive/20"
+                initial={{ opacity: 0, y: -4 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="rounded-lg bg-red-500/5 p-3 text-xs font-semibold text-red-400 border border-red-500/20"
               >
                 {error}
               </motion.div>
             )}
 
-            <AuthInput
-              id="email"
-              label="Email"
-              type="email"
-              placeholder="tu@email.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              icon={Mail}
-              autoComplete="email"
-            />
+            <div className="space-y-4">
+              <AuthInput
+                id="email"
+                label="Email"
+                type="email"
+                placeholder="tu@email.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                icon={Mail}
+                autoComplete="email"
+              />
 
-            <AuthInput
-              id="password"
-              label="Contraseña"
-              type={showPassword ? 'text' : 'password'}
-              placeholder="••••••••"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              icon={Lock}
-              autoComplete="current-password"
-              rightElement={
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="text-slate-500 hover:text-white transition-colors"
-                >
-                  {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-                </button>
-              }
-            />
+              <AuthInput
+                id="password"
+                label="Contraseña"
+                type={showPassword ? 'text' : 'password'}
+                placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                icon={Lock}
+                autoComplete="current-password"
+                rightElement={
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="text-zinc-600 hover:text-white transition-colors p-1"
+                  >
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                }
+              />
+            </div>
 
             <div className="flex justify-end pr-1">
-              <Link to="/forgot-password" className="text-[10px] font-black uppercase tracking-widest text-primary hover:underline">
-                ¿Olvidaste la clave?
+              <Link to="/forgot-password" size="sm" className="text-[10px] font-bold uppercase tracking-[0.15em] text-zinc-500 hover:text-white transition-colors">
+                ¿Olvidaste tu contraseña?
               </Link>
             </div>
 
             <Button 
               type="submit" 
-              className="w-full h-14 rounded-2xl bg-primary hover:scale-[1.02] active:scale-[0.98] transition-all font-black text-lg shadow-xl shadow-primary/20" 
+              className={cn(
+                "w-full h-12 rounded-lg bg-white text-zinc-950 hover:bg-zinc-200 transition-all font-bold text-sm",
+                "active:scale-[0.98] shadow-[0_0_20px_rgba(255,255,255,0.05)]"
+              )}
               disabled={isLoading}
             >
-              {isLoading ? <Loader2 className="h-6 w-6 animate-spin" /> : 'Entrar al Dashboard'}
+              {isLoading ? <Loader2 className="h-5 w-5 animate-spin" /> : 'Entrar al Panel'}
             </Button>
           </form>
 
@@ -120,9 +127,9 @@ export function LoginForm({ from }: LoginFormProps) {
             onGoogleClick={signInWithGoogle} 
           />
 
-          <p className="mt-10 text-center text-sm font-bold text-zinc-400">
+          <p className="mt-10 text-center text-xs font-medium text-zinc-500">
             ¿Nuevo aquí?{' '}
-            <Link to="/register" className="text-primary hover:underline font-black">
+            <Link to="/register" className="text-white hover:underline font-bold transition-all">
               Crea tu cuenta gratis
             </Link>
           </p>

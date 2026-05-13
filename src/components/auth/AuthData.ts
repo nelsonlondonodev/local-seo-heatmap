@@ -1,5 +1,5 @@
 export const loginContent = {
-  badge: 'Intelligence Platform',
+  badge: 'Plataforma de Inteligencia',
   title: 'Visualiza el éxito de tu',
   titleAccent: 'estrategia local.',
   description: 'Accede a tu panel de control y descubre cómo dominas el mapa en tiempo real.'
