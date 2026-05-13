@@ -11,7 +11,7 @@ export function Navbar() {
   return (
     <nav className="fixed top-0 z-50 w-full border-b border-zinc-800 bg-zinc-950/80 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
-        <Logo iconClassName="h-8 w-8 rounded-lg shadow-none" textClassName="text-xl font-bold" />
+        <Logo textClassName="text-xl font-bold" />
         <div className="hidden lg:flex items-center gap-8 text-sm font-medium text-zinc-400">
           <a href="#features" className="hover:text-white transition-colors">Funciones</a>
           <a href="#pricing" className="hover:text-white transition-colors">Precios</a>

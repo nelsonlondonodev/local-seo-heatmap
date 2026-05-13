@@ -1,4 +1,3 @@
-import { Map } from 'lucide-react';
 import { useBranding } from '@/features/branding';
 import { cn } from '@/lib/utils';
 
@@ -52,11 +51,8 @@ export function Footer() {
       <div className="mx-auto max-w-7xl px-6">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 mb-20">
           <div className="lg:col-span-5">
-            <div className="flex items-center gap-3 mb-8">
-              <div className="h-10 w-10 rounded-lg bg-zinc-900 border border-zinc-800 flex items-center justify-center">
-                <Map className="h-5 w-5 text-white" />
-              </div>
-              <span className="text-xl font-bold tracking-tight text-white">{config.name}</span>
+            <div className="flex items-center mb-8">
+              <span className="text-xl font-bold tracking-tighter text-white uppercase">{config.name}</span>
             </div>
             <p className="text-zinc-500 font-normal text-base leading-relaxed max-w-sm">
               Plataforma de inteligencia competitiva diseñada para agencias que dominan el SEO Local.

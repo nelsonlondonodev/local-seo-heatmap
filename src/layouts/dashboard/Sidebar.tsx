@@ -5,6 +5,7 @@ import { Separator } from '@/components/ui/separator';
 import { useBranding } from '@/features/branding';
 import { useAuth } from '@/features/auth';
 import { UserSection } from './UserSection';
+import { Logo } from '@/components/shared/Logo';
 
 const navItems = [
   { path: '/dashboard', label: 'Mapa de Calor', icon: Map },
@@ -58,17 +59,8 @@ export function Sidebar({ isOpen, onClose, onLogoutClick }: SidebarProps) {
       >
         <div className="flex h-full flex-col">
           {/* Logo Area */}
-          <div className="flex h-16 items-center gap-2 px-6">
-            {config.logoUrl ? (
-              <img src={config.logoUrl} alt={config.name} className="h-8 w-auto object-contain" />
-            ) : (
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-primary shadow-sm">
-                <Map className="h-4 w-4 text-primary-foreground" />
-              </div>
-            )}
-            <span className="text-lg font-bold tracking-tight">
-              {config.name}
-            </span>
+          <div className="flex h-16 items-center px-6">
+            <Logo textClassName="text-lg font-bold dark:text-white text-zinc-950" />
             <button
               className="ml-auto lg:hidden"
               onClick={onClose}
