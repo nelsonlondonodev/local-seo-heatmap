@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import { Mail } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
 interface AuthSuccessProps {
   email: string;
@@ -13,25 +14,32 @@ interface AuthSuccessProps {
 
 export function AuthSuccess({ email, title, description, buttonText, buttonLink }: AuthSuccessProps) {
   return (
-    <div className="flex w-full flex-col justify-center px-8 lg:w-1/2">
+    <div className="flex w-full flex-col justify-center px-6 lg:px-12 lg:w-1/2 bg-zinc-950">
       <motion.div 
-        initial={{ opacity: 0, scale: 0.95 }} 
-        animate={{ opacity: 1, scale: 1 }} 
-        className="mx-auto w-full max-w-md text-center"
+        initial={{ opacity: 0, y: 10 }} 
+        animate={{ opacity: 1, y: 0 }} 
+        className="mx-auto w-full max-w-sm text-center"
       >
         <div className="mb-10 flex flex-col items-center gap-6">
-           <div className="h-20 w-20 rounded-3xl bg-primary/10 flex items-center justify-center text-primary shadow-2xl shadow-primary/20 border border-primary/20">
-              <Mail className="h-10 w-10" />
+           <div className="h-16 w-16 rounded-xl bg-zinc-900 flex items-center justify-center text-white border border-zinc-800">
+              <Mail className="h-8 w-8" />
            </div>
-           <div className="space-y-2">
-             <h2 className="text-4xl font-black tracking-tighter text-white italic">{title}</h2>
-             <p className="text-zinc-400 font-bold px-4">
-               {description} <span className="text-white">{email}</span>. Confírmalo para acceder al dashboard.
+           <div className="space-y-3">
+             <h2 className="text-4xl font-bold tracking-tighter text-white">{title}</h2>
+             <p className="text-sm text-zinc-500 font-medium px-4 leading-relaxed">
+               {description} <span className="text-white font-bold">{email}</span>. <br />
+               Confírmalo para acceder al panel de control.
              </p>
            </div>
         </div>
+
         <Link to={buttonLink}>
-          <Button variant="outline" className="h-14 px-10 rounded-2xl font-black border-white/10 hover:bg-white/5 transition-all active:scale-[0.98]">
+          <Button 
+            className={cn(
+              "w-full h-12 rounded-lg bg-white text-zinc-950 hover:bg-zinc-200 transition-all font-bold text-sm",
+              "active:scale-[0.98] shadow-[0_0_20px_rgba(255,255,255,0.05)]"
+            )}
+          >
             {buttonText}
           </Button>
         </Link>

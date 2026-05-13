@@ -546,10 +546,31 @@ Con esta fase, el SaaS garantiza una presencia visual impecable que transmite co
 
 ---
 
+## 🚀 Visual Identity & Heatmap Vitality (v2.4.0 - Phase A & B Finalized)
+
+Hito final en la transición estética y funcional hacia el estándar Neo-Minimalista (Estilo Linear/Vercel):
+
+1.  **🧬 Unificación de Marca Tipográfica**: Eliminación total de iconos de marca genéricos en favor de una identidad 100% tipográfica (`MAPRANKER PRO`). Refactorización de `Logo.tsx` como componente atómico central para garantizar consistencia absoluta en Sidebar, Navbar y Footer.
+2.  **✨ Simulación de Mapa Viva (`MapMockup`)**: Transformación del mockup estático en una experiencia interactiva:
+    *   **Efecto Escáner**: Implementación de una línea de luz dinámica que recorre el grid simulando procesamiento en tiempo real.
+    *   **Identidad de Negocio**: Integración de un pin central (`MapPin`) con animación de pulso sutil para marcar la ubicación analizada.
+    *   **Micro-interacciones**: Celdas con estados de `hover` táctiles y escalado dinámico.
+3.  **🔐 Rediseño de Acceso "Surgical Tech" (Punto B)**: Rediseño integral de los portales de Login y Registro:
+    *   **Geometría Técnica**: Evolución de `rounded-2xl` a `rounded-lg` para un look más arquitectónico y profesional.
+    *   **Contraste Extremo**: Botones primarios en blanco sólido con texto negro y un "halo de luz" (glow) sutil para destacar la acción principal.
+    *   **Credibilidad Social**: Restauración de los colores oficiales de Google para maximizar la confianza del usuario.
+4.  **🏗️ Arquitectura Atómica y Refactorización**:
+    *   Modularización de `AuthInput`, `AuthSocial` y `AuthSuccess`.
+    *   Extracción de componentes internos en `MapMockup` para una mantenibilidad quirúrgica.
+    *   Localización total (100%) al español de todos los flujos de marketing y acceso.
+5.  **📱 Accesibilidad y Responsividad**: Corrección del sistema de scroll en tablets y laptops pequeñas, asegurando que los formularios sean siempre navegables independientemente de la altura de la pantalla.
+
+---
+
 ## 🚦 Siguiente Enfoque (Next Steps)
 
 La arquitectura base está asegurada, permitiendo continuar con el perfeccionamiento de producto:
 1.  **Rank Tracking Automation**: Fortalecer el monitoreo automático.
-2.  **UI/UX Polish**: Mejorar las gráficas de evolución de mercado y animaciones.
+2.  **UI/UX Polish**: Perfeccionamiento de gráficas de evolución y animaciones de carga internas.
 
 

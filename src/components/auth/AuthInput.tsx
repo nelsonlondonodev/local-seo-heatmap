@@ -29,15 +29,19 @@ export function AuthInput({
   autoComplete
 }: AuthInputProps) {
   return (
-    <div className="space-y-1.5">
+    <div className="space-y-2 group/input">
       <Label 
         htmlFor={id} 
-        className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-500 ml-1"
+        className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-500 ml-1 transition-colors group-focus-within/input:text-white"
       >
         {label}
       </Label>
-      <div className="relative group">
-        <Icon className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500 group-focus-within:text-zinc-300 transition-colors" />
+      
+      <div className="relative">
+        <div className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none">
+          <Icon className="h-4 w-4 text-zinc-500 group-focus-within/input:text-white transition-colors duration-300" />
+        </div>
+
         <Input
           id={id}
           type={type}
@@ -47,13 +51,15 @@ export function AuthInput({
           required={required}
           autoComplete={autoComplete}
           className={cn(
-            "h-12 rounded-lg bg-zinc-900 border-zinc-800 pl-11 pr-12 transition-all duration-300",
+            "h-12 w-full rounded-lg bg-zinc-900 border-zinc-800 pl-11 pr-12 transition-all duration-300",
             "text-white placeholder:text-zinc-600 font-medium",
-            "hover:border-zinc-600 focus:border-white focus:ring-0 focus:bg-zinc-800/50"
+            "hover:border-zinc-700",
+            "focus:border-white focus:ring-0 focus:bg-zinc-800/50"
           )}
         />
+
         {rightElement && (
-          <div className="absolute right-4 top-1/2 -translate-y-1/2">
+          <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center">
             {rightElement}
           </div>
         )}
