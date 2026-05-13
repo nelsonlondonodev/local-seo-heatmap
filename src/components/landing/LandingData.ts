@@ -20,7 +20,7 @@ export const bentoFeatures = [
     className: 'lg:col-span-1 lg:row-span-1 bg-zinc-900/50 border-zinc-800',
   },
   {
-    title: 'Informes Whitelabel PDF',
+    title: 'Informes de Marca Blanca PDF',
     description: 'Exporta reportes con tu propia marca y envíalos directamente a tus clientes.',
     icon: Share2,
     className: 'lg:col-span-2 lg:row-span-1 bg-zinc-900/50 border-zinc-800',
@@ -29,23 +29,23 @@ export const bentoFeatures = [
 
 export const pricingPlans = [
   {
-    name: 'Starter',
+    name: 'Inicio',
     price: '29€',
     features: ['5 Proyectos', 'Mapas 3x3', 'Rastreo semanal', 'Soporte email'],
     cta: 'Empezar ahora',
     popular: false
   },
   {
-    name: 'Pro',
+    name: 'Profesional',
     price: '79€',
-    features: ['25 Proyectos', 'Mapas hasta 7x7', 'Rastreo diario', 'Informes Whitelabel PDF', 'Soporte prioritario'],
-    cta: 'Prueba Pro gratis',
+    features: ['25 Proyectos', 'Mapas hasta 7x7', 'Rastreo diario', 'Informes de Marca Blanca PDF', 'Soporte prioritario'],
+    cta: 'Prueba Profesional gratis',
     popular: true
   },
   {
-    name: 'Agency',
+    name: 'Agencia',
     price: '199€',
-    features: ['Proyectos ilimitados', 'Todos los tamaños de grid', 'API Access', 'Cuentas para equipo', 'Manager dedicado'],
+    features: ['Proyectos ilimitados', 'Todos los tamaños de grid', 'Acceso a API', 'Cuentas para equipo', 'Gestor dedicado'],
     cta: 'Contactar ventas',
     popular: false
   }

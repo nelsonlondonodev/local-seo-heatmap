@@ -20,7 +20,7 @@ export function CTA() {
               Empieza Gratis
             </Button>
             <Button variant="outline" size="lg" className="h-14 px-10 text-lg font-semibold border-zinc-700 bg-transparent hover:bg-zinc-800 text-white rounded-md transition-all">
-              Ver Demo Live
+              Ver Demostración en Vivo
             </Button>
           </div>
         </div>

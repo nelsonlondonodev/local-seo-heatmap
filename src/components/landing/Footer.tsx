@@ -66,7 +66,7 @@ export function Footer() {
         </div>
         <div className="pt-10 border-t border-zinc-900 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-zinc-600 text-xs font-medium">
-            © {new Date().getFullYear()} {config.name}. Built with precision.
+            © {new Date().getFullYear()} {config.name}. Construido con precisión.
           </p>
           <div className="flex gap-6">
             <SocialLink href="#" label="Twitter" icon={<TwitterIcon />} />

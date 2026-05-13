@@ -76,7 +76,7 @@ export function MapMockup() {
             <div className="h-2 w-2 rounded-full bg-primary animate-pulse" />
           </div>
           <div className="space-y-0.5">
-            <p className="text-[8px] font-bold text-zinc-500 uppercase tracking-wider">Live Insight</p>
+            <p className="text-[8px] font-bold text-zinc-500 uppercase tracking-wider">Análisis en Vivo</p>
             <p className="text-xs font-bold text-white">#1 Ranking Local</p>
           </div>
         </div>

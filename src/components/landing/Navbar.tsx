@@ -27,7 +27,7 @@ function NavbarActions() {
     return (
       <Link to="/dashboard">
         <Button size="sm" className="bg-white text-zinc-950 hover:bg-zinc-200 font-semibold rounded-md px-5 transition-all active:scale-95">
-          Dashboard
+          Panel de Control
         </Button>
       </Link>
     );
@@ -56,7 +56,7 @@ export function Navbar() {
         <div className="hidden lg:flex items-center gap-8 text-sm font-medium">
           <NavbarLink href="#features">Funciones</NavbarLink>
           <NavbarLink href="#pricing">Precios</NavbarLink>
-          <NavbarLink href="#faq">FAQ</NavbarLink>
+          <NavbarLink href="#faq">Preguntas</NavbarLink>
         </div>
 
         <NavbarActions />

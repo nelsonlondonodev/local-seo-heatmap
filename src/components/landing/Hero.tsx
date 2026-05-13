@@ -26,7 +26,7 @@ export function Hero() {
           >
             <Badge variant="outline" className="mb-6 py-1 px-4 rounded-full border-zinc-800 bg-zinc-900/50 text-zinc-400 font-medium tracking-tight text-xs">
               <Sparkles className="h-3 w-3 mr-2 text-primary" />
-              Next-Gen Local Intelligence
+              Inteligencia Local de Próxima Generación
             </Badge>
             <h1 className="text-5xl lg:text-7xl font-bold tracking-tighter leading-[1.1] mb-6 text-white">
               Domina el ranking <br />
