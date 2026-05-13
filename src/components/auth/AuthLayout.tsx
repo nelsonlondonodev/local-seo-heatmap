@@ -9,13 +9,10 @@ interface AuthLayoutProps {
 export function AuthLayout({ children }: AuthLayoutProps) {
   return (
     <div className="flex min-h-screen bg-zinc-950 selection:bg-white/10 relative overflow-y-auto overflow-x-hidden">
-      {/* Persistent Logo - Clickable to Home */}
-      <Link 
-        to="/" 
-        className="absolute top-8 left-8 z-50 hover:opacity-70 transition-opacity"
-      >
+      {/* Persistent Logo - Logo component already includes the Link to home (/) */}
+      <div className="absolute top-8 left-8 z-50">
         <AuthBrand />
-      </Link>
+      </div>
 
       {children}
     </div>
