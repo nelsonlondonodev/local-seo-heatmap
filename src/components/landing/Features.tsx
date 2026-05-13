@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import type { Variants } from 'framer-motion';
 import { bentoFeatures } from './LandingData';
 import { MapMockup } from './MapMockup';
+import { cn } from '@/lib/utils';
 
 interface FeatureDecorationProps {
   title: string;
@@ -16,6 +17,40 @@ function FeatureDecoration({ title }: FeatureDecorationProps) {
     );
   }
   return null;
+}
+
+interface FeatureCardProps {
+  feature: typeof bentoFeatures[number];
+  index: number;
+}
+
+function FeatureCard({ feature, index }: FeatureCardProps) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ delay: index * 0.1 }}
+      className={cn(
+        "relative p-8 rounded-2xl border group transition-all duration-300 overflow-hidden",
+        "bg-zinc-900/50 border-zinc-800 hover:border-zinc-700 shadow-none",
+        feature.className
+      )}
+    >
+      <div className="relative z-20 h-full flex flex-col">
+        <div className={cn(
+          "mb-5 p-2.5 rounded-lg bg-zinc-800/50 w-fit border border-zinc-700/50",
+          "group-hover:bg-zinc-100 group-hover:text-zinc-950 transition-all"
+        )}>
+          <feature.icon className="h-5 w-5" />
+        </div>
+        <h3 className="text-xl font-bold mb-3 text-white tracking-tight">{feature.title}</h3>
+        <p className="text-zinc-400 text-sm font-normal leading-relaxed pr-6">{feature.description}</p>
+      </div>
+      
+      <FeatureDecoration title={feature.title} />
+    </motion.div>
+  );
 }
 
 export function Features() {
@@ -39,25 +74,8 @@ export function Features() {
         </motion.div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-[250px]">
-          {bentoFeatures.map((f, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.1 }}
-              className={`relative p-8 rounded-2xl border group transition-all duration-300 overflow-hidden ${f.className} hover:border-zinc-700 shadow-none`}
-            >
-              <div className="relative z-20 h-full flex flex-col">
-                <div className="mb-5 p-2.5 rounded-lg bg-zinc-800/50 w-fit border border-zinc-700/50 group-hover:bg-zinc-100 group-hover:text-zinc-950 transition-all">
-                  <f.icon className="h-5 w-5" />
-                </div>
-                <h3 className="text-xl font-bold mb-3 text-white tracking-tight">{f.title}</h3>
-                <p className="text-zinc-400 text-sm font-normal leading-relaxed pr-6">{f.description}</p>
-              </div>
-              
-              <FeatureDecoration title={f.title} />
-            </motion.div>
+          {bentoFeatures.map((feature, i) => (
+            <FeatureCard key={i} feature={feature} index={i} />
           ))}
         </div>
       </div>
