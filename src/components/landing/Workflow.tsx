@@ -1,27 +1,32 @@
 export function Workflow() {
   return (
-    <section className="py-32">
+    <section className="py-24 border-b border-zinc-900">
       <div className="mx-auto max-w-7xl px-6">
-        <div className="grid lg:grid-cols-2 gap-24 items-center">
+        <div className="grid lg:grid-cols-2 gap-20 items-center">
           <div className="order-2 lg:order-1 relative">
-             <div className="absolute inset-0 bg-primary/20 blur-[120px] rounded-full" />
-             <div className="relative p-3 rounded-[2.5rem] border border-white/10 bg-slate-900 shadow-2xl rotate-1">
-                <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1000" alt="Dashboard" className="rounded-[2rem] opacity-80" />
+             <div className="relative p-2 rounded-2xl border border-zinc-800 bg-zinc-900/30 backdrop-blur-sm">
+                <img 
+                  src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1000" 
+                  alt="Dashboard" 
+                  className="rounded-xl opacity-90 border border-zinc-800/50" 
+                />
              </div>
           </div>
           <div className="order-1 lg:order-2">
-            <h2 className="text-5xl lg:text-7xl font-black tracking-tighter mb-16 text-white leading-none">Resultados en <br/> <span className="text-primary italic">segundos.</span></h2>
-            <div className="space-y-12">
+            <h2 className="text-4xl lg:text-5xl font-bold tracking-tight mb-12 text-white leading-tight">Resultados en <span className="text-zinc-500">segundos.</span></h2>
+            <div className="space-y-10">
               {[
-                { title: 'Conecta tu GMB', desc: 'Sincroniza tus fichas de Google Business de forma segura.' },
-                { title: 'Ejecuta el Escaneo', desc: 'Define el radio de acción y deja que nuestra IA haga el resto.' },
-                { title: 'Domina el Mercado', desc: 'Identifica dónde necesitas más reseñas o optimización local.' }
+                { title: 'Conecta tu GMB', desc: 'Sincroniza tus fichas de Google Business de forma segura y automática.' },
+                { title: 'Ejecuta el Escaneo', desc: 'Define el radio de acción y deja que nuestra inteligencia procese los datos.' },
+                { title: 'Domina el Mercado', desc: 'Identifica brechas de oportunidad y optimiza tu presencia local.' }
               ].map((item, i) => (
-                <div key={i} className="flex gap-8 group">
-                  <div className="text-5xl font-black text-white/5 group-hover:text-primary/40 transition-colors">{i+1}</div>
+                <div key={i} className="flex gap-6 group">
+                  <div className="flex-shrink-0 flex h-10 w-10 items-center justify-center rounded-lg border border-zinc-800 bg-zinc-900 text-sm font-bold text-zinc-400 group-hover:text-white group-hover:border-zinc-600 transition-colors">
+                    {i+1}
+                  </div>
                   <div>
-                    <h4 className="text-2xl font-black mb-3 text-white">{item.title}</h4>
-                    <p className="text-slate-400 font-medium text-lg leading-relaxed">{item.desc}</p>
+                    <h4 className="text-xl font-bold mb-2 text-white">{item.title}</h4>
+                    <p className="text-zinc-400 font-normal text-base leading-relaxed">{item.desc}</p>
                   </div>
                 </div>
               ))}

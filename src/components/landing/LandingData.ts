@@ -5,25 +5,25 @@ export const bentoFeatures = [
     title: 'Mapas de Calor 7×7',
     description: 'Análisis profundo de hasta 49 puntos geográficos simultáneos para dominar tu área.',
     icon: Map,
-    className: 'lg:col-span-2 lg:row-span-2 bg-primary/5 border-primary/20',
+    className: 'lg:col-span-2 lg:row-span-2 bg-zinc-900/50 border-zinc-800',
   },
   {
     title: 'Rastreo de Keywords',
     description: 'Historial detallado de posiciones en buscadores locales.',
     icon: Search,
-    className: 'lg:col-span-1 lg:row-span-1 bg-white/5 border-white/10',
+    className: 'lg:col-span-1 lg:row-span-1 bg-zinc-900/50 border-zinc-800',
   },
   {
     title: 'Arquitectura SaaS',
     description: 'Gestiona múltiples clientes y equipos sin complicaciones.',
     icon: Shield,
-    className: 'lg:col-span-1 lg:row-span-1 bg-white/5 border-white/10',
+    className: 'lg:col-span-1 lg:row-span-1 bg-zinc-900/50 border-zinc-800',
   },
   {
     title: 'Informes Whitelabel PDF',
     description: 'Exporta reportes con tu propia marca y envíalos directamente a tus clientes.',
     icon: Share2,
-    className: 'lg:col-span-2 lg:row-span-1 bg-white/5 border-white/10',
+    className: 'lg:col-span-2 lg:row-span-1 bg-zinc-900/50 border-zinc-800',
   }
 ];
 

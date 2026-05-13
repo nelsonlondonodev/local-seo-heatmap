@@ -20,25 +20,25 @@ function FeatureDecoration({ title }: FeatureDecorationProps) {
 
 export function Features() {
   const revealVariants: Variants = {
-    hidden: { opacity: 0, y: 40 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } },
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
   };
 
   return (
-    <section id="features" className="py-32 bg-slate-950/50 relative">
+    <section id="features" className="py-24 bg-zinc-950 relative border-b border-zinc-900">
       <div className="mx-auto max-w-7xl px-6">
         <motion.div 
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
           variants={revealVariants}
-          className="text-center max-w-3xl mx-auto mb-24"
+          className="text-center max-w-3xl mx-auto mb-20"
         >
-          <h2 className="text-5xl lg:text-7xl font-black tracking-tight mb-8 text-white">Ingeniería para el SEO</h2>
-          <p className="text-xl text-slate-400 font-medium">Datos precisos, interfaz intuitiva y resultados que puedes tocar.</p>
+          <h2 className="text-4xl lg:text-5xl font-bold tracking-tight mb-6 text-white">Ingeniería para el SEO</h2>
+          <p className="text-lg text-zinc-400 font-normal">Datos precisos, interfaz intuitiva y resultados accionables para dominar el mercado local.</p>
         </motion.div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 auto-rows-[280px]">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-[250px]">
           {bentoFeatures.map((f, i) => (
             <motion.div
               key={i}
@@ -46,14 +46,14 @@ export function Features() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.1 }}
-              className={`relative p-10 rounded-[3rem] border group transition-all duration-500 overflow-hidden ${f.className} hover:border-primary/50`}
+              className={`relative p-8 rounded-2xl border group transition-all duration-300 overflow-hidden ${f.className} hover:border-zinc-700 shadow-none`}
             >
               <div className="relative z-20 h-full flex flex-col">
-                <div className="mb-6 p-4 rounded-2xl bg-white/5 w-fit border border-white/10 group-hover:bg-primary group-hover:text-white transition-all shadow-inner">
-                  <f.icon className="h-7 w-7" />
+                <div className="mb-5 p-2.5 rounded-lg bg-zinc-800/50 w-fit border border-zinc-700/50 group-hover:bg-zinc-100 group-hover:text-zinc-950 transition-all">
+                  <f.icon className="h-5 w-5" />
                 </div>
-                <h3 className="text-2xl font-black mb-4 text-white tracking-tight">{f.title}</h3>
-                <p className="text-zinc-300 font-medium leading-relaxed pr-10">{f.description}</p>
+                <h3 className="text-xl font-bold mb-3 text-white tracking-tight">{f.title}</h3>
+                <p className="text-zinc-400 text-sm font-normal leading-relaxed pr-6">{f.description}</p>
               </div>
               
               <FeatureDecoration title={f.title} />

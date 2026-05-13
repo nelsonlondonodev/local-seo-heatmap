@@ -9,26 +9,26 @@ export function Navbar() {
   const { user } = useAuth();
 
   return (
-    <nav className="fixed top-0 z-50 w-full border-b border-white/5 glass-morphism">
-      <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6">
-        <Logo textClassName="text-gradient" />
-        <div className="hidden lg:flex items-center gap-10 text-sm font-bold text-slate-400">
-          <a href="#features" className="hover:text-primary transition-colors">Funciones</a>
-          <a href="#pricing" className="hover:text-primary transition-colors">Precios</a>
-          <a href="#faq" className="hover:text-primary transition-colors">FAQ</a>
+    <nav className="fixed top-0 z-50 w-full border-b border-zinc-800 bg-zinc-950/80 backdrop-blur-md">
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
+        <Logo iconClassName="h-8 w-8 rounded-lg shadow-none" textClassName="text-xl font-bold" />
+        <div className="hidden lg:flex items-center gap-8 text-sm font-medium text-zinc-400">
+          <a href="#features" className="hover:text-white transition-colors">Funciones</a>
+          <a href="#pricing" className="hover:text-white transition-colors">Precios</a>
+          <a href="#faq" className="hover:text-white transition-colors">FAQ</a>
         </div>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
           {user ? (
             <Link to="/dashboard">
-              <Button size="lg" className="bg-primary hover:scale-105 transition-transform font-black rounded-xl px-8 shadow-lg shadow-primary/20">
+              <Button size="sm" className="bg-white text-zinc-950 hover:bg-zinc-200 font-semibold rounded-md px-5">
                 Dashboard
               </Button>
             </Link>
           ) : (
             <>
-              <Link to="/login" className="text-sm font-black hover:text-primary transition-colors">Entrar</Link>
+              <Link to="/login" className="text-sm font-semibold text-zinc-400 hover:text-white transition-colors">Entrar</Link>
               <Link to="/register">
-                <Button size="lg" className="bg-primary hover:scale-105 transition-transform font-black rounded-xl px-8 shadow-lg shadow-primary/20">
+                <Button size="sm" className="bg-white text-zinc-950 hover:bg-zinc-200 font-semibold rounded-md px-5">
                   Comenzar Gratis
                 </Button>
               </Link>
