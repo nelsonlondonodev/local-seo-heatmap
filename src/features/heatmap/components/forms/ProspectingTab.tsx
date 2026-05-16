@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { useHeatmap } from '../../hooks/useHeatmap';
 import { SearchForm } from './SearchForm';
 import { ScanConfirmationModal } from '../ui/ScanConfirmationModal';
-import { useAuth } from '@/features/auth';
+import { useSaaSStatus } from '@/hooks/useSaaSStatus';
 
 // Refactored Atoms & Molecules
 import { ProspectFields } from './prospecting/ProspectFields';
@@ -19,7 +19,7 @@ interface ProspectingTabProps {
  * Orchestrates the prospecting lead generation flow with a monochrome premium aesthetic.
  */
 export function ProspectingTab({ heatmap }: ProspectingTabProps) {
-  const { profile } = useAuth();
+  const { canAfford } = useSaaSStatus();
   const { 
     prospectName, setProspectName, 
     prospectEmail, setProspectEmail,
@@ -28,7 +28,7 @@ export function ProspectingTab({ heatmap }: ProspectingTabProps) {
     runAnalysis, currentConfig, estimatedCost, points
   } = heatmap;
 
-  const hasEnoughCredits = (profile?.credits ?? 0) >= estimatedCost;
+  const hasEnoughCredits = canAfford(estimatedCost);
 
   return (
     <Card className="border-zinc-200 dark:border-zinc-800 shadow-none overflow-hidden">

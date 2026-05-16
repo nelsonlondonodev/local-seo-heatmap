@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useAuth, type UserRole } from '@/features/auth';
+import { useSaaSStatus } from '@/hooks/useSaaSStatus';
 import { cn } from '@/lib/utils';
 
 const getRoleBadgeStyle = (_role: UserRole | null) => {
@@ -19,6 +20,7 @@ interface UserSectionProps {
  */
 export function UserSection({ onLogoutClick, isCollapsed }: UserSectionProps) {
   const { user, profile, role } = useAuth();
+  const { formattedCredits } = useSaaSStatus();
 
   return (
     <div className={cn("p-4 mt-auto transition-all", isCollapsed && "px-2")}>
@@ -51,7 +53,7 @@ export function UserSection({ onLogoutClick, isCollapsed }: UserSectionProps) {
                 )}
                 <div className="flex items-center gap-1 px-1.5 py-0 h-4 rounded-full bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400 border border-amber-100 dark:border-amber-900/30 text-[9px] font-bold uppercase tracking-wider">
                   <span className="shrink-0">🪙</span>
-                  <span>{profile?.credits ?? 0}</span>
+                  <span>{formattedCredits}</span>
                 </div>
               </div>
             </div>

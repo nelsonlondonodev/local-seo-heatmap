@@ -20,7 +20,7 @@ import { HeatmapResultPage } from '@/pages/HeatmapResultPage';
 import { SettingsPage } from '@/pages/SettingsPage';
 import { SiteAnalyzerPage } from '@/pages/SiteAnalyzerPage';
 import { AdminPage } from '@/pages/AdminPage';
-import { SEOManager } from '@/components/seo/SEOManager';
+import { useSEOSync } from '@/hooks/useSEOSync';
 import './index.css';
 
 const queryClient = new QueryClient({
@@ -31,6 +31,16 @@ const queryClient = new QueryClient({
     },
   },
 });
+
+import { Outlet } from 'react-router-dom';
+
+/**
+ * Root component to manage global side-effects like SEO.
+ */
+function Root() {
+  useSEOSync();
+  return <Outlet />;
+}
 
 /**
  * Public routes should redirect to dashboard if user is authenticated.
@@ -51,59 +61,53 @@ function PublicOnlyRoute({ children }: { children: React.ReactNode }) {
 
 const router = createBrowserRouter([
   {
-    path: '/',
-    element: (
-      <>
-        <SEOManager />
-        <LandingPage />
-      </>
-    )
-  },
-  { 
-    path: '/login', 
-    element: (
-      <PublicOnlyRoute>
-        <SEOManager />
-        <LoginPage />
-      </PublicOnlyRoute>
-    ) 
-  },
-  { 
-    path: '/register', 
-    element: (
-      <PublicOnlyRoute>
-        <SEOManager />
-        <RegisterPage />
-      </PublicOnlyRoute>
-    ) 
-  },
-  {
-    element: (
-      <ProtectedRoute>
-        <SEOManager />
-        <DashboardLayout />
-      </ProtectedRoute>
-    ),
+    element: <Root />,
     children: [
-      { path: '/dashboard', element: <DashboardPage /> },
-      { path: '/history', element: <HistoryPage /> },
-      { path: '/ai-history', element: <AIHistoryPage /> },
-      { path: '/market-discovery', element: <KeywordPage initialTab="discovery" /> },
-      { path: '/site-analyzer', element: <SiteAnalyzerPage /> },
-      { path: '/rank-tracker', element: <KeywordPage initialTab="monitoring" /> },
-      { path: '/result', element: <HeatmapResultPage /> },
-      { path: '/settings', element: <SettingsPage /> },
+      { path: '/', element: <LandingPage /> },
       { 
-        path: '/admin', 
+        path: '/login', 
         element: (
-          <ProtectedRoute allowedRoles={['super-admin']}>
-            <AdminPage />
-          </ProtectedRoute>
+          <PublicOnlyRoute>
+            <LoginPage />
+          </PublicOnlyRoute>
         ) 
       },
-    ],
-  },
-  { path: '*', element: <Navigate to="/" replace /> },
+      { 
+        path: '/register', 
+        element: (
+          <PublicOnlyRoute>
+            <RegisterPage />
+          </PublicOnlyRoute>
+        ) 
+      },
+      {
+        element: (
+          <ProtectedRoute>
+            <DashboardLayout />
+          </ProtectedRoute>
+        ),
+        children: [
+          { path: '/dashboard', element: <DashboardPage /> },
+          { path: '/history', element: <HistoryPage /> },
+          { path: '/ai-history', element: <AIHistoryPage /> },
+          { path: '/market-discovery', element: <KeywordPage initialTab="discovery" /> },
+          { path: '/site-analyzer', element: <SiteAnalyzerPage /> },
+          { path: '/rank-tracker', element: <KeywordPage initialTab="monitoring" /> },
+          { path: '/result', element: <HeatmapResultPage /> },
+          { path: '/settings', element: <SettingsPage /> },
+          { 
+            path: '/admin', 
+            element: (
+              <ProtectedRoute allowedRoles={['super-admin']}>
+                <AdminPage />
+              </ProtectedRoute>
+            ) 
+          },
+        ],
+      },
+      { path: '*', element: <Navigate to="/" replace /> },
+    ]
+  }
 ]);
 
 /**

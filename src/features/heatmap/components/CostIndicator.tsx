@@ -1,5 +1,5 @@
 import { Coins, AlertCircle } from 'lucide-react';
-import { useAuth } from '@/features/auth';
+import { useSaaSStatus } from '@/hooks/useSaaSStatus';
 import { cn } from '@/lib/utils';
 
 interface CostIndicatorProps {
@@ -7,8 +7,8 @@ interface CostIndicatorProps {
 }
 
 export function CostIndicator({ estimatedCost }: CostIndicatorProps) {
-  const { profile } = useAuth();
-  const hasEnoughCredits = (profile?.credits ?? 0) >= estimatedCost;
+  const { canAfford } = useSaaSStatus();
+  const hasEnoughCredits = canAfford(estimatedCost);
 
   if (estimatedCost === 0) return null;
 

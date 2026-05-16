@@ -4,15 +4,15 @@ import { Button } from '@/components/ui/button';
 import { useHeatmap } from '../../hooks/useHeatmap';
 import { SearchForm } from './SearchForm';
 import { ScanConfirmationModal } from '../ui/ScanConfirmationModal';
-import { useAuth } from '@/features/auth';
+import { useSaaSStatus } from '@/hooks/useSaaSStatus';
 
 interface AnalysisTabProps {
   heatmap: ReturnType<typeof useHeatmap>;
 }
 
 export function AnalysisTab({ heatmap }: AnalysisTabProps) {
-  const { profile } = useAuth();
-  const hasEnoughCredits = (profile?.credits ?? 0) >= heatmap.estimatedCost;
+  const { canAfford } = useSaaSStatus();
+  const hasEnoughCredits = canAfford(heatmap.estimatedCost);
 
   return (
     <Card>
