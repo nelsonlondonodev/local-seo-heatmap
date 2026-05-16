@@ -9,15 +9,16 @@ export function CostIndicator({ estimatedCost }: CostIndicatorProps) {
 
   return (
     <div className="flex items-center justify-between px-1 py-1">
-      <span className="text-[11px] font-medium text-muted-foreground flex items-center gap-1.5 uppercase tracking-wider">
-        <div className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
-        Consumo estimado
+      <span className="text-[10px] font-bold text-zinc-500 dark:text-zinc-400 flex items-center gap-1.5 uppercase tracking-[0.1em]">
+        <div className="h-1.5 w-1.5 rounded-full bg-zinc-300 dark:bg-zinc-700 animate-pulse" />
+        Inversión de Créditos
       </span>
-      <div className="flex items-center gap-1 bg-primary/10 text-primary px-2.5 py-1 rounded-full border border-primary/20 shadow-sm animate-in fade-in slide-in-from-right-2 duration-500">
-        <Coins className="h-3 w-3 opacity-70" />
-        <span className="text-xs font-bold">{estimatedCost}</span>
-        <span className="text-[10px] uppercase font-black opacity-80 ml-0.5">créditos</span>
+      <div className="flex items-center gap-1.5 bg-zinc-100 dark:bg-zinc-900 text-zinc-950 dark:text-white px-3 py-1 rounded-lg border border-zinc-200 dark:border-zinc-800 shadow-sm animate-in fade-in slide-in-from-right-2 duration-500">
+        <Coins className="h-3.5 w-3.5 text-zinc-500" strokeWidth={2.5} />
+        <span className="text-xs font-black tracking-tight">{estimatedCost}</span>
+        <span className="text-[9px] uppercase font-bold opacity-60 ml-0.5 tracking-wider">pts</span>
       </div>
     </div>
+  );
   );
 }
