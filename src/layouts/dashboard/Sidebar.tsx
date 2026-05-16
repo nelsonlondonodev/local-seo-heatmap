@@ -12,6 +12,7 @@ import { cn } from '@/lib/utils';
 import { SidebarItem } from './components/SidebarItem';
 import { SidebarHeader } from './components/SidebarHeader';
 import { UserSection } from './UserSection';
+import { AppVersion } from '@/components/ui/AppVersion';
 
 interface SidebarProps {
   isOpen: boolean;
@@ -100,6 +101,7 @@ export function Sidebar({ isOpen, onClose, onLogoutClick }: SidebarProps) {
           </AnimatePresence>
 
           <UserSection onLogoutClick={onLogoutClick} isCollapsed={shouldRenderCollapsed} />
+          <AppVersion isCollapsed={shouldRenderCollapsed} />
         </div>
       </motion.aside>
     </>
