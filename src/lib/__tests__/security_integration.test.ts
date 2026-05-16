@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { supabase } from '../supabase';
 import { invokeEdgeFunction } from '../edgeFunctions';
+import type { AuthResponse, FunctionResponse } from '@supabase/supabase-js';
 
 // Mock Supabase client
 vi.mock('../supabase', () => ({
@@ -27,13 +28,13 @@ describe('Security Infrastructure: JWT Injection Audit', () => {
     mockedGetSession.mockResolvedValue({
       data: { session: { access_token: 'valid-jwt-token' } },
       error: null,
-    } as any);
+    } as unknown as AuthResponse);
 
     // 2. Mock successful function invocation
     mockedInvoke.mockResolvedValue({
       data: { success: true },
       error: null,
-    } as any);
+    } as unknown as FunctionResponse<any>);
 
     await invokeEdgeFunction('proxy-serper', { query: 'test' });
 
@@ -48,12 +49,12 @@ describe('Security Infrastructure: JWT Injection Audit', () => {
     mockedGetSession.mockResolvedValue({
       data: { session: null },
       error: null,
-    } as any);
+    } as unknown as AuthResponse);
 
     mockedInvoke.mockResolvedValue({
       data: { success: true },
       error: null,
-    } as any);
+    } as unknown as FunctionResponse<any>);
 
     await invokeEdgeFunction('proxy-serper', { query: 'test' });
 
@@ -67,7 +68,7 @@ describe('Security Infrastructure: JWT Injection Audit', () => {
     mockedGetSession.mockResolvedValue({
       data: { session: null },
       error: null,
-    } as any);
+    } as unknown as AuthResponse);
 
     // Mock a response that looks like a fetch error context
     const mockError = new Error('Initial error');
@@ -80,7 +81,7 @@ describe('Security Infrastructure: JWT Injection Audit', () => {
     mockedInvoke.mockResolvedValue({
       data: null,
       error: mockError,
-    } as any);
+    } as unknown as FunctionResponse<any>);
 
     await expect(invokeEdgeFunction('proxy-serper', { query: 'test' }))
       .rejects.toThrow('Créditos insuficientes');

@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook } from '@testing-library/react';
 import { useSEOSync } from '../useSEOSync';
-import { useLocation } from 'react-router-dom';
+import { useLocation, type Location } from 'react-router-dom';
 import { SAAS_CONFIG } from '@/config/saas';
 
 // Mock react-router-dom
@@ -24,7 +24,7 @@ describe('useSEOSync Visibility & Canonical Audit', () => {
   });
 
   it('should set index, follow for public landing page', () => {
-    mockedUseLocation.mockReturnValue({ pathname: '/' } as any);
+    mockedUseLocation.mockReturnValue({ pathname: '/' } as unknown as Location);
     
     renderHook(() => useSEOSync());
 
@@ -34,7 +34,7 @@ describe('useSEOSync Visibility & Canonical Audit', () => {
   });
 
   it('should set noindex, nofollow for PROTECTED dashboard routes', () => {
-    mockedUseLocation.mockReturnValue({ pathname: '/dashboard/heatmap' } as any);
+    mockedUseLocation.mockReturnValue({ pathname: '/dashboard/heatmap' } as unknown as Location);
     
     renderHook(() => useSEOSync());
 
@@ -44,7 +44,7 @@ describe('useSEOSync Visibility & Canonical Audit', () => {
   });
 
   it('should set noindex, nofollow for NESTED admin routes (Inheritance check)', () => {
-    mockedUseLocation.mockReturnValue({ pathname: '/admin/users/settings' } as any);
+    mockedUseLocation.mockReturnValue({ pathname: '/admin/users/settings' } as unknown as Location);
     
     renderHook(() => useSEOSync());
 
@@ -52,7 +52,7 @@ describe('useSEOSync Visibility & Canonical Audit', () => {
   });
 
   it('should handle sub-paths correctly', () => {
-    mockedUseLocation.mockReturnValue({ pathname: '/settings/billing' } as any);
+    mockedUseLocation.mockReturnValue({ pathname: '/settings/billing' } as unknown as Location);
     
     renderHook(() => useSEOSync());
 

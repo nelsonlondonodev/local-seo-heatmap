@@ -4,6 +4,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { SiteAnalyzerPage } from './SiteAnalyzerPage';
 import { dataForSeoService } from '@/features/keywords/services/dataForSeoService';
 import { toast } from 'sonner';
+import type { DomainRankOverview, RankedKeywordItem } from '@/features/keywords/types/dataForSeo';
 
 // Mocks
 vi.mock('@/features/keywords/services/dataForSeoService', () => ({
@@ -84,8 +85,8 @@ describe('SiteAnalyzerPage Integration', () => {
       },
     ];
 
-    mockedService.getDomainRankOverview.mockResolvedValue(mockOverview as any);
-    mockedService.getDomainRankedKeywords.mockResolvedValue(mockKeywords as any);
+    mockedService.getDomainRankOverview.mockResolvedValue(mockOverview as unknown as DomainRankOverview);
+    mockedService.getDomainRankedKeywords.mockResolvedValue(mockKeywords as unknown as RankedKeywordItem[]);
 
     render(<SiteAnalyzerPage />);
 

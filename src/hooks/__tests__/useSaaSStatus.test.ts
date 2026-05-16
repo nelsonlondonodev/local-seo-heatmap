@@ -2,6 +2,8 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook } from '@testing-library/react';
 import { useSaaSStatus } from '../useSaaSStatus';
 import { useAuth } from '@/features/auth';
+import type { AuthContextType, UserProfile } from '@/features/auth/types';
+import type { User } from '@supabase/supabase-js';
 
 // Mock useAuth
 vi.mock('@/features/auth', () => ({
@@ -15,19 +17,36 @@ describe('useSaaSStatus Logic Audit', () => {
     vi.clearAllMocks();
   });
 
-  const baseMockAuth = {
-    role: 'user',
+  const createMockProfile = (overrides: Partial<UserProfile> = {}): UserProfile => ({
+    id: 'user-123',
+    email: 'test@example.com',
+    full_name: 'Test User',
+    avatar_url: null,
+    role: 'owner',
+    agency_id: 'agency-123',
+    plan: 'pro',
+    credits: 0,
+    ...overrides,
+  });
+
+  const createMockAuthContext = (overrides: Partial<AuthContextType> = {}): AuthContextType => ({
+    user: { id: 'user-123' } as User,
+    profile: createMockProfile(),
+    session: null,
     isLoading: false,
+    role: 'owner',
+    agencyId: 'agency-123',
+    signIn: vi.fn(),
+    signUp: vi.fn(),
     signOut: vi.fn(),
-    agencyId: null,
-  };
+    signInWithGoogle: vi.fn(),
+    ...overrides,
+  });
 
   it('should return correct status for a user with sufficient credits', () => {
-    mockedUseAuth.mockReturnValue({
-      ...baseMockAuth,
-      profile: { credits: 50 },
-      user: { id: 'user-1' },
-    } as any);
+    mockedUseAuth.mockReturnValue(createMockAuthContext({
+      profile: createMockProfile({ credits: 50 })
+    }));
 
     const { result } = renderHook(() => useSaaSStatus());
 
@@ -38,11 +57,9 @@ describe('useSaaSStatus Logic Audit', () => {
   });
 
   it('should return correct status for a user with INSUFFICIENT credits', () => {
-    mockedUseAuth.mockReturnValue({
-      ...baseMockAuth,
-      profile: { credits: 5 },
-      user: { id: 'user-2' },
-    } as any);
+    mockedUseAuth.mockReturnValue(createMockAuthContext({
+      profile: createMockProfile({ credits: 5 })
+    }));
 
     const { result } = renderHook(() => useSaaSStatus());
 
@@ -51,11 +68,11 @@ describe('useSaaSStatus Logic Audit', () => {
   });
 
   it('should handle missing profile gracefully (0 credits)', () => {
-    mockedUseAuth.mockReturnValue({
-      ...baseMockAuth,
+    mockedUseAuth.mockReturnValue(createMockAuthContext({
       profile: null,
-      user: { id: 'user-3' },
-    } as any);
+      role: null,
+      agencyId: null
+    }));
 
     const { result } = renderHook(() => useSaaSStatus());
 
@@ -64,22 +81,18 @@ describe('useSaaSStatus Logic Audit', () => {
   });
 
   it('should format large credit numbers correctly', () => {
-    mockedUseAuth.mockReturnValue({
-      ...baseMockAuth,
-      profile: { credits: 1500 },
-      user: { id: 'user-4' },
-    } as any);
+    mockedUseAuth.mockReturnValue(createMockAuthContext({
+      profile: createMockProfile({ credits: 1500 })
+    }));
 
     const { result } = renderHook(() => useSaaSStatus());
     expect(result.current.formattedCredits).toMatch(/1.500|1,500/);
   });
 
   it('should return false for canAfford when credits are ZERO', () => {
-    mockedUseAuth.mockReturnValue({
-      ...baseMockAuth,
-      profile: { credits: 0 },
-      user: { id: 'user-5' }
-    } as any);
+    mockedUseAuth.mockReturnValue(createMockAuthContext({
+      profile: createMockProfile({ credits: 0 })
+    }));
 
     const { result } = renderHook(() => useSaaSStatus());
     expect(result.current.canAfford(1)).toBe(false);
@@ -87,11 +100,9 @@ describe('useSaaSStatus Logic Audit', () => {
   });
 
   it('should access SAAS_CONFIG costs correctly through the hook', () => {
-    mockedUseAuth.mockReturnValue({
-      ...baseMockAuth,
-      profile: { credits: 10 },
-      user: { id: 'user-6' }
-    } as any);
+    mockedUseAuth.mockReturnValue(createMockAuthContext({
+      profile: createMockProfile({ credits: 10 })
+    }));
 
     const { result } = renderHook(() => useSaaSStatus());
     expect(result.current.config.COSTS.SCAN).toBe(1);

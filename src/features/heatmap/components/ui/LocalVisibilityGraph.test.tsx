@@ -6,7 +6,7 @@ import type { ReactNode } from 'react';
 
 // Mock Recharts to avoid issues with SVG and DOM dimensions in JSDOM
 vi.mock('recharts', async () => {
-  const OriginalRecharts = (await vi.importActual('recharts')) as any;
+  const OriginalRecharts = (await vi.importActual('recharts')) as Record<string, unknown>;
   return {
     ...OriginalRecharts,
     ResponsiveContainer: ({ children }: { children: ReactNode }) => (

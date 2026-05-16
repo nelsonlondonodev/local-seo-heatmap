@@ -113,9 +113,8 @@ describe('mappers.ts', () => {
 
       const result = mapHeatmapToResult(mockRow);
 
-      // Verify the fallback summary was applied safely
-      // @ts-expect-error - Checking that property does not exist on the type
-      expect(result.results_summary).toBeUndefined(); 
+      // Verify the fallback summary was applied safely (it should NOT be at the root of HeatmapResult)
+      expect(result).not.toHaveProperty('results_summary');
       // Wait, mapHeatmapToResult merges everything into `config`, `points`, `advertisers`, `competitors`, etc.
       // Wait! I need to look at what mapHeatmapToResult actually returns. 
       // It returns: { id, config: {...}, points, advertisers, competitors, createdAt }
