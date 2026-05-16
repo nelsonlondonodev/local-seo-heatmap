@@ -1,9 +1,10 @@
-import { Target, Loader2 } from 'lucide-react';
+import { Target, Loader2, AlertCircle } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useHeatmap } from '../../hooks/useHeatmap';
 import { SearchForm } from './SearchForm';
 import { ScanConfirmationModal } from '../ui/ScanConfirmationModal';
+import { useAuth } from '@/features/auth';
 
 // Refactored Atoms & Molecules
 import { ProspectFields } from './prospecting/ProspectFields';
@@ -18,6 +19,7 @@ interface ProspectingTabProps {
  * Orchestrates the prospecting lead generation flow with a monochrome premium aesthetic.
  */
 export function ProspectingTab({ heatmap }: ProspectingTabProps) {
+  const { profile } = useAuth();
   const { 
     prospectName, setProspectName, 
     prospectEmail, setProspectEmail,
@@ -25,6 +27,8 @@ export function ProspectingTab({ heatmap }: ProspectingTabProps) {
     setIsConfirmModalOpen, isConfirmModalOpen,
     runAnalysis, currentConfig, estimatedCost, points
   } = heatmap;
+
+  const hasEnoughCredits = (profile?.credits ?? 0) >= estimatedCost;
 
   return (
     <Card className="border-zinc-200 dark:border-zinc-800 shadow-none overflow-hidden">
@@ -52,13 +56,18 @@ export function ProspectingTab({ heatmap }: ProspectingTabProps) {
 
         <Button 
           className="w-full gap-2 h-12 text-sm font-bold bg-zinc-950 dark:bg-white text-white dark:text-zinc-950 hover:bg-zinc-800 dark:hover:bg-zinc-200 shadow-none transition-all rounded-xl" 
-          disabled={!isFormValid || isLoading}
+          disabled={!isFormValid || isLoading || !hasEnoughCredits}
           onClick={() => setIsConfirmModalOpen(true)}
         >
           {isLoading ? (
             <>
               <Loader2 className="h-4 w-4 animate-spin" />
               Auditando Lead...
+            </>
+          ) : !hasEnoughCredits ? (
+            <>
+              <AlertCircle className="h-4 w-4" />
+              Créditos Insuficientes
             </>
           ) : (
             <>
