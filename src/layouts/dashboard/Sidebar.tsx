@@ -4,6 +4,7 @@ import { PanelLeftOpen } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { useAuth } from '@/features/auth';
 import { useSidebar } from '@/context/SidebarContext';
+import { useIsMobile } from '@/hooks/useMediaQuery';
 import { NAV_ITEMS } from '@/config/navigation';
 import { cn } from '@/lib/utils';
 
@@ -26,6 +27,10 @@ export function Sidebar({ isOpen, onClose, onLogoutClick }: SidebarProps) {
   const location = useLocation();
   const { role } = useAuth();
   const { isCollapsed, toggle } = useSidebar();
+  const isMobile = useIsMobile();
+
+  // Robust Logic: On mobile/tablet, the sidebar should NEVER render in collapsed mode.
+  const shouldRenderCollapsed = isMobile ? false : isCollapsed;
 
   const itemsToRender = NAV_ITEMS.filter(item => !item.adminOnly || role === 'super-admin');
 
@@ -52,7 +57,8 @@ export function Sidebar({ isOpen, onClose, onLogoutClick }: SidebarProps) {
       >
         <div className="flex h-full flex-col">
           <SidebarHeader 
-            isCollapsed={isCollapsed} 
+            isCollapsed={shouldRenderCollapsed} 
+            isMobile={isMobile}
             onToggle={toggle} 
             onClose={onClose} 
           />
@@ -64,7 +70,7 @@ export function Sidebar({ isOpen, onClose, onLogoutClick }: SidebarProps) {
               <SidebarItem
                 key={item.path}
                 {...item}
-                isCollapsed={isCollapsed}
+                isCollapsed={shouldRenderCollapsed}
                 isActive={location.pathname === item.path}
                 onClick={onClose}
               />
@@ -73,9 +79,9 @@ export function Sidebar({ isOpen, onClose, onLogoutClick }: SidebarProps) {
 
           <Separator />
 
-          {/* Bottom Expand Trigger (Only visible when collapsed) */}
+          {/* Bottom Expand Trigger (Only visible when collapsed on Desktop) */}
           <AnimatePresence>
-            {isCollapsed && (
+            {shouldRenderCollapsed && (
               <motion.div 
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -93,7 +99,7 @@ export function Sidebar({ isOpen, onClose, onLogoutClick }: SidebarProps) {
             )}
           </AnimatePresence>
 
-          <UserSection onLogoutClick={onLogoutClick} isCollapsed={isCollapsed} />
+          <UserSection onLogoutClick={onLogoutClick} isCollapsed={shouldRenderCollapsed} />
         </div>
       </motion.aside>
     </>

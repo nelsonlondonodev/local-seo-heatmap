@@ -4,11 +4,12 @@ import { cn } from '@/lib/utils';
 
 interface SidebarHeaderProps {
   isCollapsed: boolean;
+  isMobile: boolean;
   onToggle: () => void;
   onClose: () => void;
 }
 
-export function SidebarHeader({ isCollapsed, onToggle, onClose }: SidebarHeaderProps) {
+export function SidebarHeader({ isCollapsed, isMobile, onToggle, onClose }: SidebarHeaderProps) {
   return (
     <div className={cn("flex h-16 items-center px-6", isCollapsed && "px-0 justify-center")}>
       {!isCollapsed ? (
@@ -19,7 +20,7 @@ export function SidebarHeader({ isCollapsed, onToggle, onClose }: SidebarHeaderP
         </div>
       )}
       
-      {!isCollapsed && (
+      {!isCollapsed && !isMobile && (
         <button
           className="ml-auto hidden lg:flex p-1.5 rounded-md text-zinc-400 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-all"
           onClick={onToggle}
