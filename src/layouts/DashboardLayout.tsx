@@ -33,7 +33,10 @@ export function DashboardLayout() {
   };
 
   return (
-    <div className="flex h-screen bg-background">
+    <div 
+      className="grid h-screen overflow-hidden bg-background transition-all duration-300 ease-in-out"
+      style={{ gridTemplateColumns: 'var(--sidebar-width) 1fr' }}
+    >
       {/* Atomic Sidebar & Navigation */}
       <Sidebar 
         isOpen={sidebarOpen} 
@@ -42,7 +45,7 @@ export function DashboardLayout() {
       />
 
       {/* Main Content Area */}
-      <div className="flex flex-1 flex-col overflow-hidden">
+      <div className="flex flex-col min-w-0 overflow-hidden">
         {/* Mobile Header Overlay */}
         <header className="flex h-16 items-center gap-4 border-b border-border px-4 lg:hidden">
           <Button

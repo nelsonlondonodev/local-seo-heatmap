@@ -3,7 +3,7 @@ import { MapContainer, TileLayer } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { cn } from '@/lib/utils';
-import { useSidebar } from '@/context/SidebarContext';
+import { useResizeObserver } from '@/hooks/useResizeObserver';
 import type { GridPoint } from '@/types';
 
 // Sub-components
@@ -35,9 +35,8 @@ interface HeatmapMapProps {
 }
 
 export function HeatmapMap({ center, zoom, points, businessName, radiusKm, onMapClick }: HeatmapMapProps) {
-  const { isCollapsed } = useSidebar();
+  const { ref: containerRef, size } = useResizeObserver<HTMLDivElement>();
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<L.Map | null>(null);
 
   useEffect(() => {
@@ -49,13 +48,12 @@ export function HeatmapMap({ center, zoom, points, businessName, radiusKm, onMap
     return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
   }, []);
 
-  // Sync map size with sidebar transitions
+  // Sync map size with any container resize (sidebar, window, etc)
   useEffect(() => {
-    const timer = setTimeout(() => {
+    if (size.width > 0 || size.height > 0) {
       mapRef.current?.invalidateSize();
-    }, 300); // Matches sidebar transition duration
-    return () => clearTimeout(timer);
-  }, [isCollapsed]);
+    }
+  }, [size]);
 
   const toggleFullscreen = async () => {
     if (!document.fullscreenElement) await containerRef.current?.requestFullscreen();
