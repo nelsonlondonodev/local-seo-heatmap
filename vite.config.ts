@@ -3,6 +3,7 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import path from 'path'
+import { version } from './package.json'
 
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {
@@ -22,7 +23,7 @@ export default defineConfig(({ mode }) => {
 
   return {
     define: {
-      'import.meta.env.VITE_APP_VERSION': JSON.stringify(process.env.npm_package_version || '1.0.0'),
+      'import.meta.env.VITE_APP_VERSION': JSON.stringify(version),
     },
     plugins: [react(), tailwindcss()],
     resolve: {
