@@ -3,15 +3,21 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { LocalVisibilityGraph } from './LocalVisibilityGraph';
 import { useRankingHistory } from '../../hooks/useRankingHistory';
 import type { ReactNode } from 'react';
+import type { UseQueryResult } from '@tanstack/react-query';
 
 // Mock Recharts to avoid issues with SVG and DOM dimensions in JSDOM
-vi.mock('recharts', async () => {
-  const OriginalRecharts = (await vi.importActual('recharts')) as Record<string, unknown>;
+// Using a Record<string, unknown> and casting to unknown then to the module type is the clean way
+// to mock modules in Vitest without using 'any'.
+vi.mock('recharts', () => {
+  const MockComponent = ({ children }: { children?: ReactNode }) => <div>{children}</div>;
   return {
-    ...OriginalRecharts,
-    ResponsiveContainer: ({ children }: { children: ReactNode }) => (
-      <div style={{ width: '500px', height: '300px' }}>{children}</div>
-    ),
+    ResponsiveContainer: MockComponent,
+    AreaChart: MockComponent,
+    Area: MockComponent,
+    XAxis: MockComponent,
+    YAxis: MockComponent,
+    CartesianGrid: MockComponent,
+    Tooltip: MockComponent,
   };
 });
 
@@ -30,7 +36,10 @@ describe('LocalVisibilityGraph Component', () => {
   });
 
   it('should return null (not render) if isLoading is true', () => {
-    mockedUseRankingHistory.mockReturnValue({ data: [], isLoading: true });
+    mockedUseRankingHistory.mockReturnValue({ 
+      data: [], 
+      isLoading: true 
+    } as unknown as UseQueryResult<unknown[], Error>);
     
     const { container } = render(<LocalVisibilityGraph placeId={mockPlaceId} keyword={mockKeyword} />);
     expect(container.firstChild).toBeNull();
@@ -40,7 +49,7 @@ describe('LocalVisibilityGraph Component', () => {
     mockedUseRankingHistory.mockReturnValue({ 
       data: [{ date: '2026-05-01', avgRank: 5, bestRank: 2 }], 
       isLoading: false 
-    });
+    } as unknown as UseQueryResult<unknown[], Error>);
     
     const { container } = render(<LocalVisibilityGraph placeId={mockPlaceId} keyword={mockKeyword} />);
     expect(container.firstChild).toBeNull();
@@ -53,7 +62,7 @@ describe('LocalVisibilityGraph Component', () => {
         { date: '2026-05-02T00:00:00Z', avgRank: 3, bestRank: 1 },
       ], 
       isLoading: false 
-    });
+    } as unknown as UseQueryResult<unknown[], Error>);
     
     render(<LocalVisibilityGraph placeId={mockPlaceId} keyword={mockKeyword} />);
     
@@ -69,7 +78,7 @@ describe('LocalVisibilityGraph Component', () => {
         { date: '2026-05-02T00:00:00Z', avgRank: 6, bestRank: 4 },
       ], 
       isLoading: false 
-    });
+    } as unknown as UseQueryResult<unknown[], Error>);
     
     render(<LocalVisibilityGraph placeId={mockPlaceId} keyword={mockKeyword} />);
     expect(screen.getByText(/4\.0 pts de evolución/i)).toBeInTheDocument();

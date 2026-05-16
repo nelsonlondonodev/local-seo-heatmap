@@ -25,8 +25,18 @@ describe('Security Infrastructure: JWT Injection Audit', () => {
 
   it('should explicitly inject JWT Bearer token when session exists', async () => {
     // 1. Mock active session
+    // We create a valid-looking session object to satisfy TypeScript
+    const mockSession = { 
+      access_token: 'valid-jwt-token',
+      user: { id: 'user-123' },
+      expires_at: 0,
+      expires_in: 0,
+      token_type: 'bearer',
+      refresh_token: 'refresh'
+    } as unknown as Session;
+
     mockedGetSession.mockResolvedValue({
-      data: { session: { access_token: 'valid-jwt-token' } as Session },
+      data: { session: mockSession },
       error: null,
     } as AuthSessionResponse);
 
@@ -34,7 +44,7 @@ describe('Security Infrastructure: JWT Injection Audit', () => {
     mockedInvoke.mockResolvedValue({
       data: { success: true },
       error: null,
-    } as FunctionResponse<unknown>);
+    } as FunctionResponse<Record<string, boolean>>);
 
     await invokeEdgeFunction('proxy-serper', { query: 'test' });
 
@@ -54,7 +64,7 @@ describe('Security Infrastructure: JWT Injection Audit', () => {
     mockedInvoke.mockResolvedValue({
       data: { success: true },
       error: null,
-    } as FunctionResponse<unknown>);
+    } as FunctionResponse<Record<string, boolean>>);
 
     await invokeEdgeFunction('proxy-serper', { query: 'test' });
 
@@ -73,6 +83,8 @@ describe('Security Infrastructure: JWT Injection Audit', () => {
     // Mock a response that looks like a fetch error context
     const mockError = new Error('Initial error');
     // @ts-expect-error - Mocking Supabase function error context
+    // We use @ts-expect-error because Error doesn't natively have 'context'
+    // but the Supabase FunctionError does. This is the correct way to handle this.
     mockError.context = new Response(JSON.stringify({ error: 'Créditos insuficientes' }), {
       status: 402,
       headers: { 'Content-Type': 'application/json' }
@@ -80,8 +92,8 @@ describe('Security Infrastructure: JWT Injection Audit', () => {
 
     mockedInvoke.mockResolvedValue({
       data: null,
-      error: mockError,
-    } as FunctionResponse<unknown>);
+      error: mockError as unknown as FunctionResponse<unknown>['error'],
+    } as unknown as FunctionResponse<unknown>);
 
     await expect(invokeEdgeFunction('proxy-serper', { query: 'test' }))
       .rejects.toThrow('Créditos insuficientes');
