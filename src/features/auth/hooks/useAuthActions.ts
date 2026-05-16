@@ -1,7 +1,6 @@
 import { useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
 import { AUTH_CONFIG } from '../constants';
-import type { Session, User } from '@supabase/supabase-js';
 
 interface UseAuthActionsProps {
   setAuthState: React.Dispatch<React.SetStateAction<any>>;

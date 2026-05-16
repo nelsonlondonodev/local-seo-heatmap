@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo, useRef, useCallback, type ReactNode } from 'react';
-import { logger } from '@/lib/logger';
+
 import { AuthContext } from './hooks/useAuth';
 import { useSessionSync } from './hooks/useSessionSync';
 import { useInactivityTimer } from './hooks/useInactivityTimer';

@@ -5,7 +5,6 @@ interface StatRowProps {
   icon: LucideIcon;
   label: string;
   value: string;
-  colorClass: string;
   className?: string;
 }
 
@@ -13,7 +12,6 @@ export function StatRow({
   icon: Icon, 
   label, 
   value, 
-  colorClass,
   className 
 }: StatRowProps) {
   return (

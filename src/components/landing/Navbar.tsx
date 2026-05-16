@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/features/auth';
 import { Logo } from '../shared/Logo';
-import { cn } from '@/lib/utils';
+
 
 interface NavbarLinkProps {
   href: string;

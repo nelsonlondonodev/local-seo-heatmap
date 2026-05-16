@@ -1,5 +1,5 @@
 import { useBranding } from '@/features/branding';
-import { cn } from '@/lib/utils';
+
 
 interface FooterLink {
   label: string;

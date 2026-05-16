@@ -1,15 +1,15 @@
 import { motion } from 'framer-motion';
 import { MapMockup } from '../landing/MapMockup';
-import { Sparkles, CheckCircle2 } from 'lucide-react';
+import { CheckCircle2 } from 'lucide-react';
 import { registerContent } from './AuthData';
-import { cn } from '@/lib/utils';
+
 
 const containerVariants = {
   hidden: { opacity: 0, y: 10 },
   visible: { 
     opacity: 1, 
     y: 0,
-    transition: { duration: 0.8, ease: "easeOut" }
+    transition: { duration: 0.8, ease: "easeOut" as any }
   }
 };
 

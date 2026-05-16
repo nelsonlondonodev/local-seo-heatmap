@@ -1,8 +1,8 @@
 import { motion } from 'framer-motion';
 import { MapMockup } from '../landing/MapMockup';
-import { Sparkles } from 'lucide-react';
+
 import { loginContent } from './AuthData';
-import { cn } from '@/lib/utils';
+
 
 export function LoginVisual() {
   return (

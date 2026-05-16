@@ -18,7 +18,6 @@ import { StatRow } from '@/features/heatmap/components/ui/StatRow';
 import { SalesStrategyHub } from '@/features/heatmap/components/ui/SalesStrategyHub';
 import { LocalDominanceGauge } from '@/features/heatmap/components/ui/LocalDominanceGauge';
 import { LocalVisibilityGraph } from '@/features/heatmap/components/ui/LocalVisibilityGraph';
-import { getRankColor } from '@/config/constants';
 import { isAdvertiser } from '../features/heatmap/utils/textUtils';
 import { useBranding } from '@/features/branding';
 import { APP_CONFIG } from '@/config/constants';
@@ -162,32 +161,27 @@ export function HeatmapResultPage() {
                     icon={Target} 
                     label="Lead / Prospecto" 
                     value={heatmap.prospect_name} 
-                    colorClass="bg-primary/20 text-primary border border-primary/20" 
                   />
                 )}
                 <StatRow 
                   icon={Search} 
                   label="Palabra Clave" 
                   value={config.keyword} 
-                  colorClass="bg-primary/10 text-primary" 
                 />
                 <StatRow 
                   icon={MapPin} 
                   label="Negocio Objetivo" 
                   value={config.businessName} 
-                  colorClass="bg-emerald-500/10 text-emerald-500" 
                 />
                 <StatRow 
                   icon={Grid3X3} 
                   label="Parámetros de Grid" 
                   value={`${config.gridSize} Puntos • Radio: ${config.radiusKm} km`} 
-                  colorClass="bg-blue-500/10 text-blue-500" 
                 />
                 <StatRow 
                   icon={Calendar} 
                   label="Fecha del Análisis" 
                   value={formatDate(createdAt)} 
-                  colorClass="bg-orange-500/10 text-orange-500" 
                 />
               </div>
 

@@ -18,13 +18,6 @@ import { isResultsSummary, safeCastArray } from '@/util/mappers';
 
 type HeatmapRecord = Database['public']['Tables']['heatmaps']['Row'];
 
-function getRankVariant(rank: number | null): 'default' | 'secondary' | 'destructive' {
-  if (rank === null) return 'secondary';
-  if (rank <= 3) return 'default';
-  if (rank <= 10) return 'secondary';
-  return 'destructive';
-}
-
 export function HistoryPage() {
   const navigate = useNavigate();
   const { history, isLoading, deleteHeatmap, isDeleting } = useHeatmaps();

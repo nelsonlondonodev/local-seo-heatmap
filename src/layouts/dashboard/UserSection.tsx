@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useAuth, type UserRole } from '@/features/auth';
 
-const getRoleBadgeStyle = (role: UserRole | null) => {
+const getRoleBadgeStyle = (_role: UserRole | null) => {
   return 'bg-zinc-50 dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 border border-zinc-200 dark:border-zinc-800 shadow-none';
 };
 

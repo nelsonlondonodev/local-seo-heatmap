@@ -17,7 +17,7 @@ const containerVariants = {
   visible: { 
     opacity: 1, 
     y: 0,
-    transition: { duration: 0.5, ease: "easeOut" }
+    transition: { duration: 0.5, ease: "easeOut" as any }
   }
 };
 
@@ -105,7 +105,7 @@ export function LoginForm({ from }: LoginFormProps) {
             </div>
 
             <div className="flex justify-end pr-1">
-              <Link to="/forgot-password" size="sm" className="text-[10px] font-bold uppercase tracking-[0.15em] text-zinc-500 hover:text-white transition-colors">
+              <Link to="/forgot-password" className="text-[10px] font-bold uppercase tracking-[0.15em] text-zinc-500 hover:text-white transition-colors">
                 ¿Olvidaste tu contraseña?
               </Link>
             </div>
