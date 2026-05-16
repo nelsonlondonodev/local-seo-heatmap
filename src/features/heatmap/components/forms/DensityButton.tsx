@@ -1,10 +1,19 @@
-import { Zap, Layers, Grid3X3, LucideIcon } from 'lucide-react';
+import { Zap, Layers, Grid3X3 } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
+
+type GridValue = '3x3' | '5x5' | '7x7';
+
+const ICON_MAP: Record<GridValue, LucideIcon> = {
+  '3x3': Zap,
+  '5x5': Layers,
+  '7x7': Grid3X3
+};
 
 interface DensityButtonProps {
   label: string;
   description: string;
-  value: string;
+  value: GridValue;
   isActive: boolean;
   onClick: () => void;
 }
@@ -16,8 +25,7 @@ export function DensityButton({
   isActive, 
   onClick 
 }: DensityButtonProps) {
-  const IconMap: Record<string, LucideIcon> = { '3x3': Zap, '5x5': Layers, '7x7': Grid3X3 };
-  const Icon = IconMap[value] || Grid3X3;
+  const Icon = ICON_MAP[value] || Grid3X3;
 
   return (
     <button
