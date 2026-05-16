@@ -20,5 +20,4 @@ export function CostIndicator({ estimatedCost }: CostIndicatorProps) {
       </div>
     </div>
   );
-  );
 }
