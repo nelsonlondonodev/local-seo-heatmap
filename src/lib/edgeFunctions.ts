@@ -27,19 +27,22 @@ export async function invokeEdgeFunction<TResponse = unknown, TRequest = Record<
   if (error) {
     console.error(`[EdgeFunction] Error invoking ${functionName}:`, error);
     
-    // Log detailed response body for debugging proxy errors
+    // Attempt to extract the server-side error message (e.g., 'Créditos insuficientes')
+    let errorMessage = error.message;
+    
     try {
       if (error.context instanceof Response) {
         const bodyText = await error.context.clone().text();
-        console.error(`[EdgeFunction] Error Response (${functionName}):`, bodyText);
-      } else {
-        console.error(`[EdgeFunction] Error Object:`, error);
+        const json = JSON.parse(bodyText);
+        if (json.error) {
+          errorMessage = json.error;
+        }
       }
     } catch (e) {
-      console.error(`[EdgeFunction] Could not parse error details:`, e);
+      console.warn(`[EdgeFunction] Failed to parse error JSON for ${functionName}`);
     }
 
-    throw new Error(error.message || `Edge Function error: ${functionName}`);
+    throw new Error(errorMessage || `Error en la función: ${functionName}`);
   }
 
   return data as TResponse;

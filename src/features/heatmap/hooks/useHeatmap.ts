@@ -111,9 +111,9 @@ export function useHeatmap() {
       await saveHeatmap(result);
       
       setPoints(result.points);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Heatmap analysis failed', error);
-      toast.error('Error al ejecutar el análisis');
+      toast.error(error.message || 'Error al ejecutar el análisis');
     } finally {
       setIsLoading(false);
       setScanProgress(null);

@@ -17,6 +17,7 @@ export interface UserProfile {
   role: UserRole;
   agency_id: string | null;
   plan: 'free' | 'pro' | 'enterprise';
+  credits: number;
 }
 
 export interface AuthContextType {

@@ -1,12 +1,10 @@
 import { corsHeaders, handleCorsPreflightRequest, buildCorsHeaders } from '../_shared/cors.ts';
 import { getAuthenticatedUser, unauthorizedResponse } from '../_shared/auth.ts';
+import { validateUserCredits } from '../_shared/security.ts';
 
 /**
  * Edge Function: proxy-places
- * Proxies requests to Google Places API (New v1).
- * Keeps the GOOGLE_MAPS_API_KEY secret on the server side.
- *
- * Expected body: { textQuery: string, maxResultCount?: number }
+ * Proxies requests to Google Places API (New v1) with Security Hardening.
  */
 Deno.serve(async (req: Request) => {
   const origin = req.headers.get('Origin');
@@ -27,22 +25,30 @@ Deno.serve(async (req: Request) => {
     return unauthorizedResponse(dynamicCors);
   }
 
-  // 2. Read secret
+  // 2. SECURITY CHECK: Places searches cost 1 credit
+  const securityCheck = await validateUserCredits(user.id, 1);
+  if (!securityCheck.success) {
+    return new Response(
+      JSON.stringify({ error: securityCheck.error, code: securityCheck.code }),
+      { status: 429, headers: { ...dynamicCors, 'Content-Type': 'application/json' } }
+    );
+  }
+
+  // 3. Read secret
   const apiKey = Deno.env.get('GOOGLE_MAPS_API_KEY');
   if (!apiKey) {
     return new Response(
-      JSON.stringify({ error: 'Server misconfiguration: Missing GOOGLE_MAPS_API_KEY secret.' }),
+      JSON.stringify({ error: 'Server misconfiguration: Missing GOOGLE_MAPS_API_KEY.' }),
       { status: 500, headers: { ...dynamicCors, 'Content-Type': 'application/json' } }
     );
   }
 
   try {
-    // 3. Parse incoming request
     const { textQuery, maxResultCount } = await req.json();
 
     if (!textQuery || typeof textQuery !== 'string') {
       return new Response(
-        JSON.stringify({ error: 'Invalid payload: "textQuery" string is required.' }),
+        JSON.stringify({ error: 'Invalid payload: "textQuery" is required.' }),
         { status: 400, headers: { ...dynamicCors, 'Content-Type': 'application/json' } }
       );
     }

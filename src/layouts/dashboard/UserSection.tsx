@@ -43,11 +43,17 @@ export function UserSection({ onLogoutClick, isCollapsed }: UserSectionProps) {
               <p className="truncate text-[10px] font-medium text-zinc-500 dark:text-zinc-400 leading-none">
                 {user?.email ?? ''}
               </p>
-              {role && (
-                <Badge variant="outline" className={`w-fit px-2 py-0 h-4 text-[9px] font-medium uppercase tracking-wider ${getRoleBadgeStyle(role)}`}>
-                  {role.replace('-', ' ')}
-                </Badge>
-              )}
+              <div className="flex flex-wrap items-center gap-1.5 mt-0.5">
+                {role && (
+                  <Badge variant="outline" className={`px-2 py-0 h-4 text-[9px] font-medium uppercase tracking-wider ${getRoleBadgeStyle(role)}`}>
+                    {role.replace('-', ' ')}
+                  </Badge>
+                )}
+                <div className="flex items-center gap-1 px-1.5 py-0 h-4 rounded-full bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400 border border-amber-100 dark:border-amber-900/30 text-[9px] font-bold uppercase tracking-wider">
+                  <span className="shrink-0">🪙</span>
+                  <span>{profile?.credits ?? 0}</span>
+                </div>
+              </div>
             </div>
           </motion.div>
         )}

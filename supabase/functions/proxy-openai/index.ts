@@ -1,12 +1,10 @@
 import { corsHeaders, handleCorsPreflightRequest, buildCorsHeaders } from '../_shared/cors.ts';
 import { getAuthenticatedUser, unauthorizedResponse } from '../_shared/auth.ts';
+import { validateUserCredits } from '../_shared/security.ts';
 
 /**
  * Edge Function: proxy-openai
- * Proxies requests to OpenAI Chat Completions API.
- * Keeps the OPENAI_API_KEY secret on the server side.
- *
- * Expected body: { messages: ChatMessage[], response_format?: object }
+ * Proxies requests to OpenAI Chat Completions API with Security Hardening.
  */
 Deno.serve(async (req: Request) => {
   const origin = req.headers.get('Origin');
@@ -27,17 +25,25 @@ Deno.serve(async (req: Request) => {
     return unauthorizedResponse(dynamicCors);
   }
 
-  // 2. Read secret
+  // 2. SECURITY CHECK: OpenAI calls cost 2 credits (Base cost)
+  const securityCheck = await validateUserCredits(user.id, 2);
+  if (!securityCheck.success) {
+    return new Response(
+      JSON.stringify({ error: securityCheck.error, code: securityCheck.code }),
+      { status: 429, headers: { ...dynamicCors, 'Content-Type': 'application/json' } }
+    );
+  }
+
+  // 3. Read secret
   const apiKey = Deno.env.get('OPENAI_API_KEY');
   if (!apiKey) {
     return new Response(
-      JSON.stringify({ error: 'Server misconfiguration: Missing OPENAI_API_KEY secret.' }),
+      JSON.stringify({ error: 'Server misconfiguration: Missing OPENAI_API_KEY.' }),
       { status: 500, headers: { ...dynamicCors, 'Content-Type': 'application/json' } }
     );
   }
 
   try {
-    // 3. Parse incoming request
     const { messages, response_format } = await req.json();
 
     if (!messages || !Array.isArray(messages)) {
