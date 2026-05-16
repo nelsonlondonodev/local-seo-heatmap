@@ -71,6 +71,12 @@ BEGIN
 END;
 $$;
 
--- Secure the function execution
-REVOKE EXECUTE ON FUNCTION public.check_and_deduct_credits(UUID, INTEGER, INTEGER) FROM PUBLIC;
-GRANT EXECUTE ON FUNCTION public.check_and_deduct_credits(UUID, INTEGER, INTEGER) TO authenticated, service_role;
+-- Secure the function execution (ONLY service_role can call this)
+-- This prevents authenticated users from manipulating credits via supabase.rpc()
+REVOKE ALL ON FUNCTION public.check_and_deduct_credits(UUID, INTEGER, INTEGER) FROM PUBLIC;
+REVOKE ALL ON FUNCTION public.check_and_deduct_credits(UUID, INTEGER, INTEGER) FROM authenticated;
+REVOKE ALL ON FUNCTION public.check_and_deduct_credits(UUID, INTEGER, INTEGER) FROM anon;
+GRANT EXECUTE ON FUNCTION public.check_and_deduct_credits(UUID, INTEGER, INTEGER) TO service_role;
+
+-- Secure ip_rate_limits table
+ALTER TABLE public.ip_rate_limits ENABLE ROW LEVEL SECURITY;
