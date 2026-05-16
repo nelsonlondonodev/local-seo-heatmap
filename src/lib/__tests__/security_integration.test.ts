@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { supabase } from '../supabase';
 import { invokeEdgeFunction } from '../edgeFunctions';
-import type { AuthResponse, FunctionResponse } from '@supabase/supabase-js';
+import type { AuthSessionResponse, FunctionResponse, Session } from '@supabase/supabase-js';
 
 // Mock Supabase client
 vi.mock('../supabase', () => ({
@@ -26,15 +26,15 @@ describe('Security Infrastructure: JWT Injection Audit', () => {
   it('should explicitly inject JWT Bearer token when session exists', async () => {
     // 1. Mock active session
     mockedGetSession.mockResolvedValue({
-      data: { session: { access_token: 'valid-jwt-token' } },
+      data: { session: { access_token: 'valid-jwt-token' } as Session },
       error: null,
-    } as unknown as AuthResponse);
+    } as AuthSessionResponse);
 
     // 2. Mock successful function invocation
     mockedInvoke.mockResolvedValue({
       data: { success: true },
       error: null,
-    } as unknown as FunctionResponse<any>);
+    } as FunctionResponse<unknown>);
 
     await invokeEdgeFunction('proxy-serper', { query: 'test' });
 
@@ -49,12 +49,12 @@ describe('Security Infrastructure: JWT Injection Audit', () => {
     mockedGetSession.mockResolvedValue({
       data: { session: null },
       error: null,
-    } as unknown as AuthResponse);
+    } as AuthSessionResponse);
 
     mockedInvoke.mockResolvedValue({
       data: { success: true },
       error: null,
-    } as unknown as FunctionResponse<any>);
+    } as FunctionResponse<unknown>);
 
     await invokeEdgeFunction('proxy-serper', { query: 'test' });
 
@@ -68,7 +68,7 @@ describe('Security Infrastructure: JWT Injection Audit', () => {
     mockedGetSession.mockResolvedValue({
       data: { session: null },
       error: null,
-    } as unknown as AuthResponse);
+    } as AuthSessionResponse);
 
     // Mock a response that looks like a fetch error context
     const mockError = new Error('Initial error');
@@ -81,7 +81,7 @@ describe('Security Infrastructure: JWT Injection Audit', () => {
     mockedInvoke.mockResolvedValue({
       data: null,
       error: mockError,
-    } as unknown as FunctionResponse<any>);
+    } as FunctionResponse<unknown>);
 
     await expect(invokeEdgeFunction('proxy-serper', { query: 'test' }))
       .rejects.toThrow('Créditos insuficientes');
