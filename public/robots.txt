@@ -1,0 +1,20 @@
+# https://www.robotstxt.org/robotstxt.html
+User-agent: *
+
+# Allow all public routes
+Allow: /
+Allow: /favicon.ico
+Allow: /favicon.svg
+Allow: /og-image.png
+
+# Disallow internal application routes to protect privacy and crawl budget
+Disallow: /dashboard/
+Disallow: /admin/
+Disallow: /settings/
+Disallow: /history/
+Disallow: /auth/
+Disallow: /login
+Disallow: /register
+
+# Sitemaps
+Sitemap: https://mapranker.pro/sitemap.xml

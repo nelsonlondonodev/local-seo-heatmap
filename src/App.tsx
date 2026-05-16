@@ -20,6 +20,7 @@ import { HeatmapResultPage } from '@/pages/HeatmapResultPage';
 import { SettingsPage } from '@/pages/SettingsPage';
 import { SiteAnalyzerPage } from '@/pages/SiteAnalyzerPage';
 import { AdminPage } from '@/pages/AdminPage';
+import { SEOManager } from '@/components/seo/SEOManager';
 import './index.css';
 
 const queryClient = new QueryClient({
@@ -49,11 +50,20 @@ function PublicOnlyRoute({ children }: { children: React.ReactNode }) {
 }
 
 const router = createBrowserRouter([
-  { path: '/', element: <LandingPage /> },
+  {
+    path: '/',
+    element: (
+      <>
+        <SEOManager />
+        <LandingPage />
+      </>
+    )
+  },
   { 
     path: '/login', 
     element: (
       <PublicOnlyRoute>
+        <SEOManager />
         <LoginPage />
       </PublicOnlyRoute>
     ) 
@@ -62,6 +72,7 @@ const router = createBrowserRouter([
     path: '/register', 
     element: (
       <PublicOnlyRoute>
+        <SEOManager />
         <RegisterPage />
       </PublicOnlyRoute>
     ) 
@@ -69,6 +80,7 @@ const router = createBrowserRouter([
   {
     element: (
       <ProtectedRoute>
+        <SEOManager />
         <DashboardLayout />
       </ProtectedRoute>
     ),
