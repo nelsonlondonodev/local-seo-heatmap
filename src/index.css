@@ -123,6 +123,13 @@
       @apply absolute inset-0 -z-10 bg-primary/20 blur-[100px] rounded-full;
     }
   }
+  .dashboard-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    @media (min-width: 1024px) {
+      grid-template-columns: var(--sidebar-width) 1fr;
+    }
+  }
 }
 
 /** 

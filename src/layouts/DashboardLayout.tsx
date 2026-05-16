@@ -33,10 +33,7 @@ export function DashboardLayout() {
   };
 
   return (
-    <div 
-      className="grid h-screen overflow-hidden bg-background transition-all duration-300 ease-in-out"
-      style={{ gridTemplateColumns: 'var(--sidebar-width) 1fr' }}
-    >
+    <div className="dashboard-grid h-screen overflow-hidden bg-background transition-all duration-300 ease-in-out">
       {/* Atomic Sidebar & Navigation */}
       <Sidebar 
         isOpen={sidebarOpen} 
