@@ -56,7 +56,7 @@ export function HeatmapResultPage() {
   };
 
   return (
-    <motion.div variants={staggerContainer} initial="hidden" animate="visible" className="space-y-6">
+    <motion.div variants={staggerContainer} initial="hidden" animate="visible" className="space-y-4">
       {/* Print-only Header */}
       <div className="print-only mb-10 border-b-4 border-primary pb-8">
         <div className="flex justify-between items-start">
@@ -275,7 +275,7 @@ export function HeatmapResultPage() {
 
         {/* Map Preview */}
         <motion.div variants={fadeInUp} className="lg:col-span-2">
-          <Card className="flex h-full min-h-[600px] flex-col overflow-hidden">
+          <Card className="flex h-full min-h-[500px] lg:min-h-[calc(100vh-14rem)] flex-col overflow-hidden">
             <CardContent className="relative flex-1 p-0">
               <HeatmapMap
                 center={center}

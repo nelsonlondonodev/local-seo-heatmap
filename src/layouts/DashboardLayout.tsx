@@ -56,7 +56,7 @@ export function DashboardLayout() {
         </header>
 
         {/* Dynamic Page Content with Transitions */}
-        <main className="flex-1 overflow-auto p-4 md:p-6 lg:p-8">
+        <main className="flex-1 overflow-auto p-4 lg:p-6">
           <AnimatePresence mode="wait">
             <motion.div
               key={location.pathname}

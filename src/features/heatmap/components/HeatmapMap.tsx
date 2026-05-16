@@ -3,6 +3,7 @@ import { MapContainer, TileLayer } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { cn } from '@/lib/utils';
+import { useSidebar } from '@/context/SidebarContext';
 import type { GridPoint } from '@/types';
 
 // Sub-components
@@ -34,6 +35,7 @@ interface HeatmapMapProps {
 }
 
 export function HeatmapMap({ center, zoom, points, businessName, radiusKm, onMapClick }: HeatmapMapProps) {
+  const { isCollapsed } = useSidebar();
   const [isFullscreen, setIsFullscreen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<L.Map | null>(null);
@@ -46,6 +48,14 @@ export function HeatmapMap({ center, zoom, points, businessName, radiusKm, onMap
     document.addEventListener('fullscreenchange', handleFullscreenChange);
     return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
   }, []);
+
+  // Sync map size with sidebar transitions
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      mapRef.current?.invalidateSize();
+    }, 300); // Matches sidebar transition duration
+    return () => clearTimeout(timer);
+  }, [isCollapsed]);
 
   const toggleFullscreen = async () => {
     if (!document.fullscreenElement) await containerRef.current?.requestFullscreen();

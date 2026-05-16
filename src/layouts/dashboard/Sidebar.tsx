@@ -1,11 +1,16 @@
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Map, History, Settings, X, ChevronRight, Sparkles, TrendingUp, Target, Globe, ShieldAlert, type LucideIcon } from 'lucide-react';
+import { 
+  Map, History, Settings, X, ChevronRight, Sparkles, 
+  TrendingUp, Target, Globe, ShieldAlert, PanelLeftClose, 
+  PanelLeftOpen, type LucideIcon 
+} from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { useAuth } from '@/features/auth';
 import { UserSection } from './UserSection';
 import { Logo } from '@/components/shared/Logo';
 import { cn } from '@/lib/utils';
+import { useSidebar } from '@/context/SidebarContext';
 
 const NAV_ITEMS = [
   { path: '/dashboard', label: 'Mapa de Calor', icon: Map },
@@ -22,10 +27,11 @@ interface SidebarLinkProps {
   label: string;
   icon: LucideIcon;
   isActive: boolean;
+  isCollapsed: boolean;
   onClick: () => void;
 }
 
-function SidebarLink({ path, label, icon: Icon, isActive, onClick }: SidebarLinkProps) {
+function SidebarLink({ path, label, icon: Icon, isActive, isCollapsed, onClick }: SidebarLinkProps) {
   return (
     <Link
       to={path}
@@ -34,12 +40,24 @@ function SidebarLink({ path, label, icon: Icon, isActive, onClick }: SidebarLink
         "group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-all duration-200",
         isActive
           ? "bg-zinc-100 dark:bg-zinc-900 text-zinc-950 dark:text-white font-semibold"
-          : "text-zinc-500 font-medium hover:bg-zinc-50 dark:hover:bg-zinc-900/50 hover:text-zinc-950 dark:hover:text-white"
+          : "text-zinc-500 font-medium hover:bg-zinc-50 dark:hover:bg-zinc-900/50 hover:text-zinc-950 dark:hover:text-white",
+        isCollapsed && "justify-center px-0"
       )}
+      title={isCollapsed ? label : undefined}
     >
-      <Icon className="h-4 w-4" strokeWidth={isActive ? 2.5 : 2} />
-      {label}
-      {isActive && (
+      <Icon className={cn("h-4 w-4 shrink-0", isActive ? "stroke-[2.5px]" : "stroke-[2px]")} />
+      
+      {!isCollapsed && (
+        <motion.span
+          initial={{ opacity: 0, x: -10 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="truncate"
+        >
+          {label}
+        </motion.span>
+      )}
+
+      {isActive && !isCollapsed && (
         <ChevronRight className="ml-auto h-4 w-4 text-zinc-400 dark:text-zinc-600" />
       )}
     </Link>
@@ -55,6 +73,7 @@ interface SidebarProps {
 export function Sidebar({ isOpen, onClose, onLogoutClick }: SidebarProps) {
   const location = useLocation();
   const { role } = useAuth();
+  const { isCollapsed, toggle } = useSidebar();
 
   const itemsToRender = [...NAV_ITEMS];
   if (role === 'super-admin') {
@@ -63,6 +82,7 @@ export function Sidebar({ isOpen, onClose, onLogoutClick }: SidebarProps) {
 
   return (
     <>
+      {/* Mobile Overlay */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -76,14 +96,34 @@ export function Sidebar({ isOpen, onClose, onLogoutClick }: SidebarProps) {
       </AnimatePresence>
 
       <motion.aside
+        animate={{ width: isCollapsed ? 80 : 288 }}
+        transition={{ type: 'spring', stiffness: 300, damping: 30 }}
         className={cn(
-          "fixed inset-y-0 left-0 z-[5000] w-64 border-r border-border bg-card lg:static lg:z-auto transition-transform duration-300 ease-in-out",
+          "fixed inset-y-0 left-0 z-[5000] border-r border-border bg-card lg:static lg:z-auto",
           isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
         )}
       >
         <div className="flex h-full flex-col">
-          <div className="flex h-16 items-center px-6">
-            <Logo textClassName="text-lg font-bold dark:text-white text-zinc-950" />
+          {/* Header & Toggle */}
+          <div className={cn("flex h-16 items-center px-6", isCollapsed && "px-0 justify-center")}>
+            {!isCollapsed ? (
+              <Logo textClassName="text-lg font-bold dark:text-white text-zinc-950" />
+            ) : (
+              <div className="h-8 w-8 rounded-lg bg-zinc-950 dark:bg-white flex items-center justify-center">
+                <div className="h-4 w-4 rounded-sm border-2 border-white dark:border-zinc-950" />
+              </div>
+            )}
+            
+            {!isCollapsed && (
+              <button
+                className="ml-auto hidden lg:flex p-1.5 rounded-md text-zinc-400 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-all"
+                onClick={toggle}
+                aria-label="Colapsar menú"
+              >
+                <PanelLeftClose className="h-4 w-4" />
+              </button>
+            )}
+            
             <button
               className="ml-auto lg:hidden p-2 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors"
               onClick={onClose}
@@ -95,11 +135,13 @@ export function Sidebar({ isOpen, onClose, onLogoutClick }: SidebarProps) {
 
           <Separator />
 
-          <nav className="flex-1 space-y-1 p-3 overflow-y-auto">
+          {/* Navigation */}
+          <nav className="flex-1 space-y-1 p-3 overflow-y-auto overflow-x-hidden">
             {itemsToRender.map((item) => (
               <SidebarLink
                 key={item.path}
                 {...item}
+                isCollapsed={isCollapsed}
                 isActive={location.pathname === item.path}
                 onClick={onClose}
               />
@@ -108,7 +150,20 @@ export function Sidebar({ isOpen, onClose, onLogoutClick }: SidebarProps) {
 
           <Separator />
 
-          <UserSection onLogoutClick={onLogoutClick} />
+          {/* Bottom Actions (Toggle when collapsed) */}
+          {isCollapsed && (
+            <div className="flex justify-center p-3">
+              <button
+                className="p-2 rounded-md text-zinc-400 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-all"
+                onClick={toggle}
+                aria-label="Expandir menú"
+              >
+                <PanelLeftOpen className="h-4 w-4" />
+              </button>
+            </div>
+          )}
+
+          <UserSection onLogoutClick={onLogoutClick} isCollapsed={isCollapsed} />
         </div>
       </motion.aside>
     </>

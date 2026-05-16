@@ -5,6 +5,7 @@ import { Toaster } from '@/components/ui/sonner';
 import { AuthProvider } from '@/features/auth';
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import { BrandingProvider, useBranding } from '@/features/branding';
+import { SidebarProvider } from '@/context/SidebarContext';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
 import { AuthLoading } from '@/components/auth/AuthLoading';
 import { DashboardLayout } from '@/layouts/DashboardLayout';
@@ -113,9 +114,11 @@ export default function App() {
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <BrandingProvider>
-          <BrandingSync />
-          <RouterProvider router={router} />
-          <Toaster richColors position="top-right" />
+          <SidebarProvider>
+            <BrandingSync />
+            <RouterProvider router={router} />
+            <Toaster richColors position="top-right" />
+          </SidebarProvider>
         </BrandingProvider>
       </AuthProvider>
     </QueryClientProvider>
