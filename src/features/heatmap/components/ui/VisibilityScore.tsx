@@ -65,7 +65,7 @@ export function VisibilityScore({ points }: VisibilityScoreProps) {
           <motion.div 
             initial={{ width: 0 }}
             animate={{ width: `${score}%` }}
-            transition={{ duration: 1.5, ease: "easeOut" as any }}
+            transition={{ duration: 1.5, ease: "easeOut" }}
             className={`absolute inset-y-0 left-0 rounded-full ${score >= 70 ? 'bg-emerald-500' : score >= 30 ? 'bg-amber-500' : 'bg-rose-500'}`}
           />
         </div>

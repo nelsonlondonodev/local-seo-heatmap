@@ -22,7 +22,7 @@ export async function invokeEdgeFunction<TResponse = unknown, TRequest = Record<
     };
   }
 
-  const { data, error } = await supabase.functions.invoke(functionName, options as any);
+  const { data, error } = await supabase.functions.invoke(functionName, options);
 
   if (error) {
     console.error(`[EdgeFunction] Error invoking ${functionName}:`, error);
@@ -31,14 +31,15 @@ export async function invokeEdgeFunction<TResponse = unknown, TRequest = Record<
     let errorMessage = error.message;
     
     try {
-      if (error.context instanceof Response) {
-        const bodyText = await error.context.clone().text();
+      if (error instanceof Error && 'context' in error && (error as { context: unknown }).context instanceof Response) {
+        const response = (error as { context: Response }).context;
+        const bodyText = await response.clone().text();
         const json = JSON.parse(bodyText);
         if (json.error) {
           errorMessage = json.error;
         }
       }
-    } catch (e) {
+    } catch {
       console.warn(`[EdgeFunction] Failed to parse error JSON for ${functionName}`);
     }
 

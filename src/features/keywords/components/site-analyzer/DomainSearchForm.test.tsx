@@ -14,11 +14,12 @@ window.ResizeObserver = ResizeObserverMock;
 // Mock PointerEvent which is needed for Shadcn Select in JSDOM
 if (!window.PointerEvent) {
   class PointerEventMock extends Event {
-    constructor(type: string, props?: any) {
+    constructor(type: string, props?: EventInit) {
       super(type, props);
     }
   }
-  (window as any).PointerEvent = PointerEventMock;
+  // @ts-expect-error - JSDOM polyfill
+  window.PointerEvent = PointerEventMock;
   window.HTMLElement.prototype.scrollIntoView = vi.fn();
   window.HTMLElement.prototype.hasPointerCapture = vi.fn();
   window.HTMLElement.prototype.releasePointerCapture = vi.fn();
@@ -49,7 +50,6 @@ describe('DomainSearchForm', () => {
     const input = screen.getByPlaceholderText(/ej: amazon.es, mercadolibre.com.co/i);
     await user.type(input, 'apple.com');
     
-    // We expect it to be called multiple times (once per keystroke)
     expect(defaultProps.setTargetUrl).toHaveBeenCalled();
   });
 

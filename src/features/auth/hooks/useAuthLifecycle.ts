@@ -5,9 +5,11 @@ import { profileService } from '@/services/profileService';
 import { AUTH_CONFIG } from '../constants';
 import type { Session } from '@supabase/supabase-js';
 
+import type { AuthState } from '../types';
+
 interface UseAuthLifecycleProps {
-  stateRef: React.MutableRefObject<any>;
-  setAuthState: React.Dispatch<React.SetStateAction<any>>;
+  stateRef: React.MutableRefObject<AuthState>;
+  setAuthState: React.Dispatch<React.SetStateAction<AuthState>>;
 }
 
 /**
@@ -25,7 +27,7 @@ export function useAuthLifecycle({ stateRef, setAuthState }: UseAuthLifecyclePro
       if (session) {
         // Skip fetch if we already have consistent state
         if (session.user.id === currentUser?.id && currentProfile && !isLoading) {
-          setAuthState((prev: any) => ({ ...prev, user: session.user, session }));
+          setAuthState((prev: AuthState) => ({ ...prev, user: session.user, session }));
           return;
         }
 
@@ -50,7 +52,7 @@ export function useAuthLifecycle({ stateRef, setAuthState }: UseAuthLifecyclePro
       }
     } catch (err) {
       logger.error('[AUTH] Critical session handler failure:', err);
-      setAuthState((prev: any) => ({ ...prev, isLoading: false }));
+      setAuthState((prev: AuthState) => ({ ...prev, isLoading: false }));
     }
   }, [stateRef, setAuthState]);
 

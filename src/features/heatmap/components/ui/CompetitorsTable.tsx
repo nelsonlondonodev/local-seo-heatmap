@@ -80,7 +80,7 @@ function CompetitorRow({
             <motion.div 
               initial={{ width: 0 }}
               animate={{ width: `${comp.shareOfLocalPack}%` }}
-              transition={{ duration: 1, ease: "easeOut" as any }}
+              transition={{ duration: 1, ease: "easeOut" }}
               className={`h-full ${idx === 0 ? 'bg-zinc-950 dark:bg-white' : 'bg-zinc-400 dark:bg-zinc-600'}`}
             />
           </div>

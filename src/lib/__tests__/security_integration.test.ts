@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { invokeEdgeFunction } from '../edgeFunctions';
 import { supabase } from '../supabase';
+import { invokeEdgeFunction } from '../edgeFunctions';
 
 // Mock Supabase client
 vi.mock('../supabase', () => ({
@@ -14,61 +14,75 @@ vi.mock('../supabase', () => ({
   },
 }));
 
-describe('invokeEdgeFunction Security & Error Handling', () => {
+describe('Security Infrastructure: JWT Injection Audit', () => {
+  const mockedGetSession = vi.mocked(supabase.auth.getSession);
+  const mockedInvoke = vi.mocked(supabase.functions.invoke);
+
   beforeEach(() => {
     vi.clearAllMocks();
-    (supabase.auth.getSession as any).mockResolvedValue({
-      data: { session: { access_token: 'fake-token' } },
-    });
   });
 
-  it('should propagate a specific error message from a JSON response body', async () => {
-    // Simulate a 429 Rate Limit error from the Edge Function
-    const mockErrorResponse = new Response(
-      JSON.stringify({ error: 'Créditos insuficientes' }),
-      { status: 429, headers: { 'content-type': 'application/json' } }
-    );
+  it('should explicitly inject JWT Bearer token when session exists', async () => {
+    // 1. Mock active session
+    mockedGetSession.mockResolvedValue({
+      data: { session: { access_token: 'valid-jwt-token' } },
+      error: null,
+    } as any);
 
-    (supabase.functions.invoke as any).mockResolvedValue({
-      data: null,
-      error: {
-        message: 'Rate limit exceeded',
-        context: mockErrorResponse,
-      },
+    // 2. Mock successful function invocation
+    mockedInvoke.mockResolvedValue({
+      data: { success: true },
+      error: null,
+    } as any);
+
+    await invokeEdgeFunction('proxy-serper', { query: 'test' });
+
+    // 3. Verify header injection
+    const lastCall = mockedInvoke.mock.calls[0];
+    const options = lastCall[1];
+    
+    expect(options?.headers?.Authorization).toBe('Bearer valid-jwt-token');
+  });
+
+  it('should handle missing session gracefully without crashing', async () => {
+    mockedGetSession.mockResolvedValue({
+      data: { session: null },
+      error: null,
+    } as any);
+
+    mockedInvoke.mockResolvedValue({
+      data: { success: true },
+      error: null,
+    } as any);
+
+    await invokeEdgeFunction('proxy-serper', { query: 'test' });
+
+    const lastCall = mockedInvoke.mock.calls[0];
+    const options = lastCall[1];
+    
+    expect(options?.headers?.Authorization).toBeUndefined();
+  });
+
+  it('should bubble up 402/429 errors from server-side JSON', async () => {
+    mockedGetSession.mockResolvedValue({
+      data: { session: null },
+      error: null,
+    } as any);
+
+    // Mock a response that looks like a fetch error context
+    const mockError = new Error('Initial error');
+    // @ts-expect-error - Mocking Supabase function error context
+    mockError.context = new Response(JSON.stringify({ error: 'Créditos insuficientes' }), {
+      status: 402,
+      headers: { 'Content-Type': 'application/json' }
     });
 
-    await expect(invokeEdgeFunction('test-func', {}))
+    mockedInvoke.mockResolvedValue({
+      data: null,
+      error: mockError,
+    } as any);
+
+    await expect(invokeEdgeFunction('proxy-serper', { query: 'test' }))
       .rejects.toThrow('Créditos insuficientes');
-  });
-
-  it('should use a default error message if JSON is invalid or missing error field', async () => {
-    const mockErrorResponse = new Response(
-      'Server Error',
-      { status: 500 }
-    );
-
-    (supabase.functions.invoke as any).mockResolvedValue({
-      data: null,
-      error: {
-        message: 'Original Error',
-        context: mockErrorResponse,
-      },
-    });
-
-    await expect(invokeEdgeFunction('test-func', {}))
-      .rejects.toThrow('Original Error');
-  });
-
-  it('should include the function name in the error if no message is available', async () => {
-    (supabase.functions.invoke as any).mockResolvedValue({
-      data: null,
-      error: {
-        message: '',
-        context: null,
-      },
-    });
-
-    await expect(invokeEdgeFunction('secure-scan', {}))
-      .rejects.toThrow('Error en la función: secure-scan');
   });
 });

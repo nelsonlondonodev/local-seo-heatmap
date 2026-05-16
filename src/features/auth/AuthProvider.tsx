@@ -1,4 +1,5 @@
 import { useEffect, useState, useMemo, useRef, useCallback, type ReactNode } from 'react';
+import type { Session } from '@supabase/supabase-js';
 
 import { AuthContext } from './hooks/useAuth';
 import { useSessionSync } from './hooks/useSessionSync';
@@ -33,8 +34,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const { handleSession } = useAuthLifecycle({ stateRef, setAuthState });
 
   // 4. SECURITY & SESSION POLICIES
-  const onRecovered = useCallback((session: any) => handleSession(session, 'INITIAL_WAKEUP_RECOVERED'), [handleSession]);
-  const onInitialWakeup = useCallback((session: any) => handleSession(session, 'INITIAL_WAKEUP'), [handleSession]);
+  const onRecovered = useCallback((session: Session | null) => handleSession(session, 'INITIAL_WAKEUP_RECOVERED'), [handleSession]);
+  const onInitialWakeup = useCallback((session: Session | null) => handleSession(session, 'INITIAL_WAKEUP'), [handleSession]);
 
   useSessionSync({ signOut, onRecovered, onInitialWakeup });
   

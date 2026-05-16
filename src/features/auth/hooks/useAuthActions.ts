@@ -2,8 +2,10 @@ import { useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
 import { AUTH_CONFIG } from '../constants';
 
+import type { AuthState } from '../types';
+
 interface UseAuthActionsProps {
-  setAuthState: React.Dispatch<React.SetStateAction<any>>;
+  setAuthState: React.Dispatch<React.SetStateAction<AuthState>>;
 }
 
 /**

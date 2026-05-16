@@ -82,7 +82,7 @@ export function LocalDominanceGauge({ points }: LocalDominanceGaugeProps) {
                 strokeLinecap="round"
                 initial={{ strokeDashoffset: arcLength }}
                 animate={{ strokeDashoffset: arcLength - fillAmount }}
-                transition={{ duration: 2, ease: "easeOut" as any }}
+                transition={{ duration: 2, ease: "easeOut" }}
                 className="drop-shadow-[0_0_8px_rgba(var(--primary-rgb),0.5)]"
               />
             </svg>

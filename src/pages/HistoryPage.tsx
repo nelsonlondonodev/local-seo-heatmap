@@ -14,6 +14,7 @@ import { HeatmapThumbnail } from '@/features/heatmap/components/ui/HeatmapThumbn
 import { cn } from '@/lib/utils';
 
 import type { Database } from '@/types/database';
+import type { GridPoint } from '@/types';
 import { isResultsSummary, safeCastArray } from '@/util/mappers';
 
 type HeatmapRecord = Database['public']['Tables']['heatmaps']['Row'];
@@ -100,7 +101,7 @@ export function HistoryPage() {
           {history.map((entry) => {
             const summary = isResultsSummary(entry.results_summary) ? entry.results_summary : { avgRank: 0, bestRank: null, foundCount: 0, totalCount: 0 };
             const advertisers = safeCastArray<string>(entry.advertisers);
-            const points = safeCastArray<any>(entry.points);
+            const points = safeCastArray<GridPoint>(entry.points);
             const isSelected = selectedIds.includes(entry.id);
             
             return (

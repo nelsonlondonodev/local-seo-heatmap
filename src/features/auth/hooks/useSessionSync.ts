@@ -3,10 +3,12 @@ import { supabase } from '@/lib/supabase';
 import { logger } from '@/lib/logger';
 import { AUTH_CONFIG } from '../constants';
 
+import type { Session } from '@supabase/supabase-js';
+
 interface UseSessionSyncProps {
   signOut: () => Promise<void>;
-  onRecovered: (session: any) => void;
-  onInitialWakeup: (session: any) => void;
+  onRecovered: (session: Session | null) => void;
+  onInitialWakeup: (session: Session | null) => void;
 }
 
 /**

@@ -63,7 +63,8 @@ describe('exportUtils', () => {
 
     it('should handle custom headers and escape commas correctly', () => {
       // We spy on Blob creation to inspect the content
-      const blobSpy = vi.spyOn(global, 'Blob').mockImplementation(function(content: any, options: any) {
+      // @ts-expect-error - Mocking Blob constructor is slightly complex in TS
+      const blobSpy = vi.spyOn(global, 'Blob').mockImplementation(function(content: unknown[], options?: BlobPropertyBag) {
         return { content, options } as unknown as Blob;
       });
       const data = [{ notes: 'Hello, World', val: '"quoted"' }];
@@ -72,7 +73,7 @@ describe('exportUtils', () => {
       
       expect(blobSpy).toHaveBeenCalled();
       // Inspecting the payload sent to Blob
-      const blobCallArg = blobSpy.mock.calls[0]?.[0]?.[0] as string;
+      const blobCallArg = (blobSpy.mock.calls[0][0] as string[])[0];
       expect(blobCallArg).toContain('Notes Header,Value Header');
       expect(blobCallArg).toContain('"Hello, World"');
       expect(blobCallArg).toContain('"""quoted"""'); // testing quote escaping
@@ -80,7 +81,7 @@ describe('exportUtils', () => {
   });
 
   describe('copyToClipboardAsTsv', () => {
-    let originalClipboard: any;
+    let originalClipboard: Clipboard | undefined;
 
     beforeEach(() => {
       originalClipboard = navigator.clipboard;

@@ -28,11 +28,14 @@ class ResizeObserverMock {
 }
 window.ResizeObserver = ResizeObserverMock;
 if (!window.PointerEvent) {
-  (window as any).PointerEvent = class extends Event {};
+  // @ts-expect-error - JSDOM doesn't support PointerEvent, we mock it for Radix/Shadcn
+  window.PointerEvent = class extends Event {};
   window.HTMLElement.prototype.scrollIntoView = vi.fn();
 }
 
 describe('SiteAnalyzerPage Integration', () => {
+  const mockedService = vi.mocked(dataForSeoService);
+
   beforeEach(() => {
     vi.clearAllMocks();
     // Default mock for window.confirm to simulate user clicking "OK"
@@ -42,14 +45,12 @@ describe('SiteAnalyzerPage Integration', () => {
   it('renders the initial state with no results', () => {
     render(<SiteAnalyzerPage />);
     expect(screen.getByText('Explorador de Dominios')).toBeInTheDocument();
-    // Form should be present
     expect(screen.getByRole('button', { name: /Explorar Sitio/i })).toBeInTheDocument();
-    // No results or empty state should be present yet
     expect(screen.queryByText('No se encontraron datos')).not.toBeInTheDocument();
   });
 
   it('stops analysis if user cancels the confirm dialog', async () => {
-    window.confirm = vi.fn().mockReturnValue(false); // User clicks Cancel
+    window.confirm = vi.fn().mockReturnValue(false); 
     const user = userEvent.setup();
     render(<SiteAnalyzerPage />);
 
@@ -60,7 +61,7 @@ describe('SiteAnalyzerPage Integration', () => {
     await user.click(analyzeButton);
 
     expect(window.confirm).toHaveBeenCalled();
-    expect(dataForSeoService.getDomainRankOverview).not.toHaveBeenCalled();
+    expect(mockedService.getDomainRankOverview).not.toHaveBeenCalled();
     expect(toast.success).not.toHaveBeenCalled();
   });
 
@@ -83,8 +84,8 @@ describe('SiteAnalyzerPage Integration', () => {
       },
     ];
 
-    (dataForSeoService.getDomainRankOverview as any).mockResolvedValue(mockOverview);
-    (dataForSeoService.getDomainRankedKeywords as any).mockResolvedValue(mockKeywords);
+    mockedService.getDomainRankOverview.mockResolvedValue(mockOverview as any);
+    mockedService.getDomainRankedKeywords.mockResolvedValue(mockKeywords as any);
 
     render(<SiteAnalyzerPage />);
 
@@ -94,16 +95,11 @@ describe('SiteAnalyzerPage Integration', () => {
     const analyzeButton = screen.getByRole('button', { name: /Explorar Sitio/i });
     await user.click(analyzeButton);
 
-    // Verify loading state appears briefly
-    // The button text changes to "Analizando..." (this might be too fast to catch without fine-grained mock control, but we check service calls)
-    
     await waitFor(() => {
-      expect(dataForSeoService.getDomainRankOverview).toHaveBeenCalledWith('test.com', 2724);
-      expect(dataForSeoService.getDomainRankedKeywords).toHaveBeenCalledWith('test.com', 2724);
+      expect(mockedService.getDomainRankOverview).toHaveBeenCalledWith('test.com', 2724);
+      expect(mockedService.getDomainRankedKeywords).toHaveBeenCalledWith('test.com', 2724);
     });
 
-    // Check if table renders the keywords
-    // RankedKeywordsTable should render text based on keywords
     await waitFor(() => {
       expect(screen.getByText('zapatos')).toBeInTheDocument();
       expect(screen.getByText('camisas')).toBeInTheDocument();
@@ -115,8 +111,8 @@ describe('SiteAnalyzerPage Integration', () => {
   it('renders the empty state if analysis returns no data', async () => {
     const user = userEvent.setup();
     
-    (dataForSeoService.getDomainRankOverview as any).mockResolvedValue(null); // No metrics
-    (dataForSeoService.getDomainRankedKeywords as any).mockResolvedValue([]); // No keywords
+    mockedService.getDomainRankOverview.mockResolvedValue(null);
+    mockedService.getDomainRankedKeywords.mockResolvedValue([]);
 
     render(<SiteAnalyzerPage />);
 

@@ -27,7 +27,7 @@ function InsightPill({
   description, 
   type = 'info' 
 }: { 
-  icon: any; 
+  icon: React.ElementType; 
   title: string; 
   description: string; 
   type?: 'info' | 'warning' | 'success';
