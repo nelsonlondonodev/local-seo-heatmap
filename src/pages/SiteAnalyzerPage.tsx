@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { toast } from 'sonner';
 
 // Service & Types
@@ -22,13 +22,13 @@ export function SiteAnalyzerPage() {
   const [hasSearched, setHasSearched] = useState(false);
   const [overview, setOverview] = useState<DomainRankOverview | null>(null);
   const [keywords, setKeywords] = useState<RankedKeywordItem[]>([]);
+  const isAnalyzingRef = useRef(false);
 
   /**
    * Triggers the domain analysis process.
    */
   const handleAnalyze = async () => {
-    if (!targetUrl.trim()) {
-      toast.error('Por favor, ingresa una URL válida.');
+    if (!targetUrl.trim() || isAnalyzing || isAnalyzingRef.current) {
       return;
     }
 
@@ -40,7 +40,8 @@ export function SiteAnalyzerPage() {
       return;
     }
 
-    // Reset state before search
+    // Lock sychronously
+    isAnalyzingRef.current = true;
     setIsAnalyzing(true);
     setHasSearched(false);
     setOverview(null);
@@ -62,6 +63,7 @@ export function SiteAnalyzerPage() {
       toast.error('Hubo un error al analizar el dominio. Revisa la consola para más detalles.');
     } finally {
       setIsAnalyzing(false);
+      isAnalyzingRef.current = false;
       setHasSearched(true);
     }
   };
