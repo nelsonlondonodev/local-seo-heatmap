@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect, useRef, useCallback } from 'react';
+import { useAsyncLock } from '@/hooks/useAsyncLock';
 
 import { toast } from 'sonner';
 import { MAP_DEFAULT_CENTER, COST_PER_POINT } from '@/config/constants';
@@ -16,7 +17,7 @@ export function useHeatmap() {
 
   const { saveHeatmap } = useHeatmaps();
   const hasLoadedHistory = useRef(false);
-  const isScanning = useRef(false);
+  const { execute: executeAnalysis, isLoading } = useAsyncLock();
 
   // 3. Application State
   const [keyword, setKeyword] = useState('');
@@ -29,7 +30,6 @@ export function useHeatmap() {
     MAP_DEFAULT_CENTER.lng,
   ]);
   const [points, setPoints] = useState<GridPoint[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
   const [scanProgress, setScanProgress] = useState<{ current: number; total: number } | null>(null);
   const [prospectName, setProspectName] = useState('');
   const [prospectEmail, setProspectEmail] = useState('');
@@ -95,34 +95,32 @@ export function useHeatmap() {
   }, []);
 
   const runAnalysis = useCallback(async () => {
-    if (!isFormValid || isLoading || isScanning.current) return;
-    isScanning.current = true;
+    if (!isFormValid) return;
     hasLoadedHistory.current = false;
 
-    try {
-      setIsLoading(true);
+    await executeAnalysis(async () => {
       setScanProgress({ current: 0, total: 0 });
-      
-      const result = await searchService.executeSearch(
-        currentConfig,
-        points,
-        (current, total) => setScanProgress({ current, total })
-      );
-      
-      // Save to Cloud
-      await saveHeatmap(result);
-      
-      setPoints(result.points);
-    } catch (error) {
-      console.error('Heatmap analysis failed', error);
-      const message = error instanceof Error ? error.message : 'Error al ejecutar el análisis';
-      toast.error(message);
-    } finally {
-      setIsLoading(false);
-      setScanProgress(null);
-      isScanning.current = false;
-    }
-  }, [isFormValid, isLoading, currentConfig, points, saveHeatmap]);
+      try {
+        const result = await searchService.executeSearch(
+          currentConfig,
+          points,
+          (current, total) => setScanProgress({ current, total })
+        );
+        
+        // Save to Cloud
+        await saveHeatmap(result);
+        
+        setPoints(result.points);
+      } catch (error) {
+        console.error('Heatmap analysis failed', error);
+        const message = error instanceof Error ? error.message : 'Error al ejecutar el análisis';
+        toast.error(message);
+        throw error; // Re-throw to let useAsyncLock manage the lock properly
+      } finally {
+        setScanProgress(null);
+      }
+    });
+  }, [isFormValid, currentConfig, points, saveHeatmap, executeAnalysis]);
 
   // Parameter update handlers with auto-invalidation
   const updateGridSize = useCallback(withInvalidation(setGridSize), [withInvalidation]);
