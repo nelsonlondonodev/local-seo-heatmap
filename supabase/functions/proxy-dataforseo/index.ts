@@ -1,5 +1,6 @@
 import { corsHeaders, handleCorsPreflightRequest, buildCorsHeaders } from '../_shared/cors.ts';
 import { getAuthenticatedUser, unauthorizedResponse } from '../_shared/auth.ts';
+import { validateUserCredits } from '../_shared/security.ts';
 
 /**
  * Edge Function: proxy-dataforseo
@@ -69,7 +70,23 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    // 5. Build auth header
+    // 5. SECURITY CHECK: Rate Limiting & Credits validation
+    // Autocomplete locations are cheap (1 credit), while heavy keyword/domain analysis costs 5 credits.
+    const isAutocomplete = endpoint.includes('/locations/');
+    const cost = isAutocomplete ? 1 : 5;
+
+    const securityCheck = await validateUserCredits(user.id, cost);
+    if (!securityCheck.success) {
+      return new Response(
+        JSON.stringify({ 
+          error: securityCheck.error || 'Créditos insuficientes para realizar análisis de SEO.', 
+          code: securityCheck.code || 'INSUFFICIENT_CREDITS' 
+        }),
+        { status: 429, headers: { ...dynamicCors, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // 6. Build auth header
     const authHeader = `Basic ${btoa(`${login}:${password}`)}`;
 
     // 6. Forward to DataForSEO
