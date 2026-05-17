@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { Check } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { pricingPlans } from './LandingData';
 import { cn } from '@/lib/utils';
@@ -40,14 +41,16 @@ function PricingCard({ plan, index }: PricingCardProps) {
           </div>
         ))}
       </div>
-      <Button 
-        className={cn(
-          "w-full h-11 rounded-lg font-semibold text-sm transition-all",
-          plan.popular ? "bg-white text-zinc-950 hover:bg-zinc-200" : "bg-zinc-800 hover:bg-zinc-700 text-zinc-100"
-        )}
-      >
-        {plan.cta}
-      </Button>
+      <Link to="/register" className="w-full">
+        <Button 
+          className={cn(
+            "w-full h-11 rounded-lg font-semibold text-sm transition-all cursor-pointer",
+            plan.popular ? "bg-white text-zinc-950 hover:bg-zinc-200" : "bg-zinc-800 hover:bg-zinc-700 text-zinc-100"
+          )}
+        >
+          {plan.cta}
+        </Button>
+      </Link>
     </motion.div>
   );
 }

@@ -113,7 +113,9 @@ export function SettingsPage() {
                     <Badge variant="outline" className="bg-white dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800 text-zinc-950 dark:text-white font-semibold">Activo</Badge>
                   </div>
                   <Separator className="bg-zinc-200 dark:bg-zinc-800" />
-                  <Button variant="outline" className="h-10 gap-2 border-zinc-200 dark:border-zinc-800 font-semibold shadow-none text-zinc-950 dark:text-white"><CreditCard className="h-4 w-4" />Actualizar a Pro</Button>
+                  <p className="text-sm text-zinc-500 dark:text-zinc-400 bg-zinc-50 dark:bg-zinc-900/50 p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 leading-relaxed">
+                    Para solicitar paquetes de créditos adicionales o planes corporativos personalizados a la medida de tu agencia, por favor ponte en contacto con soporte.
+                  </p>
                 </CardContent>
               </Card>
             </TabsContent>
