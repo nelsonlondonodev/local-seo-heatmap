@@ -16,6 +16,7 @@ export function useHeatmap() {
 
   const { saveHeatmap } = useHeatmaps();
   const hasLoadedHistory = useRef(false);
+  const isScanning = useRef(false);
 
   // 3. Application State
   const [keyword, setKeyword] = useState('');
@@ -94,7 +95,8 @@ export function useHeatmap() {
   }, []);
 
   const runAnalysis = useCallback(async () => {
-    if (!isFormValid) return;
+    if (!isFormValid || isLoading || isScanning.current) return;
+    isScanning.current = true;
     hasLoadedHistory.current = false;
 
     try {
@@ -118,8 +120,9 @@ export function useHeatmap() {
     } finally {
       setIsLoading(false);
       setScanProgress(null);
+      isScanning.current = false;
     }
-  }, [isFormValid, currentConfig, points, saveHeatmap]);
+  }, [isFormValid, isLoading, currentConfig, points, saveHeatmap]);
 
   // Parameter update handlers with auto-invalidation
   const updateGridSize = useCallback(withInvalidation(setGridSize), [withInvalidation]);
