@@ -1,4 +1,5 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
+import { useAsyncLock } from '@/hooks/useAsyncLock';
 import { toast } from 'sonner';
 
 // Service & Types
@@ -18,17 +19,16 @@ export function SiteAnalyzerPage() {
   // State
   const [targetUrl, setTargetUrl] = useState('');
   const [locationCode, setLocationCode] = useState<number>(2724); // Default: Spain
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
   const [overview, setOverview] = useState<DomainRankOverview | null>(null);
   const [keywords, setKeywords] = useState<RankedKeywordItem[]>([]);
-  const isAnalyzingRef = useRef(false);
+  const { execute: executeAnalysis, isLoading: isAnalyzing } = useAsyncLock();
 
   /**
    * Triggers the domain analysis process.
    */
   const handleAnalyze = async () => {
-    if (!targetUrl.trim() || isAnalyzing || isAnalyzingRef.current) {
+    if (!targetUrl.trim()) {
       return;
     }
 
@@ -40,32 +40,30 @@ export function SiteAnalyzerPage() {
       return;
     }
 
-    // Lock sychronously
-    isAnalyzingRef.current = true;
-    setIsAnalyzing(true);
-    setHasSearched(false);
-    setOverview(null);
-    setKeywords([]);
+    await executeAnalysis(async () => {
+      setHasSearched(false);
+      setOverview(null);
+      setKeywords([]);
 
-    try {
-      // Execute requests in parallel for maximum performance
-      const [overviewData, keywordsData] = await Promise.all([
-        dataForSeoService.getDomainRankOverview(domain, locationCode),
-        dataForSeoService.getDomainRankedKeywords(domain, locationCode)
-      ]);
+      try {
+        // Execute requests in parallel for maximum performance
+        const [overviewData, keywordsData] = await Promise.all([
+          dataForSeoService.getDomainRankOverview(domain, locationCode),
+          dataForSeoService.getDomainRankedKeywords(domain, locationCode)
+        ]);
 
-      setOverview(overviewData);
-      setKeywords(keywordsData);
-      
-      toast.success('Análisis completado con éxito.');
-    } catch (error) {
-      console.error('[SITE_ANALYZER] Error analyzing domain:', error);
-      toast.error('Hubo un error al analizar el dominio. Revisa la consola para más detalles.');
-    } finally {
-      setIsAnalyzing(false);
-      isAnalyzingRef.current = false;
-      setHasSearched(true);
-    }
+        setOverview(overviewData);
+        setKeywords(keywordsData);
+        
+        toast.success('Análisis completado con éxito.');
+      } catch (error) {
+        console.error('[SITE_ANALYZER] Error analyzing domain:', error);
+        toast.error('Hubo un error al analizar el dominio. Revisa la consola para más detalles.');
+        throw error; // Re-throw to allow useAsyncLock to handle locking state properly
+      } finally {
+        setHasSearched(true);
+      }
+    });
   };
 
   // Helper to check if results were found
