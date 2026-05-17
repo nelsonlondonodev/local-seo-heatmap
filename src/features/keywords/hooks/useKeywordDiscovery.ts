@@ -1,4 +1,5 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { useAsyncLock } from '@/hooks/useAsyncLock';
 import { toast } from 'sonner';
 import { logger } from '@/lib/logger';
 import { dataForSeoService } from '../services/dataForSeoService';
@@ -10,10 +11,9 @@ const DEFAULT_LOCATION_CODE = 2840; // US
 
 export function useKeywordDiscovery(selectedProjectId: string | null) {
   const [query, setQuery] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
   const [results, setResults] = useState<KeywordSuggestion[]>([]);
   const [savedKeywords, setSavedKeywords] = useState<Set<string>>(new Set());
-  const isSearchingRef = useRef(false);
+  const { execute: executeSearch, isLoading } = useAsyncLock();
 
   /**
    * Synchronizes the set of already tracked keywords from the database.
@@ -59,34 +59,31 @@ export function useKeywordDiscovery(selectedProjectId: string | null) {
   };
 
   const searchKeywords = useCallback(async (locationCode?: number) => {
-    if (!query.trim() || isLoading || isSearchingRef.current) return;
+    if (!query.trim()) return;
 
-    isSearchingRef.current = true;
-    setIsLoading(true);
-    setResults([]);
-    
-    try {
-      const data = await dataForSeoService.getKeywordSuggestions(
-        query, 
-        locationCode || DEFAULT_LOCATION_CODE
-      );
-      
-      setResults(data);
-      
-      if (data.length === 0) {
-        toast.info('No se encontraron sugerencias.');
-      } else if (selectedProjectId) {
-        updateSearchCache(selectedProjectId, query, data);
-        // Removed autoSaveSeedKeyword to favor manual research flow
+    await executeSearch(async () => {
+      setResults([]);
+      try {
+        const data = await dataForSeoService.getKeywordSuggestions(
+          query, 
+          locationCode || DEFAULT_LOCATION_CODE
+        );
+        
+        setResults(data);
+        
+        if (data.length === 0) {
+          toast.info('No se encontraron sugerencias.');
+        } else if (selectedProjectId) {
+          updateSearchCache(selectedProjectId, query, data);
+          // Removed autoSaveSeedKeyword to favor manual research flow
+        }
+      } catch (error) {
+        logger.error('[KW_DISCOVERY] Error searching:', error);
+        toast.error('Error al realizar la búsqueda.');
+        throw error; // Re-throw to allow useAsyncLock to handle locking state properly
       }
-    } catch (error) {
-      logger.error('[KW_DISCOVERY] Error searching:', error);
-      toast.error('Error al realizar la búsqueda.');
-    } finally {
-      setIsLoading(false);
-      isSearchingRef.current = false;
-    }
-  }, [query, isLoading, selectedProjectId]);
+    });
+  }, [query, selectedProjectId, executeSearch]);
 
   const saveKeyword = useCallback(async (keyword: string, targetProjectId?: string) => {
     const projectId = targetProjectId || selectedProjectId;
