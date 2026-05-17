@@ -587,10 +587,30 @@ Hito alcanzado en robustez de infraestructura, seguridad de base de datos y tipa
 
 ---
 
+## 🚀 Concurrency Armor & Security Hardening (v1.1.0 - Production Armor Edition)
+
+Hito completado en el blindaje contra fugas de presupuesto, bloqueos de concurrencia y optimización del flujo B2B Personal:
+
+1. **🛡️ Concurrency Armor (Hooks de Bloqueo)**:
+   * **`useAsyncLock`**: Nuevo hook general que bloquea síncronamente los doble-clics impacientes y peticiones en paralelo en los módulos de Heatmaps, Site Analyzer y Keyword Discovery.
+   * **`useKeyedAsyncLock`**: Hook avanzado de bloqueo segmentado por clave. Permite que múltiples keywords actualicen sus rankings en paralelo sin entorpecerse mutuamente, pero **bloquea síncronamente múltiples clics en la misma keyword**.
+2. **🧪 Suite de Testing Vitest (61/61 Pasados)**:
+   * Creación de pruebas unitarias completas para los hooks en `useAsyncLock.test.ts` y `useKeyedAsyncLock.test.ts` validadas bajo escenarios asíncronos rigurosos y aserciones de microtareas.
+   * **Cero fallos**: Confirmación de estabilidad con **61 tests de 61 exitosos** y cero advertencias en la compilación.
+3. **🔒 Servidor Proxy Hardening (proxy-dataforseo)**:
+   * **Safe JSON Body Parser**: Envoltura defensiva `try/catch` que devuelve un error `400 Bad Request` en solicitudes corruptas para evitar caídas imprevistas (excepciones 500) en el servidor de Deno.
+   * **Costo Declarativo**: Centralización dinámica de costes mediante un mapa estricto `ENDPOINT_COSTS` y evaluación limpia con `calculateRequestCost(endpoint)`.
+   * **Logs de Auditoría**: Trazabilidad en tiempo real en la consola de Supabase: `[AUDIT] [proxy-dataforseo] User: <id> | Endpoint: <endpoint> | Costo: <costo> créditos`.
+4. **📈 Comenzar Gratis & Optimización B2B**:
+   * **Cuota de Entrada Corregida**: Ajuste de `DEFAULT_INITIAL_CREDITS` de 20 a **100 créditos** en las reglas de negocio de `saas.ts`. Esto permite a las cuentas nuevas gratis realizar exactamente **3 búsquedas de 3x3** o **1 búsqueda de 5x5**, alineándose con el plan de marketing sin bloquear al usuario en el día 1.
+   * **Ocultación de Canales de Pago**: Ocultación del botón *"Actualizar a Pro"* inactivo en los Ajustes (reemplazado por un elegante texto B2B para planes a medida de agencia) y redirección directa de los CTAs de precios a la página de registro gratuito (`/register`).
+
+---
+
 ## 🚦 Siguiente Enfoque (Next Steps)
 
-La arquitectura base está asegurada, permitiendo continuar con el perfeccionamiento de producto:
-1.  **Rank Tracking Automation**: Fortalecer el monitoreo automático.
-2.  **UI/UX Polish**: Perfeccionamiento de gráficas de evolución y animaciones de carga internas.
+La arquitectura técnica, la suite de pruebas unitarias y el proxy están blindados e impecables, permitiendo continuar mañana:
+1. **Service Balances Overhaul**: Recarga de saldos oficiales prepago en Serper.dev y DataForSEO con la mente despejada.
+2. **End-to-End Live Validation**: Validación directa en producción de los flujos de rastreo integrados.
 
 
