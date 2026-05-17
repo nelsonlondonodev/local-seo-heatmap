@@ -1,7 +1,9 @@
 import { supabase } from '@/lib/supabase';
 import type { Database } from '@/types/database';
 
-export type UserProfile = Database['public']['Tables']['profiles']['Row'];
+export type UserProfile = Database['public']['Tables']['profiles']['Row'] & {
+  credits: number;
+};
 
 /**
  * Atomic service to manage User Profiles and multi-tenant data.
@@ -55,6 +57,6 @@ export const profileService = {
       return null;
     }
 
-    return data;
+    return data as UserProfile;
   },
 };

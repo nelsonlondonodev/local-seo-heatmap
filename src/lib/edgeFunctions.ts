@@ -14,15 +14,15 @@ export async function invokeEdgeFunction<TResponse = unknown, TRequest = Record<
     console.warn(`[EdgeFunction] No active session for ${functionName}. This will likely fail with 401.`);
   }
 
-  const options: { body: TRequest; headers?: Record<string, string> } = { body };
-  
+  const headers: Record<string, string> = {};
   if (session?.access_token) {
-    options.headers = {
-      Authorization: `Bearer ${session.access_token}`,
-    };
+    headers.Authorization = `Bearer ${session.access_token}`;
   }
 
-  const { data, error } = await supabase.functions.invoke(functionName, options);
+  const { data, error } = await supabase.functions.invoke(functionName, {
+    body: body as Record<string, unknown>,
+    headers,
+  });
 
   if (error) {
     console.error(`[EdgeFunction] Error invoking ${functionName}:`, error);
