@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { toast } from 'sonner';
 import { logger } from '@/lib/logger';
 import { dataForSeoService } from '../services/dataForSeoService';
@@ -13,6 +13,7 @@ export function useKeywordDiscovery(selectedProjectId: string | null) {
   const [isLoading, setIsLoading] = useState(false);
   const [results, setResults] = useState<KeywordSuggestion[]>([]);
   const [savedKeywords, setSavedKeywords] = useState<Set<string>>(new Set());
+  const isSearchingRef = useRef(false);
 
   /**
    * Synchronizes the set of already tracked keywords from the database.
@@ -58,8 +59,9 @@ export function useKeywordDiscovery(selectedProjectId: string | null) {
   };
 
   const searchKeywords = useCallback(async (locationCode?: number) => {
-    if (!query.trim()) return;
+    if (!query.trim() || isLoading || isSearchingRef.current) return;
 
+    isSearchingRef.current = true;
     setIsLoading(true);
     setResults([]);
     
@@ -82,8 +84,9 @@ export function useKeywordDiscovery(selectedProjectId: string | null) {
       toast.error('Error al realizar la búsqueda.');
     } finally {
       setIsLoading(false);
+      isSearchingRef.current = false;
     }
-  }, [query, selectedProjectId]);
+  }, [query, isLoading, selectedProjectId]);
 
   const saveKeyword = useCallback(async (keyword: string, targetProjectId?: string) => {
     const projectId = targetProjectId || selectedProjectId;
