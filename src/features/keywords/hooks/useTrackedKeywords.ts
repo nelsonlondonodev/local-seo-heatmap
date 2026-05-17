@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback } from 'react';
 import { useAsyncLock } from '@/hooks/useAsyncLock';
 import { useKeyedAsyncLock } from '@/hooks/useKeyedAsyncLock';
 import { logger } from '@/lib/logger';
