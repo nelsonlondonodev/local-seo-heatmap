@@ -8,12 +8,26 @@ import { validateUserCredits } from '../_shared/security.ts';
  * Keeps the DATAFORSEO_LOGIN and DATAFORSEO_PASSWORD secrets on the server side.
  *
  * Expected body: { endpoint: string, payload?: object, method?: 'GET' | 'POST' }
- * Example endpoints:
- *   - "/keywords_data/google_ads/keywords_for_keywords/live"
- *   - "/keywords_data/google_ads/search_volume/live"
- *   - "/serp/google/organic/live/advanced"
- *   - "/keywords_data/google/locations/ES"
  */
+
+// Declarative lookup map for DataForSEO endpoint costs
+const ENDPOINT_COSTS: Record<string, number> = {
+  '/keywords_data/google/locations/': 1,
+  '/keywords_data/': 5,
+  '/serp/': 5,
+  '/dataforseo_labs/': 5,
+} as const;
+
+/**
+ * Resolves the dynamic credit cost based on the targeted DataForSEO API endpoint.
+ * - Locations/Geocoding autocomplete is cheap (1 credit).
+ * - Comprehensive analysis (Labs / SERP / Keywords) costs 5 credits.
+ */
+function calculateRequestCost(endpoint: string): number {
+  const matchedKey = Object.keys(ENDPOINT_COSTS).find(prefix => endpoint.startsWith(prefix));
+  return matchedKey ? ENDPOINT_COSTS[matchedKey] : 5; // Safe default fallback
+}
+
 Deno.serve(async (req: Request) => {
   const origin = req.headers.get('Origin');
   const dynamicCors = buildCorsHeaders(origin);
@@ -46,34 +60,41 @@ Deno.serve(async (req: Request) => {
   const BASE_URL = 'https://api.dataforseo.com/v3';
 
   try {
-    // 3. Parse incoming request
-    const { endpoint, payload, method } = await req.json();
+    // 3. Parse incoming request safely
+    let body: { endpoint?: string; payload?: unknown; method?: string } = {};
+    try {
+      body = await req.json();
+    } catch {
+      return new Response(
+        JSON.stringify({ error: 'El cuerpo de la solicitud no es un JSON válido.' }),
+        { status: 400, headers: { ...dynamicCors, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    const { endpoint, payload, method } = body;
 
     if (!endpoint || typeof endpoint !== 'string') {
       return new Response(
-        JSON.stringify({ error: 'Invalid payload: "endpoint" string is required.' }),
+        JSON.stringify({ error: 'Payload inválido: se requiere el campo "endpoint" como string.' }),
         { status: 400, headers: { ...dynamicCors, 'Content-Type': 'application/json' } }
       );
     }
 
     // 4. Validate endpoint prefix (security: prevent SSRF)
-    const allowedPrefixes = [
-      '/keywords_data/',
-      '/serp/',
-      '/dataforseo_labs/',
-    ];
+    const allowedPrefixes = Object.keys(ENDPOINT_COSTS);
     const isAllowed = allowedPrefixes.some(prefix => endpoint.startsWith(prefix));
     if (!isAllowed) {
       return new Response(
-        JSON.stringify({ error: `Endpoint not allowed: "${endpoint}".` }),
+        JSON.stringify({ error: `Prefijo de endpoint no permitido: "${endpoint}".` }),
         { status: 403, headers: { ...dynamicCors, 'Content-Type': 'application/json' } }
       );
     }
 
     // 5. SECURITY CHECK: Rate Limiting & Credits validation
-    // Autocomplete locations are cheap (1 credit), while heavy keyword/domain analysis costs 5 credits.
-    const isAutocomplete = endpoint.includes('/locations/');
-    const cost = isAutocomplete ? 1 : 5;
+    const cost = calculateRequestCost(endpoint);
+
+    // Structured Audit Log for telemetry tracing
+    console.log(`[AUDIT] [proxy-dataforseo] User: ${user.id} | Endpoint: ${endpoint} | Costo: ${cost} créditos`);
 
     const securityCheck = await validateUserCredits(user.id, cost);
     if (!securityCheck.success) {
@@ -89,7 +110,7 @@ Deno.serve(async (req: Request) => {
     // 6. Build auth header
     const authHeader = `Basic ${btoa(`${login}:${password}`)}`;
 
-    // 6. Forward to DataForSEO
+    // 7. Forward to DataForSEO
     const fetchOptions: RequestInit = {
       method: method || (payload ? 'POST' : 'GET'),
       headers: {
