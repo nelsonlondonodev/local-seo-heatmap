@@ -350,7 +350,14 @@ Inspirado en el análisis de herramientas líderes como **DinoRank**, hemos traz
 
 ---
 
-## 🚀 Keyword Intelligence Hub (v0.9.0 - SEO Discovery & Tracking)
+## 📝 Registro de Versiones
+
+> [!NOTE]
+> **Nota sobre el control de versiones**: Las versiones anteriores a la `v1.0.0` oficial de producción (`v0.8.0` a `v2.4.0` en el historial) representaron sprints e iteraciones de la fase de desarrollo Beta del MVP. Con los avances de ayer (commit `662c286`), el proyecto consolidó su primera versión de producción oficial estable como **`v1.0.0`** (sincronizada con el `package.json`), unificando todos los desarrollos previos bajo un ecosistema de alta estabilidad, seguridad y tipado estricto.
+
+---
+
+## 🚀 Keyword Intelligence Hub (Beta-v0.9.0 - SEO Discovery & Tracking)
 
 Hemos implementado un ecosistema completo para el descubrimiento y monitoreo de palabras clave locales:
 
@@ -363,7 +370,7 @@ Hemos implementado un ecosistema completo para el descubrimiento y monitoreo de 
 
 ---
 
-## 🚀 Auditoría de Robustez & Tipado (v0.9.5 - Surgical Compliance)
+## 🚀 Auditoría de Robustez & Tipado (Beta-v0.9.5 - Surgical Compliance)
 
 Hemos elevado la calidad del código a estándares de nivel "Enterprise" mediante una auditoría quirúrgica de estabilidad:
 
@@ -375,7 +382,7 @@ Hemos elevado la calidad del código a estándares de nivel "Enterprise" mediant
 
 ---
 
-## 🚀 Precision & Persistence Hub (v1.0.0 - Local Intelligence Edition)
+## 🚀 Precision & Persistence Hub (Beta-v1.0.0 - Local Intelligence Edition)
 
 Hito alcanzado en la profesionalización de la entrega de datos e interfaz:
 
@@ -387,7 +394,7 @@ Hito alcanzado en la profesionalización de la entrega de datos e interfaz:
 
 ---
 
-## 🚀 Surgical Refactor & Clean Code (v1.1.0 - Architecture Excellence)
+## 🚀 Surgical Refactor & Clean Code (Beta-v1.1.0 - Architecture Excellence)
 
 Sesión dedicada a la eliminación de deuda técnica y fortalecimiento del núcleo de Inteligencia de Keywords:
 
@@ -399,7 +406,7 @@ Sesión dedicada a la eliminación de deuda técnica y fortalecimiento del núcl
 
 ---
 
-## 🚀 Modular Intelligence & Site Management (v1.2.0 - Core Scaling Edition)
+## 🚀 Modular Intelligence & Site Management (Beta-v1.2.0 - Core Scaling Edition)
 
 Hito alcanzado en la especialización de la plataforma:
 
@@ -411,7 +418,7 @@ Hito alcanzado en la especialización de la plataforma:
 
 ---
 
-## 🚀 Global Sync & RLS Resilience (v1.3.0 - Surgery Edition)
+## 🚀 Global Sync & RLS Resilience (Beta-v1.3.0 - Surgery Edition)
 
 Hito alcanzado en la madurez arquitectónica y seguridad del módulo de Keywords:
 
@@ -425,7 +432,7 @@ Hito alcanzado en la madurez arquitectónica y seguridad del módulo de Keywords
 
 ---
 
-## 🚀 Edge Functions & Security Migration (v1.4.0 - Infrastructure Edition)
+## 🚀 Edge Functions & Security Migration (Beta-v1.4.0 - Infrastructure Edition)
 
 Hemos completado la transición hacia una arquitectura de seguridad robusta de nivel SaaS:
 
@@ -436,7 +443,7 @@ Hemos completado la transición hacia una arquitectura de seguridad robusta de n
 
 ---
 
-## 🚀 Edge Functions & Security API Migration Resolved (v1.4.1 - Production Stable)
+## 🚀 Edge Functions & Security API Migration Resolved (Beta-v1.4.1 - Production Stable)
 
 Hemos resuelto de raíz el problema de autenticación (Errores 401) en las Edge Functions, finalizando con éxito la migración de todas las APIs:
 
@@ -447,7 +454,7 @@ Hemos resuelto de raíz el problema de autenticación (Errores 401) en las Edge 
 
 ---
 
-## 🚀 Keyword Tracking & RLS Refactor (v1.5.0 - Data Integrity Edition)
+## 🚀 Keyword Tracking & RLS Refactor (Beta-v1.5.0 - Data Integrity Edition)
 
 Sesión dedicada a la resolución de conflictos de seguridad, integridad de datos y mejora de la experiencia de usuario (UX) en la creación de proyectos:
 
@@ -460,7 +467,7 @@ Sesión dedicada a la resolución de conflictos de seguridad, integridad de dato
 
 ---
 
-## 🚀 Site Intelligence & Domain Analysis (v1.6.0 - Explorer Edition)
+## 🚀 Site Intelligence & Domain Analysis (Beta-v1.6.0 - Explorer Edition)
 
 Hemos expandido el ecosistema de inteligencia SEO con un nuevo módulo dedicado al análisis profundo de sitios web y competencia:
 
@@ -473,7 +480,7 @@ Hemos expandido el ecosistema de inteligencia SEO con un nuevo módulo dedicado 
 
 ---
 
-## 🚀 Pre-Production Quality & UX Edition (v1.7.0)
+## 🚀 Pre-Production Quality & UX Edition (Beta-v1.7.0)
 
 Sesión enfocada en blindar la aplicación para el paso a producción mediante testing automatizado y mejoras críticas de experiencia de usuario:
 
@@ -484,7 +491,7 @@ Sesión enfocada en blindar la aplicación para el paso a producción mediante t
 
 ---
 
-## 🚀 Role-Based Access Control & White Label Administration (v1.8.0)
+## 🚀 Role-Based Access Control & White Label Administration (Beta-v1.8.0)
 
 Hemos construido e integrado un ecosistema completo de jerarquías y administración de agencias (White Label), preparando la aplicación para su lanzamiento SaaS definitivo:
 
@@ -494,7 +501,7 @@ Hemos construido e integrado un ecosistema completo de jerarquías y administrac
 4.  **🔒 Master RLS Refactor (Security Definer)**: Parcheo avanzado de Row Level Security (RLS) en Supabase para evitar bucles infinitos de recursión, utilizando funciones `SECURITY DEFINER` protegidas con las mejores prácticas de la industria.
 5.  **🔗 Historial Compartido (Agency-Level)**: Modificación quirúrgica del hook de historiales y servicios para permitir que los miembros de una agencia vean los mapas de calor creados por su equipo, mientras los clientes solo ven los suyos.
 
-## 🚀 Production Deployment & Security Hardening (v1.9.0)
+## 🚀 Production Deployment & Security Hardening (Beta-v1.9.0)
 
 Hito alcanzado en el lanzamiento oficial y blindaje de infraestructura para producción:
 
@@ -504,7 +511,7 @@ Hito alcanzado en el lanzamiento oficial y blindaje de infraestructura para prod
 4.  **💉 TypeScript Strict Compliance (Final)**: Limpieza quirúrgica de errores de tipado, importaciones huérfanas y variables no utilizadas que bloqueaban el pipeline de construcción de producción.
 5.  **🧼 Zero-Exposure API Strategy**: Eliminación definitiva de cualquier rastro de API Keys en el código fuente del cliente (incluyendo `VITE_SERPER_API_KEY`), delegando la totalidad de la inteligencia y secretos al entorno seguro de Supabase Secrets.
 
-## 🚀 Premium Experience & Auth Architecture (v2.0.0)
+## 🚀 Premium Experience & Auth Architecture (Beta-v2.0.0)
 
 Hito alcanzado en la excelencia visual y estructural del producto:
 
@@ -515,7 +522,7 @@ Hito alcanzado en la excelencia visual y estructural del producto:
 5.  **🛡️ Production Build Mastery**: Resolución de conflictos críticos de tipado en animaciones (`Framer Motion`) e imports estrictos (`verbatimModuleSyntax`), garantizando un despliegue en producción 100% estable.
 6.  **✨ UX/UI Polish**: Integración de Micro-animaciones sincronizadas, Glassmorphism avanzado y corrección de jerarquías tipográficas para una experiencia de usuario fluida y cohesiva.
 
-## 🚀 Reporting Dorado & History Intelligence (v2.2.0)
+## 🚀 Reporting Dorado & History Intelligence (Beta-v2.2.0)
 
 Hito alcanzado en la profesionalización de los reportes ejecutivos y la gestión inteligente del historial:
 
@@ -528,7 +535,7 @@ Hito alcanzado en la profesionalización de los reportes ejecutivos y la gestió
 
 ---
 
-## 🚀 Neo-Minimalist UI/UX Refactor (v2.3.0 - Cal.com / Linear Aesthetic)
+## 🚀 Neo-Minimalist UI/UX Refactor (Beta-v2.3.0 - Cal.com / Linear Aesthetic)
 
 Hito enfocado en erradicar el ruido visual y consolidar una estética premium, seria y 100% orientada a datos:
 
@@ -546,7 +553,7 @@ Con esta fase, el SaaS garantiza una presencia visual impecable que transmite co
 
 ---
 
-## 🚀 Visual Identity & Heatmap Vitality (v2.4.0 - Phase A & B Finalized)
+## 🚀 Visual Identity & Heatmap Vitality (Beta-v2.4.0 - Phase A & B Finalized)
 
 Hito final en la transición estética y funcional hacia el estándar Neo-Minimalista (Estilo Linear/Vercel):
 
@@ -567,7 +574,7 @@ Hito final en la transición estética y funcional hacia el estándar Neo-Minima
 
 ---
 
-## 🚀 Iron-Clad Quality, PNPM Migration & Zero-Any Safety (v2.5.0)
+## 🚀 Primera Versión de Producción Estable (v1.0.0 - Release Oficial)
 
 Hito alcanzado en robustez de infraestructura, seguridad de base de datos y tipado 100% estricto:
 
