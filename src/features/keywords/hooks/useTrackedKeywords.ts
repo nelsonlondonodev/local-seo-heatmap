@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { logger } from '@/lib/logger';
 import { keywordPersistenceService } from '../services/keywordPersistenceService';
 import { dataForSeoService } from '../services/dataForSeoService';
@@ -11,6 +11,9 @@ export function useTrackedKeywords(projectId: string | null) {
   const [staleKeywords, setStaleKeywords] = useState<TrackedKeyword[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isUpdating, setIsUpdating] = useState<string | null>(null);
+  
+  const isUpdatingRef = useRef<Record<string, boolean>>({});
+  const isUpdatingStaleRef = useRef(false);
 
   const fetchKeywords = useCallback(async () => {
     if (!projectId) return;
@@ -42,6 +45,12 @@ export function useTrackedKeywords(projectId: string | null) {
       return;
     }
 
+    // Synchronously guard individual rank updates
+    if (isUpdating === keywordId || isUpdatingRef.current[keywordId]) {
+      return;
+    }
+
+    isUpdatingRef.current[keywordId] = true;
     setIsUpdating(keywordId);
     try {
       // DataForSEO fails if location_code is 0. Fallback to Spain (2724) if project has no location.
@@ -64,23 +73,31 @@ export function useTrackedKeywords(projectId: string | null) {
       if (!silent) toast.error('Error al actualizar el ranking.');
     } finally {
       setIsUpdating(null);
+      isUpdatingRef.current[keywordId] = false;
     }
-  }, [fetchKeywords]);
+  }, [isUpdating, fetchKeywords]);
 
   /**
    * Actualiza masivamente las keywords desactualizadas, disparado manualmente por el usuario.
    */
   const updateStaleKeywords = useCallback(async (locationCode: number, targetUrl: string) => {
-    if (staleKeywords.length === 0) return;
+    if (staleKeywords.length === 0 || isUpdatingStaleRef.current) return;
 
+    isUpdatingStaleRef.current = true;
     toast.info(`Iniciando actualización de ${staleKeywords.length} palabras clave...`);
     
-    // Update sequentially to manage API load
-    for (const kw of staleKeywords) {
-      await updateRank(kw.id, kw.keyword, locationCode, targetUrl, true);
+    try {
+      // Update sequentially to manage API load
+      for (const kw of staleKeywords) {
+        await updateRank(kw.id, kw.keyword, locationCode, targetUrl, true);
+      }
+      
+      toast.success('Actualización masiva completada.');
+    } catch (error) {
+      logger.error('[USE_TRACKED_KEYWORDS] Error mass updating stale keywords:', error);
+    } finally {
+      isUpdatingStaleRef.current = false;
     }
-    
-    toast.success('Actualización masiva completada.');
     // staleKeywords will be updated implicitly via the fetchKeywords call inside updateRank
   }, [staleKeywords, updateRank]);
 
