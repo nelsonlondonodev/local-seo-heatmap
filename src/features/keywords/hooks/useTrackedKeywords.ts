@@ -1,4 +1,6 @@
 import { useState, useCallback, useRef } from 'react';
+import { useAsyncLock } from '@/hooks/useAsyncLock';
+import { useKeyedAsyncLock } from '@/hooks/useKeyedAsyncLock';
 import { logger } from '@/lib/logger';
 import { keywordPersistenceService } from '../services/keywordPersistenceService';
 import { dataForSeoService } from '../services/dataForSeoService';
@@ -12,8 +14,8 @@ export function useTrackedKeywords(projectId: string | null) {
   const [isLoading, setIsLoading] = useState(false);
   const [isUpdating, setIsUpdating] = useState<string | null>(null);
   
-  const isUpdatingRef = useRef<Record<string, boolean>>({});
-  const isUpdatingStaleRef = useRef(false);
+  const { executeKeyed } = useKeyedAsyncLock();
+  const { execute: executeMassUpdate } = useAsyncLock();
 
   const fetchKeywords = useCallback(async () => {
     if (!projectId) return;
@@ -45,61 +47,56 @@ export function useTrackedKeywords(projectId: string | null) {
       return;
     }
 
-    // Synchronously guard individual rank updates
-    if (isUpdating === keywordId || isUpdatingRef.current[keywordId]) {
-      return;
-    }
+    await executeKeyed(keywordId, async () => {
+      setIsUpdating(keywordId);
+      try {
+        // DataForSEO fails if location_code is 0. Fallback to Spain (2724) if project has no location.
+        const finalLocationCode = locationCode || 2724; 
+        const serpItems = await dataForSeoService.getSerpResults(keyword, finalLocationCode);
+        const cleanTarget = targetUrl.toLowerCase().replace('https://', '').replace('http://', '').replace('www.', '');
+        const match = serpItems.find((item: SerpItem) => 
+          item.url?.toLowerCase().includes(cleanTarget) || 
+          item.domain?.toLowerCase().includes(cleanTarget)
+        );
 
-    isUpdatingRef.current[keywordId] = true;
-    setIsUpdating(keywordId);
-    try {
-      // DataForSEO fails if location_code is 0. Fallback to Spain (2724) if project has no location.
-      const finalLocationCode = locationCode || 2724; 
-      const serpItems = await dataForSeoService.getSerpResults(keyword, finalLocationCode);
-      const cleanTarget = targetUrl.toLowerCase().replace('https://', '').replace('http://', '').replace('www.', '');
-      const match = serpItems.find((item: SerpItem) => 
-        item.url?.toLowerCase().includes(cleanTarget) || 
-        item.domain?.toLowerCase().includes(cleanTarget)
-      );
-
-      const rank = match ? match.rank_absolute : null;
-      await keywordPersistenceService.saveRankEntry(keywordId, rank);
-      
-      if (!silent) toast.success(`Ranking actualizado para "${keyword}": ${rank || 'No encontrado'}`);
-      
-      await fetchKeywords();
-    } catch (error) {
-      logger.error('[USE_TRACKED_KEYWORDS] Error updating rank:', error);
-      if (!silent) toast.error('Error al actualizar el ranking.');
-    } finally {
-      setIsUpdating(null);
-      isUpdatingRef.current[keywordId] = false;
-    }
-  }, [isUpdating, fetchKeywords]);
+        const rank = match ? match.rank_absolute : null;
+        await keywordPersistenceService.saveRankEntry(keywordId, rank);
+        
+        if (!silent) toast.success(`Ranking actualizado para "${keyword}": ${rank || 'No encontrado'}`);
+        
+        await fetchKeywords();
+      } catch (error) {
+        logger.error('[USE_TRACKED_KEYWORDS] Error updating rank:', error);
+        if (!silent) toast.error('Error al actualizar el ranking.');
+        throw error; // Re-throw to allow useKeyedAsyncLock to release properly
+      } finally {
+        setIsUpdating(null);
+      }
+    });
+  }, [executeKeyed, fetchKeywords]);
 
   /**
    * Actualiza masivamente las keywords desactualizadas, disparado manualmente por el usuario.
    */
   const updateStaleKeywords = useCallback(async (locationCode: number, targetUrl: string) => {
-    if (staleKeywords.length === 0 || isUpdatingStaleRef.current) return;
+    if (staleKeywords.length === 0) return;
 
-    isUpdatingStaleRef.current = true;
-    toast.info(`Iniciando actualización de ${staleKeywords.length} palabras clave...`);
-    
-    try {
-      // Update sequentially to manage API load
-      for (const kw of staleKeywords) {
-        await updateRank(kw.id, kw.keyword, locationCode, targetUrl, true);
-      }
+    await executeMassUpdate(async () => {
+      toast.info(`Iniciando actualización de ${staleKeywords.length} palabras clave...`);
       
-      toast.success('Actualización masiva completada.');
-    } catch (error) {
-      logger.error('[USE_TRACKED_KEYWORDS] Error mass updating stale keywords:', error);
-    } finally {
-      isUpdatingStaleRef.current = false;
-    }
-    // staleKeywords will be updated implicitly via the fetchKeywords call inside updateRank
-  }, [staleKeywords, updateRank]);
+      try {
+        // Update sequentially to manage API load
+        for (const kw of staleKeywords) {
+          await updateRank(kw.id, kw.keyword, locationCode, targetUrl, true);
+        }
+        
+        toast.success('Actualización masiva completada.');
+      } catch (error) {
+        logger.error('[USE_TRACKED_KEYWORDS] Error mass updating stale keywords:', error);
+        throw error;
+      }
+    });
+  }, [staleKeywords, updateRank, executeMassUpdate]);
 
   const deleteKeyword = useCallback(async (keywordId: string) => {
     try {
