@@ -567,6 +567,19 @@ Hito final en la transición estética y funcional hacia el estándar Neo-Minima
 
 ---
 
+## 🚀 Iron-Clad Quality, PNPM Migration & Zero-Any Safety (v2.5.0)
+
+Hito alcanzado en robustez de infraestructura, seguridad de base de datos y tipado 100% estricto:
+
+1. **📦 Infra & DevOps (pnpm Migration)**: Migración completa de `npm` a `pnpm` para optimizar dependencias. Implementación de control estricto de instalación mediante `only-allow pnpm` en la fase `preinstall` y resolución total de dependencias fantasma.
+2. **🏗️ Robust-Zero Layout & Collapsable Sidebar**: Implementación de un sidebar colapsable persistente con sincronización de mapas en tiempo real mediante `ResizeObserver` para evitar roturas visuales. Optimización responsiva impecable en tablets y pantallas pequeñas.
+3. **🛡️ Database Security & Hardening**: Restricción de la función crítica de base de datos `check_and_deduct_credits` para ejecutarse únicamente bajo el rol `service_role`. Habilitación de políticas RLS para `ip_rate_limits` y adición de pruebas de integración de seguridad.
+4. **✨ Zinc-Zero Atomic UI & Form Polish**: Rediseño del marcador de origen en el Heatmap con glassmorphism moderno. Modularización atómica y tipado estricto de componentes de formularios (`DensityButton`, `CostIndicator`) e interfaz de prospección.
+5. **⚡ Iron-Code Architecture & SEO**: Centralización del estado de configuración SaaS y hooks de consumo de créditos. Integración de tags canónicos dinámicos y manejo automatizado de directivas para SEO, junto con la importación automática de la versión de `package.json` en Vite.
+6. **🩺 Absolute Zero Any Policy**: Erradicación quirúrgica total de la palabra clave `any` y casteos inseguros en el 100% del proyecto y tests, garantizando una seguridad de tipos (Type Safety) absoluta libre de alertas rojas en el IDE.
+
+---
+
 ## 🚦 Siguiente Enfoque (Next Steps)
 
 La arquitectura base está asegurada, permitiendo continuar con el perfeccionamiento de producto:
