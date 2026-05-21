@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useBranding } from '@/features/branding';
+import { useAuth } from '@/features/auth';
 import { cn } from '@/lib/utils';
 
 interface LogoProps {
@@ -9,10 +10,13 @@ interface LogoProps {
 
 export function Logo({ className, textClassName }: LogoProps) {
   const { config } = useBranding();
+  const { user } = useAuth();
+
+  const destination = user ? '/dashboard' : '/';
 
   return (
     <Link 
-      to="/" 
+      to={destination} 
       className={cn(
         "flex items-center hover:opacity-80 transition-all active:scale-95 duration-200 group",
         className
@@ -27,3 +31,4 @@ export function Logo({ className, textClassName }: LogoProps) {
     </Link>
   );
 }
+
