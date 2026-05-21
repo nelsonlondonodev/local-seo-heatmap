@@ -85,6 +85,12 @@ export function RegisterForm() {
             Comienza a rastrear tu posicionamiento hoy mismo.
           </p>
 
+          <AuthSocial 
+            layout="top"
+            text="O regístrate con tu correo" 
+            onGoogleClick={signInWithGoogle} 
+          />
+
           <form onSubmit={handleSubmit} className="space-y-6">
             {error && (
               <motion.div
@@ -151,11 +157,6 @@ export function RegisterForm() {
               {isLoading ? <Loader2 className="h-5 w-5 animate-spin" /> : 'Registrarme Gratis'}
             </Button>
           </form>
-
-          <AuthSocial 
-            text="O regístrate con" 
-            onGoogleClick={signInWithGoogle} 
-          />
 
           <p className="mt-10 text-center text-xs font-medium text-zinc-500">
             ¿Ya tienes cuenta?{' '}

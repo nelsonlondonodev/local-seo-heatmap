@@ -60,6 +60,12 @@ export function LoginForm({ from }: LoginFormProps) {
             Ingresa tus credenciales para acceder a tu panel.
           </p>
 
+          <AuthSocial 
+            layout="top"
+            text="O ingresa con tu correo" 
+            onGoogleClick={signInWithGoogle} 
+          />
+
           <form onSubmit={handleSubmit} className="space-y-6">
             {error && (
               <motion.div
@@ -121,11 +127,6 @@ export function LoginForm({ from }: LoginFormProps) {
               {isLoading ? <Loader2 className="h-5 w-5 animate-spin" /> : 'Entrar al Panel'}
             </Button>
           </form>
-
-          <AuthSocial 
-            text="O continúa con" 
-            onGoogleClick={signInWithGoogle} 
-          />
 
           <p className="mt-10 text-center text-xs font-medium text-zinc-500">
             ¿Nuevo aquí?{' '}

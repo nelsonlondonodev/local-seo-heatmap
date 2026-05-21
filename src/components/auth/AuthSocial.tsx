@@ -4,6 +4,7 @@ import { cn } from '@/lib/utils';
 interface AuthSocialProps {
   onGoogleClick: () => void;
   text: string;
+  layout?: 'top' | 'bottom';
 }
 
 function GoogleIcon() {
@@ -17,29 +18,46 @@ function GoogleIcon() {
   );
 }
 
-export function AuthSocial({ onGoogleClick, text }: AuthSocialProps) {
+export function AuthSocial({ onGoogleClick, text, layout = 'bottom' }: AuthSocialProps) {
+  const googleButton = (
+    <Button
+      variant="outline"
+      onClick={onGoogleClick}
+      className={cn(
+        "w-full h-12 rounded-lg bg-zinc-900/50 border-zinc-800 hover:bg-zinc-800 hover:text-white transition-all duration-300",
+        "font-semibold gap-3 text-zinc-300 shadow-none border"
+      )}
+    >
+      <GoogleIcon />
+      <span>Google</span>
+    </Button>
+  );
+
+  const divider = (
+    <div className="relative my-8">
+      <div className="absolute inset-0 flex items-center">
+        <div className="w-full border-t border-zinc-800/50"></div>
+      </div>
+      <div className="relative flex justify-center text-[10px] uppercase tracking-[0.2em] font-bold text-zinc-500">
+        <span className="bg-zinc-950 px-4">{text}</span>
+      </div>
+    </div>
+  );
+
   return (
     <div className="w-full">
-      <div className="relative my-10">
-        <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-zinc-800/50"></div>
-        </div>
-        <div className="relative flex justify-center text-[10px] uppercase tracking-[0.2em] font-bold text-zinc-500">
-          <span className="bg-zinc-950 px-4">{text}</span>
-        </div>
-      </div>
-
-      <Button
-        variant="outline"
-        onClick={onGoogleClick}
-        className={cn(
-          "w-full h-12 rounded-lg bg-zinc-900/50 border-zinc-800 hover:bg-zinc-800 hover:text-white transition-all duration-300",
-          "font-semibold gap-3 text-zinc-300 shadow-none border"
-        )}
-      >
-        <GoogleIcon />
-        <span>Google</span>
-      </Button>
+      {layout === 'top' ? (
+        <>
+          {googleButton}
+          {divider}
+        </>
+      ) : (
+        <>
+          {divider}
+          {googleButton}
+        </>
+      )}
     </div>
   );
 }
+
