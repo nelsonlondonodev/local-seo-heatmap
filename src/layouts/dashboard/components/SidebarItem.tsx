@@ -20,6 +20,8 @@ export function SidebarItem({
   isCollapsed, 
   onClick 
 }: SidebarItemProps) {
+  const isAdminItem = path === '/admin';
+
   return (
     <Link
       to={path}
@@ -45,7 +47,14 @@ export function SidebarItem({
         </motion.span>
       )}
 
-      {isActive && !isCollapsed && (
+      {/* Admin Visual Badge (Wow UX/UI Effect) */}
+      {isAdminItem && !isCollapsed && (
+        <span className="ml-auto rounded-full bg-red-500/10 px-1.5 py-0.5 text-[10px] font-bold text-red-500 border border-red-500/20">
+          Admin
+        </span>
+      )}
+
+      {isActive && !isCollapsed && !isAdminItem && (
         <ChevronRight className="ml-auto h-4 w-4 text-zinc-400 dark:text-zinc-600" />
       )}
     </Link>

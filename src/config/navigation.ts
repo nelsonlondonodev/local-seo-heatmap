@@ -11,6 +11,7 @@ export interface NavItem {
 }
 
 export const NAV_ITEMS: NavItem[] = [
+  { path: '/admin', label: 'Panel Admin', icon: ShieldAlert, adminOnly: true },
   { path: '/dashboard', label: 'Mapa de Calor', icon: Map },
   { path: '/market-discovery', label: 'Analizador de Mercado', icon: TrendingUp },
   { path: '/site-analyzer', label: 'Explorador de Sitios', icon: Globe },
@@ -18,5 +19,4 @@ export const NAV_ITEMS: NavItem[] = [
   { path: '/history', label: 'Historial', icon: History },
   { path: '/ai-history', label: 'Contenidos IA', icon: Sparkles },
   { path: '/settings', label: 'Configuración', icon: Settings },
-  { path: '/admin', label: 'Panel Admin', icon: ShieldAlert, adminOnly: true },
 ];
