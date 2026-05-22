@@ -18,18 +18,54 @@ REVOKE ALL ON FUNCTION public.check_and_deduct_credits(UUID, INTEGER, INTEGER) F
 GRANT EXECUTE ON FUNCTION public.check_and_deduct_credits(UUID, INTEGER, INTEGER) TO service_role;
 
 -- ===========================================
--- FIX #2: is_super_admin
--- PROBLEM: Signed-in users can call it directly (minor risk, but flagged)
--- NOTE: This function IS needed by authenticated users for RLS policies,
---       but we revoke from PUBLIC (anonymous) to reduce surface area.
+-- FIX #2: is_super_admin Isolation (Remove Warning)
+-- PROBLEM: Signed-in users can execute public.is_super_admin() via /rest/v1/rpc
+-- SOLUTION: Move the function to internal schema and drop the old public one.
 -- ===========================================
 
-REVOKE ALL ON FUNCTION public.is_super_admin() FROM PUBLIC;
-REVOKE ALL ON FUNCTION public.is_super_admin() FROM anon;
+-- 1. Create internal schema
+CREATE SCHEMA IF NOT EXISTS internal;
 
--- Re-grant only to who needs it
-GRANT EXECUTE ON FUNCTION public.is_super_admin() TO authenticated;
-GRANT EXECUTE ON FUNCTION public.is_super_admin() TO service_role;
+-- 2. Create function under internal schema
+CREATE OR REPLACE FUNCTION internal.is_super_admin()
+RETURNS boolean
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+BEGIN
+  RETURN EXISTS (
+    SELECT 1 FROM public.profiles 
+    WHERE id = auth.uid() AND role = 'super-admin'
+  );
+END;
+$$;
+
+-- 3. Configure strict permissions on new function
+REVOKE ALL ON FUNCTION internal.is_super_admin() FROM PUBLIC;
+REVOKE ALL ON FUNCTION internal.is_super_admin() FROM anon;
+GRANT EXECUTE ON FUNCTION internal.is_super_admin() TO authenticated;
+GRANT EXECUTE ON FUNCTION internal.is_super_admin() TO service_role;
+
+-- 4. Update Policies RLS to point to the new function
+DROP POLICY IF EXISTS "SuperAdmins can do everything on agencies" ON public.agencies;
+CREATE POLICY "SuperAdmins can do everything on agencies" 
+  ON public.agencies FOR ALL USING (internal.is_super_admin());
+
+DROP POLICY IF EXISTS "SuperAdmins can view all profiles" ON public.profiles;
+CREATE POLICY "SuperAdmins can view all profiles" 
+  ON public.profiles FOR SELECT USING (internal.is_super_admin());
+
+DROP POLICY IF EXISTS "SuperAdmins can update all profiles" ON public.profiles;
+CREATE POLICY "SuperAdmins can update all profiles" 
+  ON public.profiles FOR UPDATE USING (internal.is_super_admin());
+
+DROP POLICY IF EXISTS "SuperAdmins can view all heatmaps" ON public.heatmaps;
+CREATE POLICY "SuperAdmins can view all heatmaps" 
+  ON public.heatmaps FOR SELECT USING (internal.is_super_admin());
+
+-- 5. Drop the old public function to satisfy security advisor
+DROP FUNCTION IF EXISTS public.is_super_admin();
 
 -- ===========================================
 -- FIX #3: ip_rate_limits table security

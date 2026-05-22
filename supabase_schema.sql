@@ -42,7 +42,9 @@ ALTER TABLE public.heatmaps ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.agencies ENABLE ROW LEVEL SECURITY;
 
 -- 5. Create Security Definer Functions
-CREATE OR REPLACE FUNCTION public.is_super_admin()
+CREATE SCHEMA IF NOT EXISTS internal;
+
+CREATE OR REPLACE FUNCTION internal.is_super_admin()
 RETURNS boolean
 LANGUAGE plpgsql
 SECURITY DEFINER
@@ -57,24 +59,24 @@ END;
 $$;
 
 -- Secure the function execution
-REVOKE EXECUTE ON FUNCTION public.is_super_admin() FROM PUBLIC;
-GRANT EXECUTE ON FUNCTION public.is_super_admin() TO authenticated, service_role;
+REVOKE EXECUTE ON FUNCTION internal.is_super_admin() FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION internal.is_super_admin() TO authenticated, service_role;
 
 -- 6. Create Policies
 
 -- Agencies Policies
 CREATE POLICY "SuperAdmins can do everything on agencies" 
-  ON public.agencies FOR ALL USING (public.is_super_admin());
+  ON public.agencies FOR ALL USING (internal.is_super_admin());
 
 CREATE POLICY "Owners can view their own agency" 
   ON public.agencies FOR SELECT USING (owner_id = auth.uid());
 
 -- Profiles Policies
 CREATE POLICY "SuperAdmins can view all profiles" 
-  ON public.profiles FOR SELECT USING (public.is_super_admin());
+  ON public.profiles FOR SELECT USING (internal.is_super_admin());
 
 CREATE POLICY "SuperAdmins can update all profiles" 
-  ON public.profiles FOR UPDATE USING (public.is_super_admin());
+  ON public.profiles FOR UPDATE USING (internal.is_super_admin());
 
 CREATE POLICY "Users can view their own profile" 
   ON public.profiles FOR SELECT USING (auth.uid() = id);
@@ -84,7 +86,7 @@ CREATE POLICY "Users can update their own profile"
 
 -- Heatmaps Policies
 CREATE POLICY "SuperAdmins can view all heatmaps" 
-  ON public.heatmaps FOR SELECT USING (public.is_super_admin());
+  ON public.heatmaps FOR SELECT USING (internal.is_super_admin());
 
 CREATE POLICY "Users can view their own heatmaps" 
   ON public.heatmaps FOR SELECT USING (auth.uid() = user_id);
