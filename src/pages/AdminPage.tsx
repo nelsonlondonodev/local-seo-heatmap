@@ -229,6 +229,7 @@ export function AdminPage() {
               </div>
             )}
           </CardContent>
+        </Card>
       </div>
 
       {/* Modal para gestionar créditos */}
