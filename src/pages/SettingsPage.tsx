@@ -198,6 +198,7 @@ export function SettingsPage() {
                             <TableRow className="border-zinc-200 dark:border-zinc-800 hover:bg-transparent">
                               <TableHead className="font-semibold text-zinc-950 dark:text-white">Nombre</TableHead>
                               <TableHead className="font-semibold text-zinc-950 dark:text-white">Email</TableHead>
+                              <TableHead className="font-semibold text-zinc-950 dark:text-white">Créditos</TableHead>
                               <TableHead className="font-semibold text-zinc-950 dark:text-white">Rol</TableHead>
                             </TableRow>
                           </TableHeader>
@@ -206,6 +207,9 @@ export function SettingsPage() {
                               <TableRow key={member.id} className="border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-900/50">
                                 <TableCell className="font-medium text-zinc-950 dark:text-white">{member.full_name || 'Sin Nombre'}</TableCell>
                                 <TableCell className="text-zinc-500">{member.email}</TableCell>
+                                <TableCell className="font-semibold text-zinc-950 dark:text-white">
+                                  {new Intl.NumberFormat().format(member.credits ?? 0)}
+                                </TableCell>
                                 <TableCell>
                                   <Badge variant="outline" className="uppercase text-[10px] font-semibold text-zinc-950 dark:text-white bg-white dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800 shadow-none">{member.role}</Badge>
                                 </TableCell>

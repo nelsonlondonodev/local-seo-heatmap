@@ -72,5 +72,24 @@ export const adminService = {
     }
 
     return data as UserProfile;
+  },
+
+  /**
+   * Actualiza la cantidad de créditos de un usuario específico
+   */
+  async updateUserCredits(userId: string, newCredits: number): Promise<UserProfile> {
+    const { data, error } = await supabase
+      .from('profiles')
+      .update({ credits: newCredits })
+      .eq('id', userId)
+      .select()
+      .single();
+
+    if (error) {
+      console.error('[ADMIN_SERVICE] Error updating user credits:', error);
+      throw new Error('Error al actualizar los créditos del usuario');
+    }
+
+    return data as UserProfile;
   }
 };

@@ -1,13 +1,18 @@
 
+import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
-import { Users, Building2, Map, ShieldAlert, Loader2 } from 'lucide-react';
+import { Users, Building2, Map, ShieldAlert, Loader2, Coins, Edit2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Button } from '@/components/ui/button';
 import { adminService } from '@/services/adminService';
 import { useAuth } from '@/features/auth';
 import type { UserRole } from '@/features/auth/types';
@@ -48,6 +53,32 @@ export function AdminPage() {
 
   const handleRoleChange = (userId: string, newRole: UserRole) => {
     updateRoleMutation.mutate({ userId, role: newRole });
+  };
+
+  const [selectedUser, setSelectedUser] = useState<{ id: string; name: string; credits: number } | null>(null);
+  const [creditsInput, setCreditsInput] = useState<string>('');
+
+  const updateCreditsMutation = useMutation({
+    mutationFn: ({ userId, credits }: { userId: string; credits: number }) => 
+      adminService.updateUserCredits(userId, credits),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-users'] });
+      toast.success('Créditos actualizados correctamente');
+      setSelectedUser(null);
+    },
+    onError: () => {
+      toast.error('Error al actualizar los créditos');
+    }
+  });
+
+  const handleCreditsSave = () => {
+    if (!selectedUser) return;
+    const parsed = parseInt(creditsInput, 10);
+    if (isNaN(parsed) || parsed < 0) {
+      toast.error('Por favor introduce un número de créditos válido (mayor o igual a 0)');
+      return;
+    }
+    updateCreditsMutation.mutate({ userId: selectedUser.id, credits: parsed });
   };
 
   return (
@@ -138,6 +169,7 @@ export function AdminPage() {
                       <TableHead className="font-semibold text-zinc-950 dark:text-white">Usuario</TableHead>
                       <TableHead className="font-semibold text-zinc-950 dark:text-white">Email</TableHead>
                       <TableHead className="font-semibold text-zinc-950 dark:text-white">Plan</TableHead>
+                      <TableHead className="font-semibold text-zinc-950 dark:text-white">Créditos</TableHead>
                       <TableHead className="font-semibold text-zinc-950 dark:text-white">Rol Actual</TableHead>
                       <TableHead className="text-right font-semibold text-zinc-950 dark:text-white">Acciones</TableHead>
                     </TableRow>
@@ -151,6 +183,21 @@ export function AdminPage() {
                           <Badge variant="outline" className="uppercase text-[10px] font-semibold bg-white dark:bg-zinc-950 text-zinc-950 dark:text-white border-zinc-200 dark:border-zinc-800 shadow-none">
                             {user.plan || 'free'}
                           </Badge>
+                        </TableCell>
+                        <TableCell className="text-zinc-950 dark:text-white">
+                          <div className="flex items-center gap-2">
+                            <span className="font-semibold">{new Intl.NumberFormat().format(user.credits ?? 0)}</span>
+                            <button
+                              onClick={() => {
+                                setSelectedUser({ id: user.id, name: user.full_name || user.email, credits: user.credits ?? 0 });
+                                setCreditsInput((user.credits ?? 0).toString());
+                              }}
+                              className="p-1 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-md transition-colors text-zinc-500 hover:text-zinc-950 dark:hover:text-white"
+                              title="Editar créditos"
+                            >
+                              <Edit2 className="h-3.5 w-3.5" />
+                            </button>
+                          </div>
                         </TableCell>
                         <TableCell>
                           <Badge className="uppercase text-[10px] bg-zinc-100 dark:bg-zinc-800 text-zinc-950 dark:text-white hover:bg-zinc-200 dark:hover:bg-zinc-700 shadow-none font-semibold">
@@ -182,8 +229,52 @@ export function AdminPage() {
               </div>
             )}
           </CardContent>
-        </Card>
       </div>
+
+      {/* Modal para gestionar créditos */}
+      <Dialog open={selectedUser !== null} onOpenChange={(open) => !open && setSelectedUser(null)}>
+        <DialogContent className="sm:max-w-[400px] p-6 border border-zinc-200 dark:border-zinc-800 shadow-xl rounded-xl bg-white dark:bg-zinc-950">
+          <DialogHeader>
+            <DialogTitle className="text-lg font-semibold text-zinc-950 dark:text-white flex items-center gap-2">
+              <Coins className="h-5 w-5 text-zinc-500" />
+              Gestionar Créditos
+            </DialogTitle>
+            <DialogDescription className="text-sm text-zinc-500 dark:text-zinc-400">
+              Modifica la cantidad de créditos de <span className="font-semibold text-zinc-700 dark:text-zinc-300">{selectedUser?.name}</span>.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="credits" className="text-zinc-950 dark:text-white font-medium">Cantidad de Créditos</Label>
+              <Input
+                id="credits"
+                type="number"
+                min="0"
+                value={creditsInput}
+                onChange={(e) => setCreditsInput(e.target.value)}
+                className="h-10 rounded-md border-zinc-200 dark:border-zinc-800 focus-visible:ring-zinc-950 dark:focus-visible:ring-white shadow-none bg-zinc-50 dark:bg-zinc-900"
+              />
+            </div>
+          </div>
+          <DialogFooter className="flex justify-end gap-3 pt-4 border-t border-zinc-100 dark:border-zinc-900">
+            <Button
+              variant="outline"
+              onClick={() => setSelectedUser(null)}
+              className="h-10 border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-900/50"
+            >
+              Cancelar
+            </Button>
+            <Button
+              onClick={handleCreditsSave}
+              disabled={updateCreditsMutation.isPending}
+              className="h-10 bg-zinc-950 dark:bg-white text-white dark:text-zinc-950 shadow-none font-semibold rounded-md flex items-center gap-2"
+            >
+              {updateCreditsMutation.isPending && <Loader2 className="h-4 w-4 animate-spin" />}
+              Guardar Cambios
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
