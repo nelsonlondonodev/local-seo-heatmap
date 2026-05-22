@@ -4,7 +4,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.49.4';
  * Validates and deducts credits for a user transaction.
  * This is called from Edge Functions before executing expensive API calls.
  */
-export async function validateUserCredits(userId: string, cost: number) {
+export async function validateUserCredits(userId: string, cost: number, minSeconds = 20) {
   const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
   const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
   
@@ -13,7 +13,7 @@ export async function validateUserCredits(userId: string, cost: number) {
   const { data, error } = await supabase.rpc('check_and_deduct_credits', {
     p_user_id: userId,
     p_cost: cost,
-    p_min_seconds_between_scans: 20 // Slightly more permissive than default
+    p_min_seconds_between_scans: minSeconds
   });
 
   if (error) {

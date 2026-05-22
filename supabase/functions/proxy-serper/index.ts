@@ -26,23 +26,34 @@ Deno.serve(async (req: Request) => {
     return unauthorizedResponse(dynamicCors);
   }
 
-  // 2. SECURITY CHECK: Rate Limiting & Credits
-  // For 'maps' endpoint, we consider a cost of 1 credit per point.
-  // For 'search', we might consider it 1 or 0 depending on policy.
   const { endpoint, payload } = await req.json();
-  const cost = endpoint === 'maps' ? 1 : 0; // Search is cheaper/cached often
 
-  if (cost > 0) {
-    const securityCheck = await validateUserCredits(user.id, cost);
-    if (!securityCheck.success) {
-      return new Response(
-        JSON.stringify({ 
-          error: securityCheck.error, 
-          code: securityCheck.code 
-        }),
-        { status: 429, headers: { ...dynamicCors, 'Content-Type': 'application/json' } }
-      );
-    }
+  const validEndpoints: Record<string, string> = {
+    maps: 'https://google.serper.dev/maps',
+    search: 'https://google.serper.dev/search',
+  };
+
+  const targetUrl = validEndpoints[endpoint];
+  if (!targetUrl) {
+    return new Response(
+      JSON.stringify({ error: `Invalid endpoint: "${endpoint}".` }),
+      { status: 400, headers: { ...dynamicCors, 'Content-Type': 'application/json' } }
+    );
+  }
+
+  // 2. SECURITY CHECK: Rate Limiting & Credits
+  // All valid endpoints cost 1 credit.
+  const cost = 1;
+
+  const securityCheck = await validateUserCredits(user.id, cost, 0); // 0 seconds to allow concurrent requests
+  if (!securityCheck.success) {
+    return new Response(
+      JSON.stringify({ 
+        error: securityCheck.error, 
+        code: securityCheck.code 
+      }),
+      { status: 429, headers: { ...dynamicCors, 'Content-Type': 'application/json' } }
+    );
   }
 
   // 3. Read secret
@@ -55,19 +66,6 @@ Deno.serve(async (req: Request) => {
   }
 
   try {
-    const validEndpoints: Record<string, string> = {
-      maps: 'https://google.serper.dev/maps',
-      search: 'https://google.serper.dev/search',
-    };
-
-    const targetUrl = validEndpoints[endpoint];
-    if (!targetUrl) {
-      return new Response(
-        JSON.stringify({ error: `Invalid endpoint: "${endpoint}".` }),
-        { status: 400, headers: { ...dynamicCors, 'Content-Type': 'application/json' } }
-      );
-    }
-
     // 4. Forward to Serper
     const serperResponse = await fetch(targetUrl, {
       method: 'POST',

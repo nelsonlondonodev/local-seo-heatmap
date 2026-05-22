@@ -91,12 +91,18 @@ Deno.serve(async (req: Request) => {
     }
 
     // 5. SECURITY CHECK: Rate Limiting & Credits validation
-    const cost = calculateRequestCost(endpoint);
+    let cost = calculateRequestCost(endpoint);
+
+    // Multi-task billing safety: If payload is a non-empty array (batch),
+    // multiply the cost by the number of elements.
+    if (Array.isArray(payload) && payload.length > 0) {
+      cost = cost * payload.length;
+    }
 
     // Structured Audit Log for telemetry tracing
     console.log(`[AUDIT] [proxy-dataforseo] User: ${user.id} | Endpoint: ${endpoint} | Costo: ${cost} créditos`);
 
-    const securityCheck = await validateUserCredits(user.id, cost);
+    const securityCheck = await validateUserCredits(user.id, cost, 0); // 0 seconds to allow concurrent requests
     if (!securityCheck.success) {
       return new Response(
         JSON.stringify({ 
