@@ -605,12 +605,29 @@ Hito completado en el blindaje contra fugas de presupuesto, bloqueos de concurre
    * **Cuota de Entrada Corregida**: Ajuste de `DEFAULT_INITIAL_CREDITS` de 20 a **100 créditos** en las reglas de negocio de `saas.ts`. Esto permite a las cuentas nuevas gratis realizar exactamente **3 búsquedas de 3x3** o **1 búsqueda de 5x5**, alineándose con el plan de marketing sin bloquear al usuario en el día 1.
    * **Ocultación de Canales de Pago**: Ocultación del botón *"Actualizar a Pro"* inactivo en los Ajustes (reemplazado por un elegante texto B2B para planes a medida de agencia) y redirección directa de los CTAs de precios a la página de registro gratuito (`/register`).
 
+## 🚀 Detección Geográfica Dinámica & Placeholders Neutrales (v1.2.0 - Geo-Intelligence Edition)
+
+Hito completado para la globalización de la experiencia de usuario de la plataforma y el robustecimiento ante auditorías de seguridad:
+
+1. **🌍 Detección Geográfica Dinámica (`geoUtils`)**:
+   * Creación de la utilidad atómica [geoUtils.ts](file:///Users/nelsonlondono/Trabajo/developer/local-seo-heatmap/src/util/geoUtils.ts) para detectar automáticamente el idioma del navegador del usuario.
+   * Adaptación de stubs y datos de demostración en [placesService.ts](file:///Users/nelsonlondono/Trabajo/developer/local-seo-heatmap/src/features/heatmap/services/placesService.ts) a la región del usuario (Madrid para español (`es`), Nueva York para fallback global/inglés).
+2. **🧼 Placeholders Neutrales de Interfaz**:
+   * Neutralización de inputs fijos de dominio y ubicaciones (ej: Chía, Colombia) en componentes clave (`LocationSelector`, `CreateProjectModal`, `DomainSearchForm`, `SiteAnalyzerPage`), ofreciendo ahora placeholders adaptados dinámicamente según el locale.
+3. **🧪 Suite de Pruebas Unitarias de Vitest (71/71 Pasados)**:
+   * Creación de [geoUtils.test.ts](file:///Users/nelsonlondono/Trabajo/developer/local-seo-heatmap/src/util/geoUtils.test.ts) con cobertura completa (10 tests) para verificar el mockeo de `navigator.language` bajo todos los entornos posibles.
+   * Actualización de aserciones en tests existentes para soportar placeholders dinámicos. Todos los tests de la app se ejecutan con un **100% de éxito**.
+4. **🔒 Mitigación de Alertas de Seguridad en Supabase (Auditoría Resolutiva)**:
+   * **Aislamiento de `is_super_admin`**: Traslado de la función crítica al esquema privado `internal` para resolver la advertencia de ejecución pública como SECURITY DEFINER.
+   * **Política RLS en `ip_rate_limits`**: Creación de una política de RLS exclusiva para el rol `service_role`, eliminando el warning de "RLS Enabled No Policy".
+
 ---
 
 ## 🚦 Siguiente Enfoque (Next Steps)
 
-La arquitectura técnica, la suite de pruebas unitarias y el proxy están blindados e impecables, permitiendo continuar mañana:
+La arquitectura técnica, la suite de pruebas unitarias, el proxy, la detección regional dinámica y la seguridad de la base de datos están en su estado más óptimo y estable:
 1. **Service Balances Overhaul**: Recarga de saldos oficiales prepago en Serper.dev y DataForSEO con la mente despejada.
 2. **End-to-End Live Validation**: Validación directa en producción de los flujos de rastreo integrados.
+
 
 
