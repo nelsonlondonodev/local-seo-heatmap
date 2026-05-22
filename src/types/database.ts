@@ -54,6 +54,7 @@ export interface Database {
           role: 'super-admin' | 'owner' | 'admin' | 'staff' | 'client';
           agency_id: string | null;
           plan: 'free' | 'pro' | 'enterprise';
+          credits: number;
           created_at: string;
         };
         Insert: {
@@ -64,6 +65,7 @@ export interface Database {
           role?: 'super-admin' | 'owner' | 'admin' | 'staff' | 'client';
           agency_id?: string | null;
           plan?: 'free' | 'pro' | 'enterprise';
+          credits?: number;
           created_at?: string;
         };
         Update: {
@@ -74,6 +76,7 @@ export interface Database {
           role?: 'super-admin' | 'owner' | 'admin' | 'staff' | 'client';
           agency_id?: string | null;
           plan?: 'free' | 'pro' | 'enterprise';
+          credits?: number;
           created_at?: string;
         };
         Relationships: [];
