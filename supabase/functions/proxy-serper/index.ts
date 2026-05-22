@@ -26,7 +26,25 @@ Deno.serve(async (req: Request) => {
     return unauthorizedResponse(dynamicCors);
   }
 
-  const { endpoint, payload } = await req.json();
+  // Deserializar con tipado estricto (eliminando any implícitos)
+  let body: { endpoint?: string; payload?: unknown } = {};
+  try {
+    body = await req.json();
+  } catch {
+    return new Response(
+      JSON.stringify({ error: 'El cuerpo de la solicitud no es un JSON válido.' }),
+      { status: 400, headers: { ...dynamicCors, 'Content-Type': 'application/json' } }
+    );
+  }
+
+  const { endpoint, payload } = body;
+
+  if (!endpoint || typeof endpoint !== 'string') {
+    return new Response(
+      JSON.stringify({ error: 'Payload inválido: se requiere el campo "endpoint" como string.' }),
+      { status: 400, headers: { ...dynamicCors, 'Content-Type': 'application/json' } }
+    );
+  }
 
   const validEndpoints: Record<string, string> = {
     maps: 'https://google.serper.dev/maps',
