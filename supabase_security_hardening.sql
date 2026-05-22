@@ -80,3 +80,10 @@ GRANT EXECUTE ON FUNCTION public.check_and_deduct_credits(UUID, INTEGER, INTEGER
 
 -- Secure ip_rate_limits table
 ALTER TABLE public.ip_rate_limits ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Only service_role can access ip_rate_limits"
+  ON public.ip_rate_limits
+  FOR ALL
+  TO service_role
+  USING (true)
+  WITH CHECK (true);

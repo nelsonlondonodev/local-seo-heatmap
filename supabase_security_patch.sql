@@ -69,13 +69,19 @@ DROP FUNCTION IF EXISTS public.is_super_admin();
 
 -- ===========================================
 -- FIX #3: ip_rate_limits table security
--- Ensure RLS is enabled and only service_role can access
+-- Ensure RLS is enabled and create strict policy for service_role
 -- ===========================================
 
 ALTER TABLE public.ip_rate_limits ENABLE ROW LEVEL SECURITY;
 
--- No public policies - only service_role (Edge Functions) can read/write
--- This table is invisible to all frontend users
+DROP POLICY IF EXISTS "Only service_role can access ip_rate_limits" ON public.ip_rate_limits;
+
+CREATE POLICY "Only service_role can access ip_rate_limits"
+  ON public.ip_rate_limits
+  FOR ALL
+  TO service_role
+  USING (true)
+  WITH CHECK (true);
 
 -- ===========================================
 -- VERIFICATION: Run this to confirm permissions are correct
