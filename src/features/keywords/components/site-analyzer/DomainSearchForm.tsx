@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { NATIONAL_LOCATIONS } from '../../config/siteAnalyzer';
+import { getGeoPlaceholders } from '@/util/geoUtils';
 
 interface DomainSearchFormProps {
   targetUrl: string;
@@ -33,7 +34,7 @@ export function DomainSearchForm({
             <div className="relative group">
               <Globe className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-brand-primary group-focus-within:scale-110 transition-transform" />
               <Input 
-                placeholder="ej: amazon.es, mercadolibre.com.co..."
+                placeholder={getGeoPlaceholders().domain}
                 value={targetUrl}
                 onChange={(e) => setTargetUrl(e.target.value)}
                 className="pl-11 h-12 rounded-xl bg-background border-2 text-lg transition-all hover:border-brand-primary/50"

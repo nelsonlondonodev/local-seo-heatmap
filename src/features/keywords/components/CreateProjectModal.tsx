@@ -7,6 +7,7 @@ import { LocationSelector } from './LocationSelector';
 import { useProjects } from '../hooks/useProjects';
 import type { DataForSeoLocation } from '../types/dataForSeo';
 import { toast } from 'sonner';
+import { getGeoPlaceholders } from '@/util/geoUtils';
 
 interface CreateProjectModalProps {
   isOpen: boolean;
@@ -75,7 +76,7 @@ export function CreateProjectModal({ isOpen, onClose, onCreated }: CreateProject
               Nombre del Proyecto / Cliente
             </label>
             <Input
-              placeholder="ej: Narbo's Salon Spa"
+              placeholder={`ej: ${getGeoPlaceholders().project}`}
               value={name}
               onChange={(e) => setName(e.target.value)}
               className="h-11 rounded-xl border-2 bg-background/50 focus-visible:ring-brand-primary/20"

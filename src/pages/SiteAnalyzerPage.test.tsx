@@ -5,6 +5,7 @@ import { SiteAnalyzerPage } from './SiteAnalyzerPage';
 import { dataForSeoService } from '@/features/keywords/services/dataForSeoService';
 import { toast } from 'sonner';
 import type { DomainRankOverview, RankedKeywordItem } from '@/features/keywords/types/dataForSeo';
+import { getGeoPlaceholders, getDefaultLocationCode } from '@/util/geoUtils';
 
 // Mocks
 vi.mock('@/features/keywords/services/dataForSeoService', () => ({
@@ -55,7 +56,7 @@ describe('SiteAnalyzerPage Integration', () => {
     const user = userEvent.setup();
     render(<SiteAnalyzerPage />);
 
-    const input = screen.getByPlaceholderText(/ej: amazon.es, mercadolibre.com.co/i);
+    const input = screen.getByPlaceholderText(getGeoPlaceholders().domain);
     await user.type(input, 'test.com');
     
     const analyzeButton = screen.getByRole('button', { name: /Explorar Sitio/i });
@@ -90,15 +91,15 @@ describe('SiteAnalyzerPage Integration', () => {
 
     render(<SiteAnalyzerPage />);
 
-    const input = screen.getByPlaceholderText(/ej: amazon.es, mercadolibre.com.co/i);
+    const input = screen.getByPlaceholderText(getGeoPlaceholders().domain);
     await user.type(input, 'test.com');
     
     const analyzeButton = screen.getByRole('button', { name: /Explorar Sitio/i });
     await user.click(analyzeButton);
 
     await waitFor(() => {
-      expect(mockedService.getDomainRankOverview).toHaveBeenCalledWith('test.com', 2724);
-      expect(mockedService.getDomainRankedKeywords).toHaveBeenCalledWith('test.com', 2724);
+      expect(mockedService.getDomainRankOverview).toHaveBeenCalledWith('test.com', getDefaultLocationCode());
+      expect(mockedService.getDomainRankedKeywords).toHaveBeenCalledWith('test.com', getDefaultLocationCode());
     });
 
     await waitFor(() => {
@@ -117,7 +118,7 @@ describe('SiteAnalyzerPage Integration', () => {
 
     render(<SiteAnalyzerPage />);
 
-    const input = screen.getByPlaceholderText(/ej: amazon.es, mercadolibre.com.co/i);
+    const input = screen.getByPlaceholderText(getGeoPlaceholders().domain);
     await user.type(input, 'empty.com');
     
     const analyzeButton = screen.getByRole('button', { name: /Explorar Sitio/i });

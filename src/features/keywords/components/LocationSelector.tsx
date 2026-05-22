@@ -3,6 +3,7 @@ import { MapPin, Loader2, X, Flag } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { dataForSeoService } from '../services/dataForSeoService';
+import { getDefaultCountryCode, getGeoPlaceholders } from '@/util/geoUtils';
 
 import type { DataForSeoLocation } from '../types/dataForSeo';
 
@@ -13,18 +14,18 @@ interface LocationSelectorProps {
 }
 
 const COMMON_COUNTRIES = [
-  { name: 'Colombia', code: 'co' },
   { name: 'España', code: 'es' },
+  { name: 'Estados Unidos', code: 'us' },
+  { name: 'Colombia', code: 'co' },
   { name: 'México', code: 'mx' },
   { name: 'Chile', code: 'cl' },
   { name: 'Perú', code: 'pe' },
   { name: 'Argentina', code: 'ar' },
-  { name: 'Estados Unidos', code: 'us' },
   { name: 'Ecuador', code: 'ec' },
 ];
 
 export function LocationSelector({ onLocationSelect, selectedLocation, initialCountryCode }: LocationSelectorProps) {
-  const [selectedCountry, setSelectedCountry] = useState<string>(initialCountryCode || 'co'); 
+  const [selectedCountry, setSelectedCountry] = useState<string>(initialCountryCode || getDefaultCountryCode()); 
   const [cityQuery, setCityQuery] = useState('');
   const [allLocations, setAllLocations] = useState<DataForSeoLocation[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -116,7 +117,7 @@ export function LocationSelector({ onLocationSelect, selectedLocation, initialCo
           <div className="relative group">
             <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-brand-primary group-focus-within:scale-110 transition-transform" />
             <Input 
-              placeholder={isLoading ? "Cargando ciudades..." : "Escribe ciudad... (ej: Chía)"}
+              placeholder={isLoading ? "Cargando ciudades..." : `Escribe ciudad... (ej: ${getGeoPlaceholders().city})`}
               value={displayValue}
               disabled={isLoading}
               onChange={(e) => {

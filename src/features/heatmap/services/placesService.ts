@@ -1,4 +1,5 @@
 import { invokeEdgeFunction } from '@/lib/edgeFunctions';
+import { getGeoPlaceholders } from '@/util/geoUtils';
 
 /**
  * Service to handle Google Places Autocomplete and Details.
@@ -14,26 +15,30 @@ export interface PlaceSuggestion {
   userRatingsTotal?: number;
 }
 
-const MOCK_PLACES: PlaceSuggestion[] = [
-  {
-    placeId: "ChIJ_narbo_1",
-    name: "Narbo's Salón & Spa (Demo)",
-    address: "Calle de la Moda 123, Chía, Colombia",
-    lat: 4.8617,
-    lng: -74.0531,
-    rating: 4.8,
-    userRatingsTotal: 156,
-  },
-  {
-    placeId: "ChIJ_barber_2",
-    name: "The Barber Shop Chía (Demo)",
-    address: "Av. Pradilla #45-12, Chía, Colombia",
-    lat: 4.8589,
-    lng: -74.0582,
-    rating: 4.5,
-    userRatingsTotal: 89,
-  },
-];
+function getMockPlaces(): PlaceSuggestion[] {
+  const ph = getGeoPlaceholders();
+  const isEs = ph.addressCity.includes('España');
+  return [
+    {
+      placeId: "ChIJ_demo_1",
+      name: `${ph.project} (Demo)`,
+      address: `Calle de la Moda 123, ${ph.addressCity}`,
+      lat: isEs ? 40.4167 : 40.7128,
+      lng: isEs ? -3.7037 : -74.0060,
+      rating: 4.8,
+      userRatingsTotal: 156,
+    },
+    {
+      placeId: "ChIJ_demo_2",
+      name: isEs ? "Peluquería & Barbería (Demo)" : "The Barber Shop (Demo)",
+      address: `Av. Principal #45-12, ${ph.addressCity}`,
+      lat: isEs ? 40.4200 : 40.7150,
+      lng: isEs ? -3.7050 : -74.0100,
+      rating: 4.5,
+      userRatingsTotal: 89,
+    },
+  ];
+}
 
 /**
  * Type for the Google Places API response forwarded by the Edge Function.
@@ -62,7 +67,7 @@ export const placesService = {
     if (import.meta.env.VITE_DEMO_MODE === 'true') {
       await new Promise((resolve) => setTimeout(resolve, 300));
       const searchLower = query.toLowerCase();
-      return MOCK_PLACES.filter(
+      return getMockPlaces().filter(
         (p) => p.name.toLowerCase().includes(searchLower) || p.address.toLowerCase().includes(searchLower)
       );
     }

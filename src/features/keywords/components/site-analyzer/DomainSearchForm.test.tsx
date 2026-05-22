@@ -2,6 +2,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, it, expect, vi } from 'vitest';
 import { DomainSearchForm } from './DomainSearchForm';
+import { getGeoPlaceholders } from '@/util/geoUtils';
 
 // Mock ResizeObserver which is needed for Shadcn Select
 class ResizeObserverMock {
@@ -38,7 +39,7 @@ describe('DomainSearchForm', () => {
   it('renders the input, select, and button correctly', () => {
     render(<DomainSearchForm {...defaultProps} />);
     
-    expect(screen.getByPlaceholderText(/ej: amazon.es, mercadolibre.com.co/i)).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(getGeoPlaceholders().domain)).toBeInTheDocument();
     expect(screen.getByText(/Explorar Sitio/i)).toBeInTheDocument();
     expect(screen.getByText(/País de Análisis/i)).toBeInTheDocument();
   });
@@ -47,7 +48,7 @@ describe('DomainSearchForm', () => {
     const user = userEvent.setup();
     render(<DomainSearchForm {...defaultProps} />);
     
-    const input = screen.getByPlaceholderText(/ej: amazon.es, mercadolibre.com.co/i);
+    const input = screen.getByPlaceholderText(getGeoPlaceholders().domain);
     await user.type(input, 'apple.com');
     
     expect(defaultProps.setTargetUrl).toHaveBeenCalled();
@@ -58,7 +59,7 @@ describe('DomainSearchForm', () => {
     const onAnalyzeMock = vi.fn();
     render(<DomainSearchForm {...defaultProps} onAnalyze={onAnalyzeMock} />);
     
-    const input = screen.getByPlaceholderText(/ej: amazon.es, mercadolibre.com.co/i);
+    const input = screen.getByPlaceholderText(getGeoPlaceholders().domain);
     await user.type(input, '{Enter}');
     
     expect(onAnalyzeMock).toHaveBeenCalledTimes(1);

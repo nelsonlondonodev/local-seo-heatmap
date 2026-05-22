@@ -14,11 +14,12 @@ import { SiteAnalyzerEmptyState } from '@/features/keywords/components/site-anal
 
 // Utils
 import { cleanDomain } from '@/features/keywords/util/domainUtils';
+import { getDefaultLocationCode } from '@/util/geoUtils';
 
 export function SiteAnalyzerPage() {
   // State
   const [targetUrl, setTargetUrl] = useState('');
-  const [locationCode, setLocationCode] = useState<number>(2724); // Default: Spain
+  const [locationCode, setLocationCode] = useState<number>(getDefaultLocationCode());
   const [hasSearched, setHasSearched] = useState(false);
   const [overview, setOverview] = useState<DomainRankOverview | null>(null);
   const [keywords, setKeywords] = useState<RankedKeywordItem[]>([]);
