@@ -13,7 +13,7 @@ export const SAAS_CONFIG = {
   // 🛡️ Security & Access
   SECURITY: {
     MIN_SECONDS_BETWEEN_SCANS: 20,
-    DEFAULT_INITIAL_CREDITS: 100,
+    DEFAULT_INITIAL_CREDITS: 50,
   },
 
   // 📈 SEO & Visibility
