@@ -274,6 +274,12 @@ Para asegurar que la interfaz del software sea fiel y mantenga una identidad de 
 *   **Sincronización de Fondos y Cartas**: Ajustar las variables de color CSS (`--background`, `--card`, `--border`) en `index.css` en sus versiones de tema claro y oscuro para evitar que se visualicen parches de color híbridos (ej: remover los tintes azulados del modo oscuro `oklch(0.1 0.01 250)` a favor de neutros zinc/negros profundos).
 *   **Alineamiento del Tema de Shadcn**: Ajustar las variables de color primario (`--primary`, `--ring`) para que los componentes interactivos utilicen por defecto los tonos oscuros de la paleta unificada.
 
+### 8. Mejoras de UX y Benchmarking en el Explorador de Dominios
+Para enriquecer la usabilidad y la profundidad de análisis del Explorador de Sitios, se planifican las siguientes actualizaciones de UX y de negocio:
+*   **Selector de País Amigable**: Reemplazar los códigos numéricos internos de la API de DataForSEO (ej: `2724`) que aparecen actualmente en el selector por nombres de países legibles para el usuario, acompañados de sus códigos de dos letras (ej: `ES` o `US`) y banderas correspondientes (ej: 🇪🇸, 🇺🇸).
+*   **Métricas de Rendimiento y Tráfico**: Presentar de manera clara y destacada el estimado de visitas mensuales orgánicas y de pago del sitio web analizado, así como la cantidad total de palabras clave indexadas.
+*   **Módulo Comparativo de Competidores (Keyword Gap)**: Añadir una sección de comparación directa entre el sitio web auditado y sus principales competidores orgánicos en paralelo. Esto permitirá identificar de forma inmediata la brecha de palabras clave ("qué palabras posiciona la competencia que el cliente no tiene aún"), sirviendo como argumento de venta y plan de acción de contenidos.
+
 ---
 
 ## 🗂️ Documentación Técnica Específica
