@@ -254,6 +254,12 @@ Para elevar la calidad y la precisión de la experiencia visual en las auditorí
 *   **Nodos con Índices de Ranking Numéricos**: Cada círculo/nodo de la grilla de calor proyectará de manera legible su posición numérica real de ranking sobre el mapa.
 *   **Cobertura Coherente en Grandes Áreas**: Asegurar que las cuadrículas de mayor escala (ej. 7x7 o superior con radios extendidos de hasta 20 km) distribuyan y transicionen los colores de forma homogénea en todos los puntos una vez escaneados, evitando zonas grises residuales y mostrando el contraste real del área auditada.
 
+### 5. Arquitectura de Proyectos Unificados: De Prospecto a Cliente Activo
+Para ofrecer un flujo de trabajo óptimo y una experiencia de usuario (UX) unificada, el sistema transicionará de herramientas aisladas a una arquitectura centralizada en el concepto de "Proyecto":
+*   **Fase de Prospección (Prospecto)**: El consultor/agencia crea un "Proyecto de Prospección" para un negocio potencial. Bajo este mismo proyecto se empaquetan y agrupan todas las auditorías iniciales de venta (el mapa de calor de SEO local, el análisis de auditoría de su sitio web y el benchmarking de competidores).
+*   **Fase de Conversión (Promoción a Cliente)**: Si el prospecto acepta la propuesta comercial, el administrador puede promover el proyecto a "Cliente Activo" con un solo clic.
+*   **Fase de Monitoreo Continuo (Cliente Activo)**: Al promoverse, el proyecto conserva todo el historial de prospección realizado y desbloquea las herramientas de monitoreo continuo (tracking periódico de rankings de palabras clave, evolución histórica de heatmaps, histórico de cambios del sitio web y monitor de competidores), manteniendo todo el expediente del cliente centralizado en un solo lugar.
+
 ---
 
 ## 🗂️ Documentación Técnica Específica
