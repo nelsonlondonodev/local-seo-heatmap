@@ -112,6 +112,34 @@ export const adminService = {
    * Consulta el estado de salud en tiempo real de las APIs de terceros
    */
   async getApiHealthStatus(): Promise<SystemHealthResponse> {
+    if (import.meta.env.VITE_DEMO_MODE === 'true') {
+      // Simulate realistic network delay and dynamic API metrics
+      await new Promise((resolve) => setTimeout(resolve, 600));
+      return {
+        serper: {
+          status: 'ok',
+          latencyMs: Math.floor(Math.random() * 60) + 40,
+          message: 'Conectado (Simulación local)',
+        },
+        dataforseo: {
+          status: 'ok',
+          latencyMs: Math.floor(Math.random() * 120) + 100,
+          message: 'Conectado (Simulación local)',
+          balance: 84.25,
+        },
+        openai: {
+          status: 'ok',
+          latencyMs: Math.floor(Math.random() * 90) + 70,
+          message: 'Conectado (Simulación local)',
+        },
+        google: {
+          status: 'ok',
+          latencyMs: Math.floor(Math.random() * 50) + 30,
+          message: 'Conectado (Simulación local)',
+        },
+      };
+    }
+
     return invokeEdgeFunction<SystemHealthResponse, Record<string, never>>(
       'admin-health-check',
       {}
