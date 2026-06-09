@@ -245,6 +245,15 @@ El panel de **Gestión de Usuarios** incorporará controles administrativos comp
 *   **Update (Actualizar)**: Edición directa del nombre de usuario, email, plan, créditos y cambio dinámico de rol (`super-admin`, `owner`, `admin`, `staff`, `client`).
 *   **Delete (Eliminar)**: Eliminación o desactivación lógica de perfiles no deseados con un **modal de confirmación de seguridad de doble paso** para evitar pérdidas accidentales de datos e historial de mapas.
 
+### 4. Optimización de la Escala de Calor y Visualización del Mapa
+Para elevar la calidad y la precisión de la experiencia visual en las auditorías locales, el mapa de calor incorporará las siguientes mejoras cromáticas y de UX:
+*   **Gradiente Cromático Completo (SEO Tradicional)**: Corrección del rango de colores para asegurar una transición intuitiva. El mapa debe pintar obligatoriamente los tres estados clave:
+    - **Verde brillante (Top 1-3)**: Posiciones dominantes con alta visibilidad.
+    - **Amarillo / Naranja (Posiciones 4-10)**: Puntos visibles pero fuera del podio (oportunidades de mejora).
+    - **Rojo carmín (Posiciones 11-20+)**: Áreas de invisibilidad absoluta del negocio donde la competencia domina.
+*   **Nodos con Índices de Ranking Numéricos**: Cada círculo/nodo de la grilla de calor proyectará de manera legible su posición numérica real de ranking sobre el mapa.
+*   **Cobertura Coherente en Grandes Áreas**: Asegurar que las cuadrículas de mayor escala (ej. 7x7 o superior con radios extendidos de hasta 20 km) distribuyan y transicionen los colores de forma homogénea en todos los puntos una vez escaneados, evitando zonas grises residuales y mostrando el contraste real del área auditada.
+
 ---
 
 ## 🗂️ Documentación Técnica Específica
