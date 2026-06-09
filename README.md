@@ -280,6 +280,12 @@ Para enriquecer la usabilidad y la profundidad de análisis del Explorador de Si
 *   **Métricas de Rendimiento y Tráfico**: Presentar de manera clara y destacada el estimado de visitas mensuales orgánicas y de pago del sitio web analizado, así como la cantidad total de palabras clave indexadas.
 *   **Módulo Comparativo de Competidores (Keyword Gap)**: Añadir una sección de comparación directa entre el sitio web auditado y sus principales competidores orgánicos en paralelo. Esto permitirá identificar de forma inmediata la brecha de palabras clave ("qué palabras posiciona la competencia que el cliente no tiene aún"), sirviendo como argumento de venta y plan de acción de contenidos.
 
+### 9. Rastreo de Posiciones Automatizado e Histórico de Palabras Clave (Auto Rank Tracker)
+Para liberar al usuario de la ejecución manual y optimizar el análisis continuo de SEO, se planifica la automatización del rastreo de rankings:
+*   **Escaneo Programado Recurrente**: Configuración de rastreos automáticos semanales (estándar de la industria) o bi-semanales de palabras clave del proyecto. Las ejecuciones programadas debitarán automáticamente los créditos correspondientes (ej: 1 crédito por keyword) del saldo disponible del cliente.
+*   **Historial de Posiciones por Fechas**: Registro y almacenamiento de cada escaneo en una tabla temporal para que el usuario pueda graficar y estudiar la evolución histórica de su posicionamiento a lo largo de los días y semanas.
+*   **Tendencias y Comparativa Inicial**: Visualización de la posición inicial de partida (línea base) e indicadores dinámicos de tendencia (subió ⬆️, bajó ⬇️ o se mantuvo ➡️) por palabra clave, facilitando el reporte inmediato de valor de la agencia hacia el cliente final.
+
 ---
 
 ## 🗂️ Documentación Técnica Específica
