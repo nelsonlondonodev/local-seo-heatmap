@@ -39,10 +39,11 @@ export function AdminPage() {
     queryFn: () => adminService.getAllUsers(),
   });
 
-  const { data: healthStatus, isLoading: isLoadingHealth, refetch: refetchHealth, isRefetching: isRefetchingHealth } = useQuery({
+  const { data: healthStatus, isLoading: isLoadingHealth, refetch: refetchHealth, isRefetching: isRefetchingHealth, isError: isHealthError, error: healthQueryError } = useQuery({
     queryKey: ['admin-api-health'],
     queryFn: () => adminService.getApiHealthStatus(),
     refetchInterval: 60000,
+    retry: false,
   });
 
   const totalApis = 4;
@@ -184,6 +185,14 @@ export function AdminPage() {
                 <Loader2 className="h-4 w-4 animate-spin" />
                 <span className="text-sm">Analizando...</span>
               </div>
+            ) : isHealthError ? (
+              <>
+                <div className="text-2xl font-bold text-rose-600 dark:text-rose-500 flex items-center gap-2">
+                  <Activity className="h-5 w-5 text-rose-500" />
+                  Desconectado
+                </div>
+                <p className="text-xs text-rose-600/80 dark:text-rose-500/80 font-medium">Fallo de Edge Function</p>
+              </>
             ) : hasHealthError ? (
               <>
                 <div className="text-2xl font-bold text-amber-600 dark:text-amber-500 flex items-center gap-2">
@@ -223,120 +232,148 @@ export function AdminPage() {
           </span>
         </div>
 
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          {/* Serper Dev */}
-          <Card className="border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 shadow-none rounded-xl">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1.5">
-              <span className="text-xs font-semibold uppercase tracking-wider text-zinc-500">Serper Dev (Google SERP)</span>
-              <Cpu className="h-4 w-4 text-zinc-400" />
-            </CardHeader>
-            <CardContent className="space-y-1.5">
-              {isLoadingHealth && !healthStatus ? (
-                <div className="h-10 flex items-center"><Loader2 className="h-4 w-4 animate-spin text-zinc-400" /></div>
-              ) : (
-                <>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium text-zinc-950 dark:text-white">Estado</span>
-                    <Badge variant={healthStatus?.serper.status === 'ok' ? 'default' : 'destructive'} className={`text-[10px] uppercase font-bold shadow-none ${healthStatus?.serper.status === 'ok' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-950/30 dark:text-emerald-400 dark:border-emerald-900/50 hover:bg-emerald-50 dark:hover:bg-emerald-950/30' : ''}`}>
-                      {healthStatus?.serper.status === 'ok' ? 'Activo' : 'Error'}
-                    </Badge>
-                  </div>
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="text-zinc-500">Latencia</span>
-                    <span className="font-semibold text-zinc-800 dark:text-zinc-200">{healthStatus?.serper.latencyMs ?? 0} ms</span>
-                  </div>
-                  <p className="text-[10px] text-zinc-400 truncate mt-1">{healthStatus?.serper.message}</p>
-                </>
-              )}
-            </CardContent>
-          </Card>
+        {isHealthError ? (
+          <div className="p-5 rounded-xl border border-amber-200 dark:border-amber-900/50 bg-amber-50/30 dark:bg-amber-950/20 text-amber-800 dark:text-amber-400 text-xs leading-relaxed space-y-3 shadow-sm">
+            <div className="flex items-center gap-2">
+              <ShieldAlert className="h-5 w-5 text-amber-600 dark:text-amber-500" />
+              <span className="font-semibold text-sm">Función de diagnóstico no disponible en el servidor</span>
+            </div>
+            <p>
+              La Edge Function <code className="px-1.5 py-0.5 bg-amber-100/80 dark:bg-amber-950/80 rounded font-mono border border-amber-200/50 dark:border-amber-900/40">admin-health-check</code> no responde o no ha sido desplegada en tu proyecto de Supabase remoto.
+            </p>
+            <p>
+              Para ver la salud y consumo en tiempo real de tus APIs, realiza los siguientes pasos en tu consola local:
+            </p>
+            <ol className="list-decimal list-inside space-y-2 ml-1">
+              <li>
+                Despliega la función ejecutando: 
+                <pre className="mt-1 p-2 bg-zinc-950 text-zinc-100 dark:bg-zinc-900 rounded-md font-mono text-[10px] select-all overflow-x-auto border border-zinc-800">supabase functions deploy admin-health-check</pre>
+              </li>
+              <li>
+                Asegúrate de configurar los secretos en tu panel de producción ejecutando:
+                <pre className="mt-1 p-2 bg-zinc-950 text-zinc-100 dark:bg-zinc-900 rounded-md font-mono text-[10px] select-all overflow-x-auto border border-zinc-800">supabase secrets set SERPER_API_KEY=tu_key DATAFORSEO_LOGIN=tu_login DATAFORSEO_PASSWORD=tu_pass OPENAI_API_KEY=tu_openai_key GOOGLE_MAPS_API_KEY=tu_maps_key</pre>
+              </li>
+            </ol>
+            <p className="text-[10px] text-amber-600/70 dark:text-amber-500/70 pt-1">
+              Detalle técnico: {healthQueryError instanceof Error ? healthQueryError.message : 'Error 404 (Not Found)'}
+            </p>
+          </div>
+        ) : (
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            {/* Serper Dev */}
+            <Card className="border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 shadow-none rounded-xl">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1.5">
+                <span className="text-xs font-semibold uppercase tracking-wider text-zinc-500">Serper Dev (Google SERP)</span>
+                <Cpu className="h-4 w-4 text-zinc-400" />
+              </CardHeader>
+              <CardContent className="space-y-1.5">
+                {isLoadingHealth && !healthStatus ? (
+                  <div className="h-10 flex items-center"><Loader2 className="h-4 w-4 animate-spin text-zinc-400" /></div>
+                ) : (
+                  <>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium text-zinc-950 dark:text-white">Estado</span>
+                      <Badge variant={healthStatus?.serper.status === 'ok' ? 'default' : 'destructive'} className={`text-[10px] uppercase font-bold shadow-none ${healthStatus?.serper.status === 'ok' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-950/30 dark:text-emerald-400 dark:border-emerald-900/50 hover:bg-emerald-50 dark:hover:bg-emerald-950/30' : ''}`}>
+                        {healthStatus?.serper.status === 'ok' ? 'Activo' : 'Error'}
+                      </Badge>
+                    </div>
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="text-zinc-500">Latencia</span>
+                      <span className="font-semibold text-zinc-800 dark:text-zinc-200">{healthStatus?.serper.latencyMs ?? 0} ms</span>
+                    </div>
+                    <p className="text-[10px] text-zinc-400 truncate mt-1">{healthStatus?.serper.message}</p>
+                  </>
+                )}
+              </CardContent>
+            </Card>
 
-          {/* DataForSEO */}
-          <Card className="border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 shadow-none rounded-xl">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1.5">
-              <span className="text-xs font-semibold uppercase tracking-wider text-zinc-500">DataForSEO</span>
-              <Database className="h-4 w-4 text-zinc-400" />
-            </CardHeader>
-            <CardContent className="space-y-1.5">
-              {isLoadingHealth && !healthStatus ? (
-                <div className="h-10 flex items-center"><Loader2 className="h-4 w-4 animate-spin text-zinc-400" /></div>
-              ) : (
-                <>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium text-zinc-950 dark:text-white">Estado</span>
-                    <Badge variant={healthStatus?.dataforseo.status === 'ok' ? 'default' : 'destructive'} className={`text-[10px] uppercase font-bold shadow-none ${healthStatus?.dataforseo.status === 'ok' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-950/30 dark:text-emerald-400 dark:border-emerald-900/50 hover:bg-emerald-50 dark:hover:bg-emerald-950/30' : ''}`}>
-                      {healthStatus?.dataforseo.status === 'ok' ? 'Activo' : 'Error'}
-                    </Badge>
-                  </div>
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="text-zinc-500">Saldo</span>
-                    <span className="font-bold text-zinc-950 dark:text-white">
-                      {healthStatus?.dataforseo.balance !== undefined ? `$${healthStatus.dataforseo.balance.toFixed(2)}` : 'N/A'}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="text-zinc-500">Latencia</span>
-                    <span className="font-semibold text-zinc-800 dark:text-zinc-200">{healthStatus?.dataforseo.latencyMs ?? 0} ms</span>
-                  </div>
-                </>
-              )}
-            </CardContent>
-          </Card>
+            {/* DataForSEO */}
+            <Card className="border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 shadow-none rounded-xl">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1.5">
+                <span className="text-xs font-semibold uppercase tracking-wider text-zinc-500">DataForSEO</span>
+                <Database className="h-4 w-4 text-zinc-400" />
+              </CardHeader>
+              <CardContent className="space-y-1.5">
+                {isLoadingHealth && !healthStatus ? (
+                  <div className="h-10 flex items-center"><Loader2 className="h-4 w-4 animate-spin text-zinc-400" /></div>
+                ) : (
+                  <>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium text-zinc-950 dark:text-white">Estado</span>
+                      <Badge variant={healthStatus?.dataforseo.status === 'ok' ? 'default' : 'destructive'} className={`text-[10px] uppercase font-bold shadow-none ${healthStatus?.dataforseo.status === 'ok' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-950/30 dark:text-emerald-400 dark:border-emerald-900/50 hover:bg-emerald-50 dark:hover:bg-emerald-950/30' : ''}`}>
+                        {healthStatus?.dataforseo.status === 'ok' ? 'Activo' : 'Error'}
+                      </Badge>
+                    </div>
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="text-zinc-500">Saldo</span>
+                      <span className="font-bold text-zinc-950 dark:text-white">
+                        {healthStatus?.dataforseo.balance !== undefined ? `$${healthStatus.dataforseo.balance.toFixed(2)}` : 'N/A'}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="text-zinc-500">Latencia</span>
+                      <span className="font-semibold text-zinc-800 dark:text-zinc-200">{healthStatus?.dataforseo.latencyMs ?? 0} ms</span>
+                    </div>
+                  </>
+                )}
+              </CardContent>
+            </Card>
 
-          {/* OpenAI */}
-          <Card className="border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 shadow-none rounded-xl">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1.5">
-              <span className="text-xs font-semibold uppercase tracking-wider text-zinc-500">OpenAI (IA)</span>
-              <Activity className="h-4 w-4 text-zinc-400" />
-            </CardHeader>
-            <CardContent className="space-y-1.5">
-              {isLoadingHealth && !healthStatus ? (
-                <div className="h-10 flex items-center"><Loader2 className="h-4 w-4 animate-spin text-zinc-400" /></div>
-              ) : (
-                <>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium text-zinc-950 dark:text-white">Estado</span>
-                    <Badge variant={healthStatus?.openai.status === 'ok' ? 'default' : 'destructive'} className={`text-[10px] uppercase font-bold shadow-none ${healthStatus?.openai.status === 'ok' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-950/30 dark:text-emerald-400 dark:border-emerald-900/50 hover:bg-emerald-50 dark:hover:bg-emerald-950/30' : ''}`}>
-                      {healthStatus?.openai.status === 'ok' ? 'Activo' : 'Error'}
-                    </Badge>
-                  </div>
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="text-zinc-500">Latencia</span>
-                    <span className="font-semibold text-zinc-800 dark:text-zinc-200">{healthStatus?.openai.latencyMs ?? 0} ms</span>
-                  </div>
-                  <p className="text-[10px] text-zinc-400 truncate mt-1">{healthStatus?.openai.message}</p>
-                </>
-              )}
-            </CardContent>
-          </Card>
+            {/* OpenAI */}
+            <Card className="border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 shadow-none rounded-xl">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1.5">
+                <span className="text-xs font-semibold uppercase tracking-wider text-zinc-500">OpenAI (IA)</span>
+                <Activity className="h-4 w-4 text-zinc-400" />
+              </CardHeader>
+              <CardContent className="space-y-1.5">
+                {isLoadingHealth && !healthStatus ? (
+                  <div className="h-10 flex items-center"><Loader2 className="h-4 w-4 animate-spin text-zinc-400" /></div>
+                ) : (
+                  <>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium text-zinc-950 dark:text-white">Estado</span>
+                      <Badge variant={healthStatus?.openai.status === 'ok' ? 'default' : 'destructive'} className={`text-[10px] uppercase font-bold shadow-none ${healthStatus?.openai.status === 'ok' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-950/30 dark:text-emerald-400 dark:border-emerald-900/50 hover:bg-emerald-50 dark:hover:bg-emerald-950/30' : ''}`}>
+                        {healthStatus?.openai.status === 'ok' ? 'Activo' : 'Error'}
+                      </Badge>
+                    </div>
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="text-zinc-500">Latencia</span>
+                      <span className="font-semibold text-zinc-800 dark:text-zinc-200">{healthStatus?.openai.latencyMs ?? 0} ms</span>
+                    </div>
+                    <p className="text-[10px] text-zinc-400 truncate mt-1">{healthStatus?.openai.message}</p>
+                  </>
+                )}
+              </CardContent>
+            </Card>
 
-          {/* Google Places / Maps */}
-          <Card className="border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 shadow-none rounded-xl">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1.5">
-              <span className="text-xs font-semibold uppercase tracking-wider text-zinc-500">Google Maps / Places</span>
-              <Map className="h-4 w-4 text-zinc-400" />
-            </CardHeader>
-            <CardContent className="space-y-1.5">
-              {isLoadingHealth && !healthStatus ? (
-                <div className="h-10 flex items-center"><Loader2 className="h-4 w-4 animate-spin text-zinc-400" /></div>
-              ) : (
-                <>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium text-zinc-950 dark:text-white">Estado</span>
-                    <Badge variant={healthStatus?.google.status === 'ok' ? 'default' : 'destructive'} className={`text-[10px] uppercase font-bold shadow-none ${healthStatus?.google.status === 'ok' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-950/30 dark:text-emerald-400 dark:border-emerald-900/50 hover:bg-emerald-50 dark:hover:bg-emerald-950/30' : ''}`}>
-                      {healthStatus?.google.status === 'ok' ? 'Activo' : 'Error'}
-                    </Badge>
-                  </div>
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="text-zinc-500">Latencia</span>
-                    <span className="font-semibold text-zinc-800 dark:text-zinc-200">{healthStatus?.google.latencyMs ?? 0} ms</span>
-                  </div>
-                  <p className="text-[10px] text-zinc-400 truncate mt-1">{healthStatus?.google.message}</p>
-                </>
-              )}
-            </CardContent>
-          </Card>
-        </div>
+            {/* Google Places / Maps */}
+            <Card className="border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 shadow-none rounded-xl">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1.5">
+                <span className="text-xs font-semibold uppercase tracking-wider text-zinc-500">Google Maps / Places</span>
+                <Map className="h-4 w-4 text-zinc-400" />
+              </CardHeader>
+              <CardContent className="space-y-1.5">
+                {isLoadingHealth && !healthStatus ? (
+                  <div className="h-10 flex items-center"><Loader2 className="h-4 w-4 animate-spin text-zinc-400" /></div>
+                ) : (
+                  <>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium text-zinc-950 dark:text-white">Estado</span>
+                      <Badge variant={healthStatus?.google.status === 'ok' ? 'default' : 'destructive'} className={`text-[10px] uppercase font-bold shadow-none ${healthStatus?.google.status === 'ok' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-950/30 dark:text-emerald-400 dark:border-emerald-900/50 hover:bg-emerald-50 dark:hover:bg-emerald-950/30' : ''}`}>
+                        {healthStatus?.google.status === 'ok' ? 'Activo' : 'Error'}
+                      </Badge>
+                    </div>
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="text-zinc-500">Latencia</span>
+                      <span className="font-semibold text-zinc-800 dark:text-zinc-200">{healthStatus?.google.latencyMs ?? 0} ms</span>
+                    </div>
+                    <p className="text-[10px] text-zinc-400 truncate mt-1">{healthStatus?.google.message}</p>
+                  </>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+        )}
       </motion.div>
 
       <div className="mt-6">
