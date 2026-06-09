@@ -1,7 +1,22 @@
 import { supabase } from '@/lib/supabase';
+import { invokeEdgeFunction } from '@/lib/edgeFunctions';
 
 import type { UserProfile } from './profileService';
 import type { UserRole } from '@/features/auth/types';
+
+export interface ApiHealthStatus {
+  status: 'ok' | 'error';
+  latencyMs: number;
+  message: string;
+  balance?: number;
+}
+
+export interface SystemHealthResponse {
+  serper: ApiHealthStatus;
+  dataforseo: ApiHealthStatus;
+  openai: ApiHealthStatus;
+  google: ApiHealthStatus;
+}
 
 export interface SystemMetrics {
   users: number;
@@ -91,5 +106,15 @@ export const adminService = {
     }
 
     return data as UserProfile;
+  },
+
+  /**
+   * Consulta el estado de salud en tiempo real de las APIs de terceros
+   */
+  async getApiHealthStatus(): Promise<SystemHealthResponse> {
+    return invokeEdgeFunction<SystemHealthResponse, Record<string, never>>(
+      'admin-health-check',
+      {}
+    );
   }
 };
