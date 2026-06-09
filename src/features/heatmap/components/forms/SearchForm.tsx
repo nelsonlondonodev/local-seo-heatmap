@@ -6,7 +6,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { GRID_OPTIONS, RADIUS_OPTIONS, PLAN_LIMITS } from '@/config/constants';
+import { GRID_OPTIONS, RADIUS_OPTIONS } from '@/config/constants';
 import { BusinessSearch, CostIndicator, type PlaceSuggestion } from '@/features/heatmap';
 import { useHeatmap } from '../../hooks/useHeatmap';
 import { useSaaSStatus } from '@/hooks/useSaaSStatus';
@@ -20,17 +20,8 @@ interface SearchFormProps {
   heatmap: ReturnType<typeof useHeatmap>;
 }
 
-const GRID_WEIGHTS = {
-  '3x3': 1,
-  '5x5': 2,
-  '7x7': 3,
-} as const;
-
 export function SearchForm({ heatmap }: SearchFormProps) {
-  const { profile } = useSaaSStatus();
-  const userPlan = profile?.plan ?? 'free';
-  const maxGrid = PLAN_LIMITS[userPlan]?.maxGridSize ?? '5x5';
-  const maxWeight = GRID_WEIGHTS[maxGrid];
+  const { isGridSizeAllowed } = useSaaSStatus();
 
   return (
     <div className="space-y-6">
@@ -90,18 +81,15 @@ export function SearchForm({ heatmap }: SearchFormProps) {
         <div className="space-y-2">
           <SectionLabel>Densidad de Puntos (Grid)</SectionLabel>
           <div className="grid grid-cols-3 gap-3">
-            {GRID_OPTIONS.map((option) => {
-              const isDisabled = GRID_WEIGHTS[option.value] > maxWeight;
-              return (
-                <DensityButton
-                  key={option.value}
-                  {...option}
-                  isActive={heatmap.gridSize === option.value}
-                  onClick={() => heatmap.setGridSize(option.value)}
-                  disabled={isDisabled}
-                />
-              );
-            })}
+            {GRID_OPTIONS.map((option) => (
+              <DensityButton
+                key={option.value}
+                {...option}
+                isActive={heatmap.gridSize === option.value}
+                onClick={() => heatmap.setGridSize(option.value)}
+                disabled={!isGridSizeAllowed(option.value)}
+              />
+            ))}
           </div>
         </div>
       </div>
