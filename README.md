@@ -212,6 +212,32 @@ VITE_DEMO_MODE=false
 | **test** | `pnpm test` | Ejecución de pruebas unitarias con Vitest |
 | **test:ui** | `pnpm run test:ui` | Interfaz gráfica de Vitest |
 
+## 🚀 Roadmap de Telemetría y Consumo de Créditos (v1.4.0+)
+
+Para garantizar la viabilidad comercial y la protección del presupuesto de APIs de terceros (Serper, DataForSEO, OpenAI), el proyecto tiene planificado el desarrollo de los siguientes módulos en las próximas versiones:
+
+### 1. Tabla Desglose de Consumo de Créditos (Basado en Collac.io)
+El sistema contará con una equivalencia clara de costos por acción para que el usuario conozca en qué gasta su saldo:
+
+| Acción del Sistema | Costo en Créditos | API de Terceros Consumida | Propósito |
+|---|---|---|---|
+| **Escaneo de Heatmap (Coordenada)** | 1 crédito / punto | Serper /maps API | Búsqueda local geolocalizada en Google Maps |
+| **Búsqueda Web Orgánica (SERP)** | 5 créditos / consulta | Serper /search API | Listado de resultados de búsqueda móvil/desktop |
+| **Optimización SEO con IA** | 2 créditos / análisis | OpenAI completions API | Generación de posts, respuestas y descripciones GBP |
+| **Análisis de Palabras Clave (Labs)** | 5 créditos / consulta | DataForSEO Labs API | Obtención de volumen, CPC y competencia local |
+| **Autocompletado de Ubicaciones** | 1 crédito / consulta | Google Places / autocomplete | Búsqueda predictiva de direcciones y negocios |
+
+### 2. Módulos de Contadores y Telemetría
+*   **Panel de SuperAdministrador (SuperAdmin Counter)**:
+    - Vista consolidada de consumo de créditos totales en la plataforma.
+    - Monitor de coste financiero real en USD de las APIs de Serper y DataForSEO para el administrador (Nelson).
+*   **Panel de Dueño de Agencia (Owner Agency Counter)**:
+    - Registro histórico del consumo de créditos realizado por su equipo (usuarios tipo `admin` y `staff`).
+    - Desglose de créditos consumidos por cada cliente final (`client`) asignado a su marca blanca.
+*   **Contadores e Historial por Perfil (Profile Limits & Throttling)**:
+    - Contadores individuales por perfil (`profiles.credits`) con reabastecimiento manual o periódico configurable.
+    - Cuotas de uso temporal por día/semana para evitar picos de consumo inesperados.
+
 ---
 
 ## 🗂️ Documentación Técnica Específica
