@@ -286,6 +286,11 @@ Para liberar al usuario de la ejecución manual y optimizar el análisis continu
 *   **Historial de Posiciones por Fechas**: Registro y almacenamiento de cada escaneo en una tabla temporal para que el usuario pueda graficar y estudiar la evolución histórica de su posicionamiento a lo largo de los días y semanas.
 *   **Tendencias y Comparativa Inicial**: Visualización de la posición inicial de partida (línea base) e indicadores dinámicos de tendencia (subió ⬆️, bajó ⬇️ o se mantuvo ➡️) por palabra clave, facilitando el reporte inmediato de valor de la agencia hacia el cliente final.
 
+### 10. Optimización de Gráficos (SoLV Gauge) y Depuración de Herramientas IA
+Para consolidar la claridad visual y mantener el alcance del MVP enfocado, se proponen los siguientes ajustes de UX en el reporte del mapa de calor:
+*   **Adaptabilidad Cromática del Medidor de Dominancia (SoLV)**: Refactorizar el componente `LocalDominanceGauge` para que sea 100% responsivo a los temas claro y oscuro (evitando que renderice fondos oscuros fijos y tipografías de bajo contraste en modo claro). Mejorar las tipografías internas del medidor para que la lectura del porcentaje (ej. `42%`) y etiquetas sea limpia y accesible.
+*   **Remoción del Kit de Persuasión IA**: Retirar el módulo "Kit de Persuasión IA" (creación de posts, BIO y respuestas automáticas de reseñas) del reporte del mapa de calor. Nelson prefiere descartar esta funcionalidad para simplificar la interfaz, evitar ruido cognitivo y mantener el enfoque estrictamente en auditoría geolocalizada e inteligencia competitiva local.
+
 ---
 
 ## 🗂️ Documentación Técnica Específica
