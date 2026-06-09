@@ -46,6 +46,10 @@ supabase secrets set DATAFORSEO_PASSWORD=tu_contraseña_de_dataforseo
 supabase secrets set GOOGLE_MAPS_API_KEY=tu_clave_de_google_maps
 ```
 
+### 5. Parches de Base de Datos (Database Patches)
+Si estás desplegando o configurando una base de datos nueva, asegúrate de correr los parches SQL correspondientes en el editor SQL de Supabase:
+*   **[supabase_credits_patch.sql](file:///Users/nelsonlondono/Trabajo/developer/local-seo-heatmap/supabase_credits_patch.sql)**: Cambia el valor por defecto de créditos iniciales de 20 a 50 para nuevas cuentas gratuitas y actualiza las cuentas de demo existentes.
+
 ---
 
 ## 🧬 Guía de Cambio de Marca o Dominio (Paso a Paso)
