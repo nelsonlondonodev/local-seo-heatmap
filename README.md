@@ -260,6 +260,14 @@ Para ofrecer un flujo de trabajo óptimo y una experiencia de usuario (UX) unifi
 *   **Fase de Conversión (Promoción a Cliente)**: Si el prospecto acepta la propuesta comercial, el administrador puede promover el proyecto a "Cliente Activo" con un solo clic.
 *   **Fase de Monitoreo Continuo (Cliente Activo)**: Al promoverse, el proyecto conserva todo el historial de prospección realizado y desbloquea las herramientas de monitoreo continuo (tracking periódico de rankings de palabras clave, evolución histórica de heatmaps, histórico de cambios del sitio web y monitor de competidores), manteniendo todo el expediente del cliente centralizado en un solo lugar.
 
+### 6. Escalabilidad de Cuadrículas de Heatmap (Grids 9x9 y superiores)
+Para equiparar el producto con las herramientas de SEO local líderes en el mercado, se evaluará la incorporación de cuadrículas de mayor densidad sobre el mapa de calor:
+*   **Equiparación Competitiva**: Soporte para resoluciones de cuadrícula de **`9x9`** (81 puntos de escaneo) y superiores.
+*   **Análisis de Impacto (Pros y Contras)**:
+    - **Pros**: Precisión extrema del posicionamiento orgánico a nivel de calles y micro-zonas comerciales. Reportes visuales de gran impacto comercial.
+    - **Contras (Costo y Latencia)**: Una cuadrícula de `9x9` consume de forma exponencial un total de 81 créditos por escaneo, impactando directamente la cuota mensual de consumo de APIs. Además, introduce mayor tiempo de espera del usuario (latencia de carga de red) mientras se resuelven los 81 pings en paralelo.
+*   **UX/UI Controlada por Plan**: Estas cuadrículas de alta densidad estarán restringidas y habilitadas únicamente para planes de agencias y corporativos premium, aplicando restricciones en tiempo de diseño.
+
 ---
 
 ## 🗂️ Documentación Técnica Específica
