@@ -268,6 +268,12 @@ Para equiparar el producto con las herramientas de SEO local líderes en el merc
     - **Contras (Costo y Latencia)**: Una cuadrícula de `9x9` consume de forma exponencial un total de 81 créditos por escaneo, impactando directamente la cuota mensual de consumo de APIs. Además, introduce mayor tiempo de espera del usuario (latencia de carga de red) mientras se resuelven los 81 pings en paralelo.
 *   **UX/UI Controlada por Plan**: Estas cuadrículas de alta densidad estarán restringidas y habilitadas únicamente para planes de agencias y corporativos premium, aplicando restricciones en tiempo de diseño.
 
+### 7. Unificación de Paleta de Colores y Congruencia Visual (Design System Hardening)
+Para asegurar que la interfaz del software sea fiel y mantenga una identidad de marca coherente y de aspecto premium (estilo minimalista de grises, negros y acentos sutiles), se unificará el sistema visual eliminando parches cromáticos remanentes:
+*   **Eliminación de Tonos Azules**: Reemplazar y remover los colores de fondo y botones azules de la interfaz que no pertenezcan al sistema visual (por ejemplo, el botón azul del Explorador de Dominios/Sitios) unificándolos bajo la paleta de grises/negros del proyecto.
+*   **Sincronización de Fondos y Cartas**: Ajustar las variables de color CSS (`--background`, `--card`, `--border`) en `index.css` en sus versiones de tema claro y oscuro para evitar que se visualicen parches de color híbridos (ej: remover los tintes azulados del modo oscuro `oklch(0.1 0.01 250)` a favor de neutros zinc/negros profundos).
+*   **Alineamiento del Tema de Shadcn**: Ajustar las variables de color primario (`--primary`, `--ring`) para que los componentes interactivos utilicen por defecto los tonos oscuros de la paleta unificada.
+
 ---
 
 ## 🗂️ Documentación Técnica Específica
