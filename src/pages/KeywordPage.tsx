@@ -23,6 +23,13 @@ export function KeywordPage({ initialTab = 'discovery' }: KeywordPageProps) {
     setSearchParams(searchParams);
   };
 
+  const handleProjectDelete = useCallback(async (id: string) => {
+    const success = await deleteProject(id);
+    if (success) {
+      setSelectedProjectId(null);
+    }
+  }, [deleteProject]);
+
   const isMonitoring = initialTab === 'monitoring';
 
   return (
@@ -53,12 +60,7 @@ export function KeywordPage({ initialTab = 'discovery' }: KeywordPageProps) {
             projects={projects}
             onProjectUpdate={updateProjectLocal}
             onProjectsRefresh={refreshProjects}
-            onProjectDelete={useCallback(async (id: string) => {
-              const success = await deleteProject(id);
-              if (success) {
-                setSelectedProjectId(null);
-              }
-            }, [deleteProject, setSelectedProjectId])}
+            onProjectDelete={handleProjectDelete}
           />
         )}
       </div>
