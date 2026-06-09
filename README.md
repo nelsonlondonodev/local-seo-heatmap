@@ -238,6 +238,13 @@ El sistema contará con una equivalencia clara de costos por acción para que el
     - Contadores individuales por perfil (`profiles.credits`) con reabastecimiento manual o periódico configurable.
     - Cuotas de uso temporal por día/semana para evitar picos de consumo inesperados.
 
+### 3. Gestión Completa de Usuarios (CRUD Administrativo & Owners)
+El panel de **Gestión de Usuarios** incorporará controles administrativos completos para gestionar el ciclo de vida de los perfiles de la plataforma (aplicable tanto a la vista de `SuperAdmin` como al panel de administración de agencias de `Owner`):
+*   **Create (Crear)**: Capacidad para dar de alta nuevos usuarios/miembros del equipo directamente desde la interfaz, asignando plan inicial, créditos y rol de forma inmediata.
+*   **Read (Leer)**: Vista detallada de perfiles que incluya su historial de mapas generados y transacciones de créditos.
+*   **Update (Actualizar)**: Edición directa del nombre de usuario, email, plan, créditos y cambio dinámico de rol (`super-admin`, `owner`, `admin`, `staff`, `client`).
+*   **Delete (Eliminar)**: Eliminación o desactivación lógica de perfiles no deseados con un **modal de confirmación de seguridad de doble paso** para evitar pérdidas accidentales de datos e historial de mapas.
+
 ---
 
 ## 🗂️ Documentación Técnica Específica
