@@ -20,12 +20,15 @@
 
 ---
 
-## 🚀 Estado Actual del Proyecto (v1.2.0 - Production Stable)
+## 🚀 Estado Actual del Proyecto (v1.3.0 - Production Stable)
 
-El proyecto se encuentra en su primera versión de producción oficial estable como **`v1.0.0+`**, habiéndose resuelto todos los desafíos críticos de concurrencia, seguridad, RLS en la base de datos y consistencia de tipos:
+El proyecto se encuentra en su versión de producción estable **`v1.3.0`**, habiéndose implementado medidas estrictas de control de consumo para proteger la inversión en APIs de terceros y corregido advertencias críticas del ciclo de vida de React:
 
 1. **🔒 Arquitectura Zero-Key Client**: Las API keys de terceros (Serper, DataForSEO, OpenAI, Google) están 100% protegidas y aisladas en el servidor mediante Supabase Edge Functions. El frontend solo conoce las credenciales públicas de Supabase.
-2. **🛡️ Concurrency Armor**: Implementación de bloqueos asíncronos (`useAsyncLock`, `useKeyedAsyncLock`) para blindar el presupuesto contra clics accidentales dobles y cargas concurrentes innecesarias.
+2. **💳 Control de Créditos y Límite Inicial**: El saldo por defecto para nuevas cuentas se redujo de 100 a **50 créditos** (mediante [supabase_credits_patch.sql](./supabase_credits_patch.sql) y [saas.ts](./src/config/saas.ts)), limitando la exposición financiera por cuenta de prueba a un máximo de $0.05.
+3. **🚫 Bloqueo de Grid 7x7 para Cuentas Free**: Deshabilitación visual e interactiva con icono de candado (`Lock`) de la cuadrícula de 7x7 para usuarios en el plan gratuito en [SearchForm.tsx](./src/features/heatmap/components/forms/SearchForm.tsx), mitigando consumos accidentales de alto costo.
+4. **🛡️ Concurrency Armor**: Implementación de bloqueos asíncronos (`useAsyncLock`, `useKeyedAsyncLock`) para blindar el presupuesto contra clics accidentales dobles y cargas concurrentes innecesarias.
+5. **🩺 Estabilidad del Código (Rules of Hooks)**: Corrección de violaciones de renderizado condicional en la página de Keywords ([KeywordPage.tsx](./src/pages/KeywordPage.tsx)), garantizando un ciclo de vida limpio y libre de advertencias de consola.
 3. **🏢 White Label & Roles**: Jerarquía multi-inquilino de 5 niveles para agencias y clientes con aislamiento estricto mediante políticas de seguridad a nivel de fila (RLS).
 4. **🌍 Detección Geográfica Dinámica**: Detección del idioma y locale del usuario para mostrar coordenadas iniciales (Madrid vs. New York) y placeholders neutrales de búsqueda.
 5. **🧪 Cobertura de Testing**: Suite robusta de pruebas automatizadas con Vitest que valida la lógica del negocio con un 100% de éxito.

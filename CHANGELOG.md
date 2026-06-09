@@ -4,6 +4,17 @@ Este documento registra de manera cronológica todos los cambios, mejoras, refac
 
 ---
 
+## 🚀 Control de Consumo & Estabilidad de Hooks (v1.3.0 - Resource Armor Edition)
+
+Hito completado para blindar la inversión en APIs de terceros (Serper y DataForSEO) y estabilizar la navegación ante advertencias de React:
+
+1. **💳 Reducción de Créditos Iniciales**: Ajuste de los créditos de inicio de 100 a **50 créditos** por registro en [saas.ts](file:///Users/nelsonlondono/Trabajo/developer/local-seo-heatmap/src/config/saas.ts) y mediante la creación de [supabase_credits_patch.sql](file:///Users/nelsonlondono/Trabajo/developer/local-seo-heatmap/supabase_credits_patch.sql). Esto reduce el riesgo financiero de registros masivos de bots (Sybil attacks) a la mitad.
+2. **🔒 Deshabilitación de Cuadrículas (Grids)**: Bloqueo visual e interactivo de la opción de grid 7×7 para usuarios con plan `free` en el formulario del Heatmap, mostrando un icono de candado (`Lock`) para motivar el upgrade comercial.
+3. **🏗️ Refactorización de Lógica de Negocio (Clean Code)**: Desacoplamiento de las reglas de límites del plan del componente de presentación [SearchForm.tsx](file:///Users/nelsonlondono/Trabajo/developer/local-seo-heatmap/src/features/heatmap/components/forms/SearchForm.tsx). Toda la validación matemática se encapsula ahora en el hook [useSaaSStatus.ts](file:///Users/nelsonlondono/Trabajo/developer/local-seo-heatmap/src/hooks/useSaaSStatus.ts) mediante la función `isGridSizeAllowed(gridSize)`.
+4. **🩺 Estabilización de React (Rules of Hooks)**: Extracción del callback condicional `onProjectDelete` al nivel superior de [KeywordPage.tsx](file:///Users/nelsonlondono/Trabajo/developer/local-seo-heatmap/src/pages/KeywordPage.tsx) usando `useCallback` limpio, erradicando advertencias y bloqueos de pantalla por hooks mal posicionados.
+
+---
+
 ## 🚀 Detección Geográfica Dinámica & Placeholders Neutrales (v1.2.0 - Geo-Intelligence Edition)
 
 Hito completado para la globalización de la experiencia de usuario de la plataforma y el robustecimiento ante auditorías de seguridad:
